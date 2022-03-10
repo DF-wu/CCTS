@@ -1,0 +1,31 @@
+CCTS: 0.1
+Title: CCTS saga test case1
+StartAt: Top-up event start
+States:
+  Top-up event Start:
+    Comment: initial state
+    Next: payment Verify
+  Payment Verify:
+    Comment: make payment in payment service
+    Next: Update Points
+    Choices:
+      - BooleanEquals: yes
+        Next: Update Points
+      - BooleanEquals: no
+        Next: rollback payment
+  Update Points:
+    Comment: update points in point service
+    Choices:
+      - BooleanEquals: yes
+        Next: log
+      - BooleanEquals: no
+        Next: rollback points
+  rollback payment:
+    Comment: payment service compensation
+    Next: log
+  rollback points:
+    Comment: point service compensation
+    Next: rollback payment
+  Log:
+    Comment: logging
+    End: True
