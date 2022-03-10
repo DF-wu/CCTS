@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import tw.dfder.ccts.services.StateParser;
 
 import javax.annotation.PostConstruct;
+import javax.print.attribute.standard.JobKOctets;
 import java.io.IOException;
 import java.util.Map;
 
@@ -23,7 +24,8 @@ public class Controller {
     @PostConstruct
     public void testMethod() throws IOException {
         Map<String, Object> profile = stateParser.parseYaml();
-        System.out.println(profile);
+        System.out.println(profile.get("States"));
+
     }
 
 }
