@@ -1,0 +1,19 @@
+server:
+  port: 58090
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://df:dfder@clusters.owt5s.mongodb.net/CCTS?retryWrites=true&w=majority
+  rabbitmq:
+    username: 'soselab'
+    password: 'soselab401'
+    host: 140.121.196.23
+    port: 10109
+    virtual-host: /
+    listener:
+      simple:
+        # 手動ack, 確保訊息完整處理
+        acknowledge-mode: manual
+
+
+
