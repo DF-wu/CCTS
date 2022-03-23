@@ -3,6 +3,7 @@ package tw.dfder.ccts.entity;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,18 +12,18 @@ public class SimpleState {
     private String comment;
     private Boolean end;
     private NextState nextState;
-    private Map<String, NextState> options;
+    private HashMap<String, NextState> options;
 
 
     /*
     below for getter && setter
      */
 
-    public Map<String, NextState> getOptions() {
+    public HashMap<String, NextState> getOptions() {
         return options;
     }
 
-    public void setOptions(Map<String, NextState> options) {
+    public void setOptions(HashMap<String, NextState> options) {
         this.options = options;
     }
 
