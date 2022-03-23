@@ -7,9 +7,10 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import tw.dfder.ccts.configuration.CCTSConfigure;
 import tw.dfder.ccts.entity.CCTSProfile;
+import tw.dfder.ccts.entity.NextState;
 import tw.dfder.ccts.entity.SimpleState;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Map;
 
 
@@ -23,7 +24,7 @@ public class CCTSProfileParser {
         this.cctsConfigure = cctsConfigure;
     }
 
-    public CCTSProfile parseYaml() {
+    public CCTSProfile parse2CCTSProfile() {
         Yaml yaml = new Yaml(new Constructor(CCTSProfile.class));
 
         Map<String, Object> profileProperties = null;
@@ -40,27 +41,22 @@ public class CCTSProfileParser {
 
     }
 
-    public CCTSProfile convert2CCTSProfile(Map<String, Object> yml){
-        CCTSProfile cctsFile = new CCTSProfile();
-
-        //set basic info
-        cctsFile.setStartAt((String) yml.get("StartAt"));
-        cctsFile.setTitle((String) yml.get("Title"));
-        cctsFile.setCCTSversion((String) yml.get("CCTS"));
-
-        HashMap inputMap = (HashMap) yml.get("States");
-        HashMap<String, SimpleState> states = new HashMap<>();
-        // set states
-        for (int i = 0; i < yml.size(); i++) {
-            // current state
-            inputMap.get(i);
-            // Setting a state
-            SimpleState s = new SimpleState();
-
-
+    public ArrayList<NextState> findPathList(CCTSProfile cctsProfile){
+        ArrayList<NextState> pathList = new ArrayList<NextState>();
+        for (String k : cctsProfile.getStates().keySet()) {
+            SimpleState simpleState = cctsProfile.getStates().get(k);
+            // next exist
+            if(simpleState.getNextState() != null && simpleState.getOptions() == null){
+                pathList.add(simpleState.getNextState());
+            // options exist
+            }else if(simpleState.getNextState() == null && simpleState.getOptions() != null){
+                pathList.addAll(simpleState.getOptions().values());
+            // not end state exception
+            }else if(!simpleState.getEnd()){
+                System.out.println("exception!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            }
         }
 
-        return cctsFile;
+        return pathList;
     }
-
 }
