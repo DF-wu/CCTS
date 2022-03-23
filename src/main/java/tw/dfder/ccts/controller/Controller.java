@@ -3,6 +3,7 @@ package tw.dfder.ccts.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
+import tw.dfder.ccts.entity.CCTSProfile;
 import tw.dfder.ccts.services.CCTSProfileParser;
 
 import javax.annotation.PostConstruct;
@@ -22,8 +23,9 @@ public class Controller {
 
     @PostConstruct
     public void testMethod() throws IOException {
-        Map<String, Object> profile = CCTSProfileParser.parseYaml();
-        System.out.println(profile.get("States"));
+        CCTSProfile cctsProfile = CCTSProfileParser.parseYaml();
+
+//        System.out.println(profile.get("States"));
 
     }
 
