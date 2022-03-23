@@ -3,10 +3,9 @@ package tw.dfder.ccts.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
-import tw.dfder.ccts.services.StateParser;
+import tw.dfder.ccts.services.CCTSProfileParser;
 
 import javax.annotation.PostConstruct;
-import javax.print.attribute.standard.JobKOctets;
 import java.io.IOException;
 import java.util.Map;
 
@@ -14,16 +13,16 @@ import java.util.Map;
 @RestController
 public class Controller {
 
-    StateParser stateParser;
+    CCTSProfileParser CCTSProfileParser;
 
     @Autowired
-    public Controller(StateParser stateParser) {
-        this.stateParser = stateParser;
+    public Controller(CCTSProfileParser CCTSProfileParser) {
+        this.CCTSProfileParser = CCTSProfileParser;
     }
 
     @PostConstruct
     public void testMethod() throws IOException {
-        Map<String, Object> profile = stateParser.parseYaml();
+        Map<String, Object> profile = CCTSProfileParser.parseYaml();
         System.out.println(profile.get("States"));
 
     }

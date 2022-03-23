@@ -1,31 +1,106 @@
-CCTS: 0.1
+CCTS: 0.4
 Title: CCTS saga test case1
-StartAt: Top-up event start
+StartAt: Create top-up event
 States:
-  Top-up event Start:
+  Create top-up event:
     Comment: initial state
-    Next: payment Verify
-  Payment Verify:
-    Comment: make payment in payment service
-    Next: Update Points
-    Choices:
-      - BooleanEquals: yes
-        Next: Update Points
-      - BooleanEquals: no
-        Next: rollback payment
-  Update Points:
-    Comment: update points in point service
-    Choices:
-      - BooleanEquals: yes
-        Next: log
-      - BooleanEquals: no
-        Next: rollback points
-  rollback payment:
-    Comment: payment service compensation
-    Next: log
-  rollback points:
-    Comment: point service compensation
-    Next: rollback payment
+    End: False
+    Next:
+      Contract Name: payment process contract
+      State: payment process
+      Publisher: Orchestrator
+      Subscriber: Payment
+  Payment process:
+    Comment: make payment
+    End: False
+    Options:
+      Prepare update point:
+        Contract Name:  make payment contract
+        Publisher: Payment
+        Subscriber: Orchestrator
+      Payment Fail:
+        Contract Name:  Payment Fail response
+        Publisher: Payment
+        Subscriber: Orchestrator
+  Payment Fail:
+    Comment: do payment fail compensation
+    End: False
+    Next:
+      State: Payment reversed
+      Contract Name: Payment Fail response
+      Publisher: Orchestrator
+      Subscriber: Payment
+  Payment reversed:
+    Comment: reverse Payment
+    End: False
+    Next:
+      State: Top-up cancel
+      Contract Name: compensation done and cancel saga
+      Publisher: Payment
+      Subscriber: Orchestrator
+  Prepare update point:
+    Comment: orchestrator received response from payment and ready to send update point request to Point service
+    End: False
+    Next:
+      State: Update point
+      Contract Name: update point request contract
+      Publisher: Orchestrator
+      Subscriber: Point
+  Upate point:
+    Comment: do update point
+    End: False
+    Options:
+      Prepare log:
+        Contract Name: response orchestrator contract
+        Publisher: Point
+        Subscriber: Orchestrator
+      Update point Fail:
+        Contract Name: notify orchestrator revert point contract
+      Publisher: Point
+      Subscriber: Orchestrator
+  Update point Fail:
+    Comment: revert points
+    End: False
+    Next:
+      State: Revert point
+      Contract Name: orchestrator request Point service revert point
+      Publisher: Orchestrator
+    Subscriber: Point
+  Revert point:
+    Comment: revert points
+    End: False
+    Next:
+      State: Prepare reverse payment
+      Contract Name: notify orchestrator do compensation for payment contract
+    Publisher: Point
+    Subscriber: Orchestrator
+  Prepare reverse payment:
+    Comment: orchestrator received response that point finished compensation , ready to do payment compensation
+    End: False
+    Next:
+      State: Payment reverse
+      Contract Name: request payment do compensation contract
+    Publisher: Orchestrator
+    Subscriber: Payment
+  Prepare Log:
+    Comment: orchestrator ready to send Log request
+    End: False
+    Next:
+      State: Log
+      Contract Name: Log request Contract
+    Publisher: Orchestrator
+    Subscriber: Log
   Log:
     Comment: logging
+    End: False
+    Next:
+      State: Approved top-update
+      Contract Name: log response contract
+    Publisher: Log
+    Subscriber: Orchestrator
+  Approved top-up:
+    Comment: finishe saga process
+    End: True
+  Top-up cancel:
+    Comment: finishe compensation process and finishe saga
     End: True
