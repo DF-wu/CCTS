@@ -3,15 +3,14 @@ package tw.dfder.ccts.entity;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Document("CCTSProfile")
 public class CCTSProfile {
-    private String version;
-    private String Title;
-    private SimpleState startState;
-    private HashMap<String, SimpleState> states;
+    private String CCTSversion;
+    private String title;
+    private String startAt;
+    private Map<String, SimpleState> states;
 
 
 
@@ -20,35 +19,35 @@ public class CCTSProfile {
     below for getter && setter
      */
 
-    public String getVersion() {
-        return version;
+    public String getCCTSversion() {
+        return CCTSversion;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public void setCCTSversion(String CCTSversion) {
+        this.CCTSversion = CCTSversion;
     }
 
     public String getTitle() {
-        return Title;
+        return title;
     }
 
     public void setTitle(String title) {
-        Title = title;
+        this.title = title;
     }
 
-    public SimpleState getStartState() {
-        return startState;
+    public String getStartAt() {
+        return startAt;
     }
 
-    public void setStartState(SimpleState startState) {
-        this.startState = startState;
+    public void setStartAt(String startAt) {
+        this.startAt = startAt;
     }
 
-    public HashMap<String, SimpleState> getStates() {
+    public Map<String, SimpleState> getStates() {
         return states;
     }
 
-    public void setStates(HashMap<String, SimpleState> states) {
+    public void setStates(Map<String, SimpleState> states) {
         this.states = states;
     }
 }

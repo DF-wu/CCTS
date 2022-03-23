@@ -3,34 +3,35 @@ package tw.dfder.ccts.entity;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Document("SimpleState")
 public class SimpleState {
-    private String stateName;
-    private String Comment;
-    private NextState nextState;
+    private String comment;
     private Boolean end;
+    private NextState nextState;
+    private Map<String, NextState> options;
 
 
     /*
     below for getter && setter
      */
 
-    public String getStateName() {
-        return stateName;
+    public Map<String, NextState> getOptions() {
+        return options;
     }
 
-    public void setStateName(String stateName) {
-        this.stateName = stateName;
+    public void setOptions(Map<String, NextState> options) {
+        this.options = options;
     }
 
     public String getComment() {
-        return Comment;
+        return comment;
     }
 
     public void setComment(String comment) {
-        Comment = comment;
+        this.comment = comment;
     }
 
     public NextState getNextState() {

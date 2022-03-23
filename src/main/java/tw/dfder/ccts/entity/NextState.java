@@ -1,10 +1,8 @@
 package tw.dfder.ccts.entity;
 
-import java.util.HashMap;
-
 public class NextState {
     private String contractName;
-    private String next;
+    private String state;
     private String publisher;
     private String subscriber;
 
@@ -21,12 +19,12 @@ public class NextState {
         this.contractName = contractName;
     }
 
-    public String getNext() {
-        return next;
+    public String getState() {
+        return state;
     }
 
-    public void setNext(String next) {
-        this.next = next;
+    public void setState(String state) {
+        this.state = state;
     }
 
     public String getPublisher() {
