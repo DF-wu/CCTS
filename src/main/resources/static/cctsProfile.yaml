@@ -1,106 +1,106 @@
-CCTS: 0.4
-Title: CCTS saga test case1
-StartAt: Create top-up event
-States:
+CCTSversion: "0.5"
+title: CCTS saga test case1
+startAt: Create top-up event
+states:
   Create top-up event:
-    Comment: initial state
-    End: False
-    Next:
-      Contract Name: payment process contract
-      State: payment process
-      Publisher: Orchestrator
-      Subscriber: Payment
+    comment: initial state
+    end: False
+    nextState:
+      contractName: payment process contract
+      state: payment process
+      publisher: Orchestrator
+      subscriber: Payment
   Payment process:
-    Comment: make payment
-    End: False
-    Options:
+    comment: make payment
+    end: False
+    options:
       Prepare update point:
-        Contract Name:  make payment contract
-        Publisher: Payment
-        Subscriber: Orchestrator
+        contractName:  make payment contract
+        publisher: Payment
+        subscriber: Orchestrator
       Payment Fail:
-        Contract Name:  Payment Fail response
-        Publisher: Payment
-        Subscriber: Orchestrator
+        contractName:  Payment Fail response
+        publisher: Payment
+        subscriber: Orchestrator
   Payment Fail:
-    Comment: do payment fail compensation
-    End: False
-    Next:
-      State: Payment reversed
-      Contract Name: Payment Fail response
-      Publisher: Orchestrator
-      Subscriber: Payment
+    comment: do payment fail compensation
+    end: False
+    nextState:
+      state: Payment reversed
+      contractName: Payment Fail response
+      publisher: Orchestrator
+      subscriber: Payment
   Payment reversed:
-    Comment: reverse Payment
-    End: False
-    Next:
-      State: Top-up cancel
-      Contract Name: compensation done and cancel saga
-      Publisher: Payment
-      Subscriber: Orchestrator
+    comment: reverse Payment
+    end: False
+    nextState:
+      state: Top-up cancel
+      contractName: compensation done and cancel saga
+      publisher: Payment
+      subscriber: Orchestrator
   Prepare update point:
-    Comment: orchestrator received response from payment and ready to send update point request to Point service
-    End: False
-    Next:
-      State: Update point
-      Contract Name: update point request contract
-      Publisher: Orchestrator
-      Subscriber: Point
+    comment: orchestrator received response from payment and ready to send update point request to Point service
+    end: False
+    nextState:
+      state: Update point
+      contractName: update point request contract
+      publisher: Orchestrator
+      subscriber: Point
   Upate point:
-    Comment: do update point
-    End: False
-    Options:
+    comment: do update point
+    end: False
+    options:
       Prepare log:
-        Contract Name: response orchestrator contract
-        Publisher: Point
-        Subscriber: Orchestrator
+        contractName: response orchestrator contract
+        publisher: Point
+        subscriber: Orchestrator
       Update point Fail:
-        Contract Name: notify orchestrator revert point contract
-      Publisher: Point
-      Subscriber: Orchestrator
+        contractName: notify orchestrator revert point contract
+        publisher: Point
+        subscriber: Orchestrator
   Update point Fail:
-    Comment: revert points
-    End: False
-    Next:
-      State: Revert point
-      Contract Name: orchestrator request Point service revert point
-      Publisher: Orchestrator
-    Subscriber: Point
+    comment: revert points
+    end: False
+    nextState:
+      state: Revert point
+      contractName: orchestrator request Point service revert point
+      publisher: Orchestrator
+      subscriber: Point
   Revert point:
-    Comment: revert points
-    End: False
-    Next:
-      State: Prepare reverse payment
-      Contract Name: notify orchestrator do compensation for payment contract
-    Publisher: Point
-    Subscriber: Orchestrator
+    comment: revert points
+    end: False
+    nextState:
+      state: Prepare reverse payment
+      contractName: notify orchestrator do compensation for payment contract
+      publisher: Point
+      subscriber: Orchestrator
   Prepare reverse payment:
-    Comment: orchestrator received response that point finished compensation , ready to do payment compensation
-    End: False
-    Next:
-      State: Payment reverse
-      Contract Name: request payment do compensation contract
-    Publisher: Orchestrator
-    Subscriber: Payment
+    comment: orchestrator received response that point finished compensation , ready to do payment compensation
+    end: False
+    nextState:
+      state: Payment reverse
+      contractName: request payment do compensation contract
+      publisher: Orchestrator
+      subscriber: Payment
   Prepare Log:
-    Comment: orchestrator ready to send Log request
-    End: False
-    Next:
-      State: Log
-      Contract Name: Log request Contract
-    Publisher: Orchestrator
-    Subscriber: Log
+    comment: orchestrator ready to send Log request
+    end: False
+    nextState:
+      state: Log
+      contractName: Log request Contract
+      publisher: Orchestrator
+      subscriber: Log
   Log:
-    Comment: logging
-    End: False
-    Next:
-      State: Approved top-update
-      Contract Name: log response contract
-    Publisher: Log
-    Subscriber: Orchestrator
+    comment: logging
+    end: False
+    nextState:
+      state: Approved top-update
+      contractName: log response contract
+      publisher: Log
+      subscriber: Orchestrator
   Approved top-up:
-    Comment: finishe saga process
-    End: True
+    comment: finishe saga process
+    end: True
   Top-up cancel:
-    Comment: finishe compensation process and finishe saga
-    End: True
+    comment: finishe compensation process and finishe saga
+    end: True
