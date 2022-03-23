@@ -10,7 +10,6 @@ import tw.dfder.ccts.services.CCTSProfileParser;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.Map;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
@@ -25,11 +24,11 @@ public class Controller {
 
     @PostConstruct
     public void testMethod() throws IOException {
-        CCTSProfile cctsProfile = CCTSProfileParser.parseYaml();
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        CCTSProfile cctsProfile = CCTSProfileParser.parse2CCTSProfile();
 
-        gson.toJson(cctsProfile);
-        System.out.println(gson.toJson(cctsProfile));
+        System.out.println(CCTSProfileParser.findPathList(cctsProfile).size());
+
 //        System.out.println(profile.get("States"));
 
     }
