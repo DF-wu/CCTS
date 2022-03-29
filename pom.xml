@@ -10,7 +10,7 @@
     </parent>
     <groupId>tw.dfder</groupId>
     <artifactId>CCTS</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>CCTS</name>
     <description>CCTS</description>
     <properties>
