@@ -18,7 +18,7 @@ services:
   pact_broker:
     image: pactfoundation/pact-broker
     ports:
-      - "8282:9292"
+      - "10141:9292"
     depends_on:
       - postgres
     environment:
