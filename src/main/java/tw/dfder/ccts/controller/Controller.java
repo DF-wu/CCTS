@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import tw.dfder.ccts.entity.CCTSProfile;
 import tw.dfder.ccts.services.CCTSProfileParser;
+import tw.dfder.ccts.services.PactBrokerBusyBox;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -16,10 +17,12 @@ import java.io.IOException;
 public class Controller {
 
     CCTSProfileParser CCTSProfileParser;
+    private PactBrokerBusyBox pactBrokerBusyBox;
 
     @Autowired
-    public Controller(CCTSProfileParser CCTSProfileParser) {
+    public Controller(CCTSProfileParser CCTSProfileParser, PactBrokerBusyBox pactBrokerBusyBox) {
         this.CCTSProfileParser = CCTSProfileParser;
+        this.pactBrokerBusyBox = pactBrokerBusyBox;
     }
 
     @PostConstruct
@@ -29,7 +32,7 @@ public class Controller {
 
         System.out.println(CCTSProfileParser.findPathList(cctsProfile).size());
 
-//        System.out.println(profile.get("States"));
+        pactBrokerBusyBox.retrieveAllPacts();
 
     }
 
