@@ -15,5 +15,5 @@ spring:
         # 手動ack, 確保訊息完整處理
         acknowledge-mode: manual
 
-
-
+CCTS:
+  pact_broker: http://23.dfder.tw:10141
