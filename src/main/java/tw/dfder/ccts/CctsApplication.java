@@ -10,7 +10,6 @@ public class CctsApplication {
         SpringApplication.run(CctsApplication.class, args);
 
         System.out.println(
-                "/*\n" +
                         "                           _ooOoo_\n" +
                         "                          o8888888o\n" +
                         "                          88\" . \"88\n" +
@@ -30,8 +29,7 @@ public class CctsApplication {
                         "        ======`-.____`-.___\\_____/___.-`____.-'======\n" +
                         "                           `=---='\n" +
                         "        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n" +
-                        "                 佛祖保佑       永無BUG\n" +
-                        "        */"
+                        "                 佛祖保佑       永無BUG\n"
         );
     }
 
