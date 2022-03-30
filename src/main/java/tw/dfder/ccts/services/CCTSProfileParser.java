@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
-import tw.dfder.ccts.configuration.CCTSConfigure;
+import tw.dfder.ccts.configuration.ServiceConfigure;
 import tw.dfder.ccts.entity.CCTSProfile;
 import tw.dfder.ccts.entity.NextState;
 import tw.dfder.ccts.entity.SimpleState;
@@ -16,12 +16,12 @@ import java.util.Map;
 
 @Service
 public class CCTSProfileParser {
-    private  CCTSConfigure cctsConfigure;
+    private ServiceConfigure serviceConfigure;
 
     @Autowired
-    public CCTSProfileParser(CCTSConfigure cctsConfigure) {
+    public CCTSProfileParser(ServiceConfigure serviceConfigure) {
 
-        this.cctsConfigure = cctsConfigure;
+        this.serviceConfigure = serviceConfigure;
     }
 
     public CCTSProfile parse2CCTSProfile() {
@@ -30,7 +30,7 @@ public class CCTSProfileParser {
         Map<String, Object> profileProperties = null;
         CCTSProfile cctsProfile = null;
         try {
-            cctsProfile = yaml.load(cctsConfigure.cctsFile.getInputStream());
+            cctsProfile = yaml.load(serviceConfigure.cctsFile.getInputStream());
 
         }catch (Exception e ){
             System.out.println("CCTS profile parse error");
