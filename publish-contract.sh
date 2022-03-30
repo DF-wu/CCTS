@@ -1,2 +1,2 @@
 #!/bin/bash
-docker run --rm -e 23.dfder.tw:10141 pactfoundation/pact-cli:latest broker can-i-deploy --pacticipant 'Example App' --latest
+docker run --rm  pactfoundation/pact-cli:latest broker can-i-deploy --pacticipant 'Example App' --broker-base-url 23.dfder.tw:10141 --latest
