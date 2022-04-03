@@ -13,3 +13,11 @@ echo "build.sh : cp apps from target directory to root directory"
 
 docker build . -t CCTS-image
 echo "build.sh : docker build successfully"
+
+
+
+# running in deploy machine.
+#docker stop pdvps-payment || true
+#docker rm pdvps-payment || true
+
+#docker run  -p 10107:8888 -d --name pdvps-payment pdvps-payment-image:latest

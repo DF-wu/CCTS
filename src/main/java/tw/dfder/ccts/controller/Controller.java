@@ -45,6 +45,7 @@ public class Controller {
                 new StreamGobbler(process.getInputStream(), System.out::println);
         Executors.newSingleThreadExecutor().submit(streamGobbler);
         int exitCode = process.waitFor();
+        System.out.println("!!!!!");
         System.out.println(exitCode);
 
 
