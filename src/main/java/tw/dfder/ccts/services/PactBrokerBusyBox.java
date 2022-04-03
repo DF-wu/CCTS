@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tw.dfder.ccts.configuration.ServiceConfigure;
 
+import java.util.ArrayList;
+
 @Service("PactBrokerBusyBox")
 public class PactBrokerBusyBox {
     private Gson gson;
@@ -22,18 +24,21 @@ public class PactBrokerBusyBox {
         this.serviceConnector = serviceConnector;
     }
 
-    public void retrieveAllPacts(){
+    public ArrayList<String> getretrieveAllPacts(){
         // I am JsonObject from Gson!!
         JsonObject pacts =  gson.fromJson(serviceConnector.retrieveAllPactsFromPactBroker().getBody(), JsonObject.class);
+
+        // consumer , provider
+        ArrayList<String> pairs = new ArrayList<>();
         pacts.getAsJsonArray("pacts").forEach(obj ->{
-            System.out.println(
-                    obj.getAsJsonObject()
-                            .get("_embedded")
-                            .getAsJsonObject()
-                            .get("consumer")
-                            .getAsJsonObject()
-                            .get("name")
-                );
+
+                obj.getAsJsonObject()
+                        .get("_embedded")
+                        .getAsJsonObject()
+                        .get("consumer")
+                        .getAsJsonObject()
+                        .get("name");
+
             System.out.println(
                     obj.getAsJsonObject()
                             .get("_embedded")
@@ -43,8 +48,7 @@ public class PactBrokerBusyBox {
                             .get("name"));
                 });
 
-
-
+        return null;
     }
 
 
