@@ -32,7 +32,6 @@ public class Controller {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         CCTSProfile cctsProfile = CCTSProfileParser.parse2CCTSProfile();
 
-        System.out.println(CCTSProfileParser.findPathList(cctsProfile).size());
 
 //        pactBrokerBusyBox.retrieveAllPacts();
 
@@ -40,7 +39,7 @@ public class Controller {
 
 
 
-        process = Runtime.getRuntime().exec("docker run --rm -e 23.dfder.tw:10141 pactfoundation/pact-cli:latest broker can-i-deploy --pacticipant loggingService --latest");
+        process = Runtime.getRuntime().exec("docker run --rm  pactfoundation/pact-cli:latest broker can-i-deploy --pacticipant loggingService --latest --broker-base-url http://23.dfder.tw:10141");
         StreamGobbler streamGobbler =
                 new StreamGobbler(process.getInputStream(), System.out::println);
         Executors.newSingleThreadExecutor().submit(streamGobbler);
