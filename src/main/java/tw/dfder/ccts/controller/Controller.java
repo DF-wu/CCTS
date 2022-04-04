@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
-import tw.dfder.ccts.entity.CCTSProfile;
+import tw.dfder.ccts.entity.CCTSModel.CCTSProfile;
 import tw.dfder.ccts.services.CCTSProfileParser;
 import tw.dfder.ccts.services.PactBrokerBusyBox;
 import tw.dfder.ccts.services.StreamGobbler;
@@ -39,7 +39,7 @@ public class Controller {
 
 
 
-        process = Runtime.getRuntime().exec("docker run --rm  pactfoundation/pact-cli:latest broker can-i-deploy --pacticipant loggingService --latest --broker-base-url http://23.dfder.tw:10141");
+        process = Runtime.getRuntime().exec("docker run --rm  pactfoundation/pact-cli:latest broker can-i-deploy --pacticipant orchestrator --latest --broker-base-url http://23.dfder.tw:10141");
         StreamGobbler streamGobbler =
                 new StreamGobbler(process.getInputStream(), System.out::println);
         Executors.newSingleThreadExecutor().submit(streamGobbler);
