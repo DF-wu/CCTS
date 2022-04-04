@@ -1,10 +1,9 @@
-package tw.dfder.ccts.entity;
+package tw.dfder.ccts.entity.CCTSModel;
 
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.HashMap;
-import java.util.Map;
 
 @Document(collection = "CCTSProfile")
 public class CCTSProfile {

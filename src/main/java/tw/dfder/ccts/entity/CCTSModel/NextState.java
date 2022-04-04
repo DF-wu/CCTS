@@ -1,4 +1,4 @@
-package tw.dfder.ccts.entity;
+package tw.dfder.ccts.entity.CCTSModel;
 
 public class NextState {
     private String contractName;
