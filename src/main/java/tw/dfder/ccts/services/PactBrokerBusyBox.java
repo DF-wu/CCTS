@@ -13,20 +13,20 @@ import java.util.ArrayList;
 public class PactBrokerBusyBox {
     private Gson gson;
     private ServiceConfigure serviceConfig;
-    private ServiceConnector serviceConnector;
+    private PactBrokerConnector pactBrokerConnector;
 
 
 
     @Autowired
-    public PactBrokerBusyBox(Gson gson, ServiceConfigure serviceConfig, ServiceConnector serviceConnector) {
+    public PactBrokerBusyBox(Gson gson, ServiceConfigure serviceConfig, PactBrokerConnector pactBrokerConnector) {
         this.gson = gson;
         this.serviceConfig = serviceConfig;
-        this.serviceConnector = serviceConnector;
+        this.pactBrokerConnector = pactBrokerConnector;
     }
 
-    public ArrayList<String> getretrieveAllPacts(){
+    public ArrayList<String> retrieveAllPacts(){
         // I am JsonObject from Gson!!
-        JsonObject pacts =  gson.fromJson(serviceConnector.retrieveAllPactsFromPactBroker().getBody(), JsonObject.class);
+        JsonObject pacts =  gson.fromJson(pactBrokerConnector.retrieveAllPactsFromPactBroker().getBody().toString(), JsonObject.class);
 
         // consumer , provider
         ArrayList<String> pairs = new ArrayList<>();
