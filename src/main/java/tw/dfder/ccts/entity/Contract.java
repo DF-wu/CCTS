@@ -6,14 +6,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document(collection = "Contracts")
-public class ServiceContract {
+public class Contract {
     @Id
     private String Id;
 
     @Field
-    private String consumer;
+    private String consumerName;
+
     @Field
-    private String producer;
+    private String providerName;
+
+
 
 
 
