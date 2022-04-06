@@ -10,6 +10,8 @@ import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
+import tw.dfder.ccts.entity.EventLog;
+import tw.dfder.ccts.repository.EventLogRepository;
 
 import java.io.IOException;
 
@@ -17,10 +19,12 @@ import java.io.IOException;
 @Service("EventLogListener")
 public class EventLogListener {
     private final Gson gson;
+    private final EventLogRepository eventLogRepository;
 
     @Autowired
-    public EventLogListener(Gson gson) {
+    public EventLogListener(Gson gson, EventLogRepository eventLogRepository) {
         this.gson = gson;
+        this.eventLogRepository = eventLogRepository;
     }
 
     @RabbitListener(queues = {
@@ -31,6 +35,24 @@ public class EventLogListener {
         ch.basicAck(deliveryTag,false);
         System.out.println(message.getMessageProperties());
         System.out.println(msg);
+
+        try {
+            EventLog el = new EventLog(
+                    System.currentTimeMillis(),
+                    message.getMessageProperties().getHeaders().get("provider").toString(),
+                    message.getMessageProperties().getHeaders().get("consumer").toString(),
+                    message.getMessageProperties().getHeaders().get("contractName").toString(),
+                    message.getMessageProperties().getHeaders().get("contractTerm").toString()
+                    );
+            eventLogRepository.save(el);
+
+        }catch (Exception e) {
+            System.out.println("EventLog error!!");
+            System.out.println(e);
+        }
+
+
+
     }
 
 
