@@ -6,8 +6,8 @@ import org.springframework.core.io.Resource;
 
 @Configuration
 public class ServiceConfigure {
-    @Value("classpath:static/cctsProfile.yaml")
-    public Resource cctsFile;
+    @Value("classpath:CCTSProfiles/*.yaml")
+    public Resource[] cctsFiles;
 
     @Value("${CCTS.pact_broker}")
     public String pactBrokerUrlPrefix;
