@@ -1,4 +1,4 @@
-CCTSversion: "0.5"
+CCTSversion: "0.6"
 title: CCTS saga test case1
 startAt: Create top-up event
 states:
@@ -6,8 +6,8 @@ states:
     comment: initial state
     end: False
     nextState:
-      contractName: payment process contract
       state: payment process
+      testCaseId: poc-01
       publisher: Orchestrator
       subscriber: Payment
   Payment process:
@@ -15,35 +15,35 @@ states:
     end: False
     options:
       Prepare update point:
-        contractName:  make payment contract
+        testCaseId: poc-02
         publisher: Payment
         subscriber: Orchestrator
       Payment Fail:
-        contractName:  Payment Fail response
+        testCaseId: poc-03
         publisher: Payment
         subscriber: Orchestrator
   Payment Fail:
     comment: do payment fail compensation
     end: False
     nextState:
+      testCaseId: poc-04
       state: Payment reversed
-      contractName: Payment Fail response
       publisher: Orchestrator
       subscriber: Payment
   Payment reversed:
     comment: reverse Payment
     end: False
     nextState:
+      testCaseId: poc-05
       state: Top-up cancel
-      contractName: compensation done and cancel saga
       publisher: Payment
       subscriber: Orchestrator
   Prepare update point:
     comment: orchestrator received response from payment and ready to send update point request to Point service
     end: False
     nextState:
+      testCaseId: poc-06
       state: Update point
-      contractName: update point request contract
       publisher: Orchestrator
       subscriber: Point
   Upate point:
@@ -51,51 +51,51 @@ states:
     end: False
     options:
       Prepare log:
-        contractName: response orchestrator contract
+        testCaseId: poc-07
         publisher: Point
         subscriber: Orchestrator
       Update point Fail:
-        contractName: notify orchestrator revert point contract
+        testCaseId: poc-08
         publisher: Point
         subscriber: Orchestrator
   Update point Fail:
     comment: revert points
     end: False
     nextState:
+      testCaseId: poc-08
       state: Revert point
-      contractName: orchestrator request Point service revert point
       publisher: Orchestrator
       subscriber: Point
   Revert point:
     comment: revert points
     end: False
     nextState:
+      testCaseId: poc-09
       state: Prepare reverse payment
-      contractName: notify orchestrator do compensation for payment contract
       publisher: Point
       subscriber: Orchestrator
   Prepare reverse payment:
     comment: orchestrator received response that point finished compensation , ready to do payment compensation
     end: False
     nextState:
+      testCaseId: poc-10
       state: Payment reverse
-      contractName: request payment do compensation contract
       publisher: Orchestrator
       subscriber: Payment
   Prepare Log:
     comment: orchestrator ready to send Log request
     end: False
     nextState:
+      testCaseId: poc-11
       state: Log
-      contractName: Log request Contract
       publisher: Orchestrator
       subscriber: Log
   Log:
     comment: logging
     end: False
     nextState:
+      testCaseId: poc-12
       state: Approved top-update
-      contractName: log response contract
       publisher: Log
       subscriber: Orchestrator
   Approved top-up:
