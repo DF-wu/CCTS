@@ -49,7 +49,7 @@ public class PactBrokerConnector {
         return sendGetRequest(UrlTemplate.getAllPactsURLPath());
     }
 
-    public ResponseEntity<?> retrievePactDetail(String providerName, String consumerName){
+    public ResponseEntity<?> retrieveLatestPactDetail(String providerName, String consumerName){
         String targetUrl = serviceConfig.pactBrokerUrlPrefix + UrlTemplate.getPactDetailURLPath(providerName, consumerName);
         return sendGetRequest(targetUrl);
     }
