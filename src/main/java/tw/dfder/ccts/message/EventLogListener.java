@@ -36,12 +36,13 @@ public class EventLogListener {
         System.out.println(message.getMessageProperties());
         System.out.println(msg);
 
+
+        //  aspect CCTS message spec
         try {
             EventLog el = new EventLog(
                     System.currentTimeMillis(),
                     message.getMessageProperties().getHeaders().get("provider").toString(),
                     message.getMessageProperties().getHeaders().get("consumer").toString(),
-                    message.getMessageProperties().getHeaders().get("contractName").toString(),
                     message.getMessageProperties().getHeaders().get("contractTerm").toString()
                     );
             eventLogRepository.save(el);
