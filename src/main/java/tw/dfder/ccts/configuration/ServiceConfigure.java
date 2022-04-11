@@ -6,7 +6,7 @@ import org.springframework.core.io.Resource;
 
 @Configuration
 public class ServiceConfigure {
-    @Value("classpath:CCTSProfiles/*.yaml")
+    @Value("classpath:CCTSDocuments/*.yaml")
     public Resource[] cctsFiles;
 
     @Value("${CCTS.pact_broker}")
