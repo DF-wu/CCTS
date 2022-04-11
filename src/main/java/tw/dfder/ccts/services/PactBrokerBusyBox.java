@@ -2,10 +2,12 @@ package tw.dfder.ccts.services;
 
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tw.dfder.ccts.configuration.ServiceConfigure;
+import tw.dfder.ccts.entity.Contract;
 
 import java.util.ArrayList;
 
@@ -51,6 +53,30 @@ public class PactBrokerBusyBox {
         return null;
     }
 
+
+
+    public Contract getAndParsePact2ContractFromBroker(String providerName, String consumerName){
+        JsonObject pactJson = gson.fromJson(
+                pactBrokerConnector.retrieveLatestPactDetail(providerName, consumerName).getBody().toString(),
+                JsonObject.class
+        );
+
+        Contract c = new Contract();
+        c.setConsumerName(pactJson.getAsJsonObject().get("consumer").getAsJsonObject().get("name").getAsString());
+        c.setProviderName(pactJson.getAsJsonObject().get("provider").getAsJsonObject().get("name").getAsString());
+
+
+        // get all contract term in pact
+        ArrayList<String> terms = new ArrayList<>();
+
+        for (JsonElement e:
+        pactJson.getAsJsonObject().get("messages").getAsJsonArray()) {
+            terms.add(e.getAsJsonObject().get("description").getAsString());
+        }
+
+        return c;
+
+    }
 
 
 }
