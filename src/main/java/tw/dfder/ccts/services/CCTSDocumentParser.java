@@ -2,49 +2,53 @@ package tw.dfder.ccts.services;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import tw.dfder.ccts.configuration.ServiceConfigure;
-import tw.dfder.ccts.entity.CCTSModel.CCTSProfile;
+import tw.dfder.ccts.entity.CCTSModel.CCTSDocument;
 import tw.dfder.ccts.entity.CCTSModel.NextState;
 import tw.dfder.ccts.entity.CCTSModel.SimpleState;
+import tw.dfder.ccts.repository.CCTSDocumentRepository;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 
 @Service
-public class CCTSProfileParser {
+public class CCTSDocumentParser {
     private ServiceConfigure serviceConfigure;
-
+    private CCTSDocumentRepository repo;
     @Autowired
-    public CCTSProfileParser(ServiceConfigure serviceConfigure) {
+    public CCTSDocumentParser(ServiceConfigure serviceConfigure) {
 
         this.serviceConfigure = serviceConfigure;
     }
 
-    public CCTSProfile parse2CCTSProfile() {
-        Yaml yaml = new Yaml(new Constructor(CCTSProfile.class));
-
+    private CCTSDocument parse2CCTSProfile(Resource fileResource) {
+        Yaml yaml = new Yaml(new Constructor(CCTSDocument.class));
         Map<String, Object> profileProperties = null;
-        CCTSProfile cctsProfile = null;
+
+        CCTSDocument c = null;
         try {
-            cctsProfile = yaml.load(serviceConfigure.cctsFile.getInputStream());
+            c = yaml.load(fileResource.getInputStream());
 
         }catch (Exception e ){
             System.out.println("CCTS profile parse error");
             System.out.println(e);
 
         }
-        return cctsProfile;
+
+
+        return c;
 
     }
 
-    public ArrayList<NextState> findPathList(CCTSProfile cctsProfile){
+    public ArrayList<NextState> findPathList(CCTSDocument cctsDocument){
         ArrayList<NextState> pathList = new ArrayList<NextState>();
-        for (String k : cctsProfile.getStates().keySet()) {
-            SimpleState simpleState = cctsProfile.getStates().get(k);
+        for (String k : cctsDocument.getStates().keySet()) {
+            SimpleState simpleState = cctsDocument.getStates().get(k);
             // next exist
             if(simpleState.getNextState() != null && simpleState.getOptions() == null){
                 pathList.add(simpleState.getNextState());
@@ -58,5 +62,15 @@ public class CCTSProfileParser {
         }
 
         return pathList;
+    }
+
+
+    public void parseAllCCTSProfilesAndSave2DB(){
+        ArrayList<CCTSDocument> cctsDocuments = new ArrayList<>();
+        for (Resource r : serviceConfigure.cctsFiles) {
+            cctsDocuments.add(parse2CCTSProfile(r));
+        }
+
+        repo.saveAll(cctsDocuments);
     }
 }

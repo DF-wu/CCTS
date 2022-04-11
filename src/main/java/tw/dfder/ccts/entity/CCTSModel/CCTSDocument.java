@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.HashMap;
 
 @Document(collection = "CCTSProfile")
-public class CCTSProfile {
+public class CCTSDocument {
     private String CCTSversion;
     private String title;
     private String startAt;
