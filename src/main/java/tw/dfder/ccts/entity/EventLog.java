@@ -4,8 +4,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.ArrayList;
-
 @Document(collection = "EventLogs")
 public class EventLog {
     @Id
@@ -24,24 +22,21 @@ public class EventLog {
     private String providerName;
     @Field
     private String consumerName;
-    @Field
-    private String contractName;
 
-//    "description" in Pact spec
+    //    "description" in Pact spec
     @Field
-    private String term;
+    private String testCaseId;
 
     @Field
-    private Boolean isValidated;
+    private boolean isValidated;
 
 
 
-    public EventLog(long timeInMillis, String providerName, String consumerName, String contractName, String term) {
+    public EventLog(long timeInMillis, String providerName, String consumerName, String testCaseId) {
         this.timeInMillis = timeInMillis;
         this.providerName = providerName;
         this.consumerName = consumerName;
-        this.contractName = contractName;
-        this.term = term;
+        this.testCaseId = testCaseId;
     }
 
 
@@ -77,27 +72,19 @@ public class EventLog {
         this.consumerName = consumerName;
     }
 
-    public String getContractName() {
-        return contractName;
+    public String gettestCaseId() {
+        return testCaseId;
     }
 
-    public void setContractName(String contractName) {
-        this.contractName = contractName;
+    public void settestCaseId(String term) {
+        this.testCaseId = term;
     }
 
-    public String getterm() {
-        return term;
-    }
-
-    public void setterm(String term) {
-        this.term = term;
-    }
-
-    public Boolean getValidated() {
+    public boolean getValidated() {
         return isValidated;
     }
 
-    public void setValidated(Boolean validated) {
+    public void setValidated(boolean validated) {
         isValidated = validated;
     }
 }
