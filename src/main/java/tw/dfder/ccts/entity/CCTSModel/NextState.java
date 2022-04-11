@@ -1,45 +1,45 @@
 package tw.dfder.ccts.entity.CCTSModel;
 
 public class NextState {
-    private String contractName;
-    private String state;
-    private String publisher;
-    private String subscriber;
+    private String stateName;
+    private String provider;
+    private String consumer;
+    private String testCaseId;
 
 
     /*
     below for getter && setter
      */
 
-    public String getContractName() {
-        return contractName;
+    public String getStateName() {
+        return stateName;
     }
 
-    public void setContractName(String contractName) {
-        this.contractName = contractName;
+    public void setStateName(String stateName) {
+        this.stateName = stateName;
     }
 
-    public String getState() {
-        return state;
+    public String getProvider() {
+        return provider;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setProvider(String provider) {
+        this.provider = provider;
     }
 
-    public String getPublisher() {
-        return publisher;
+    public String getConsumer() {
+        return consumer;
     }
 
-    public void setPublisher(String publisher) {
-        this.publisher = publisher;
+    public void setConsumer(String consumer) {
+        this.consumer = consumer;
     }
 
-    public String getSubscriber() {
-        return subscriber;
+    public String getTestCaseId() {
+        return testCaseId;
     }
 
-    public void setSubscriber(String subscriber) {
-        this.subscriber = subscriber;
+    public void setTestCaseId(String testCaseId) {
+        this.testCaseId = testCaseId;
     }
 }
