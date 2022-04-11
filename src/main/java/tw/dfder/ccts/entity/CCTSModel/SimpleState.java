@@ -8,7 +8,7 @@ import java.util.HashMap;
 @Document(collection = "SimpleState")
 public class SimpleState {
     private String comment;
-    private Boolean end;
+    private boolean end;
     private NextState nextState;
     private HashMap<String, NextState> options;
 
@@ -41,11 +41,11 @@ public class SimpleState {
         this.nextState = nextState;
     }
 
-    public Boolean getEnd() {
+    public boolean getEnd() {
         return end;
     }
 
-    public void setEnd(Boolean end) {
+    public void setEnd(boolean end) {
         this.end = end;
     }
 }
