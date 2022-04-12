@@ -21,9 +21,9 @@ public class CCTSDocumentParser {
     private ServiceConfigure serviceConfigure;
     private CCTSDocumentRepository repo;
     @Autowired
-    public CCTSDocumentParser(ServiceConfigure serviceConfigure) {
-
+    public CCTSDocumentParser(ServiceConfigure serviceConfigure, CCTSDocumentRepository repo) {
         this.serviceConfigure = serviceConfigure;
+        this.repo = repo;
     }
 
     private CCTSDocument parse2CCTSProfile(Resource fileResource) {
@@ -70,7 +70,6 @@ public class CCTSDocumentParser {
         for (Resource r : serviceConfigure.cctsFiles) {
             cctsDocuments.add(parse2CCTSProfile(r));
         }
-
         repo.saveAll(cctsDocuments);
     }
 }
