@@ -19,7 +19,7 @@ public class Contract {
     private String providerName;
 
     @Field
-    private ArrayList<String> contractTerms;
+    private ArrayList<String> testCaseIds;
 
 
     public String getId() {
@@ -46,11 +46,11 @@ public class Contract {
         this.providerName = providerName;
     }
 
-    public ArrayList<String> getContractTerms() {
-        return contractTerms;
+    public ArrayList<String> getTestCaseIds() {
+        return testCaseIds;
     }
 
-    public void setContractTerms(ArrayList<String> contractTerms) {
-        this.contractTerms = contractTerms;
+    public void setTestCaseIds(ArrayList<String> testCaseIds) {
+        this.testCaseIds = testCaseIds;
     }
 }
