@@ -1,4 +1,4 @@
-package tw.dfder.ccts.services;
+package tw.dfder.ccts.services.pact_broker;
 
 
 import com.google.gson.Gson;
@@ -55,7 +55,7 @@ public class PactBrokerBusyBox {
 
 
 
-    public Contract getAndParsePact2ContractFromBroker(String providerName, String consumerName){
+    public Contract getContractFromBroker(String providerName, String consumerName){
         JsonObject pactJson = gson.fromJson(
                 pactBrokerConnector.retrieveLatestPactDetail(providerName, consumerName).getBody().toString(),
                 JsonObject.class
