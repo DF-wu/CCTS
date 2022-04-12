@@ -6,98 +6,98 @@ states:
     comment: initial state
     end: False
     nextState:
-      state: payment process
+      stateName: payment process
       testCaseId: poc-01
-      publisher: Orchestrator
-      subscriber: Payment
+      provider: Orchestrator
+      consumer: Payment
   Payment process:
     comment: make payment
     end: False
     options:
       Prepare update point:
         testCaseId: poc-02
-        publisher: Payment
-        subscriber: Orchestrator
+        provider: Payment
+        consumer: Orchestrator
       Payment Fail:
         testCaseId: poc-03
-        publisher: Payment
-        subscriber: Orchestrator
+        provider: Payment
+        consumer: Orchestrator
   Payment Fail:
     comment: do payment fail compensation
     end: False
     nextState:
       testCaseId: poc-04
-      state: Payment reversed
-      publisher: Orchestrator
-      subscriber: Payment
+      stateName: Payment reversed
+      provider: Orchestrator
+      consumer: Payment
   Payment reversed:
     comment: reverse Payment
     end: False
     nextState:
       testCaseId: poc-05
-      state: Top-up cancel
-      publisher: Payment
-      subscriber: Orchestrator
+      stateName: Top-up cancel
+      provider: Payment
+      consumer: Orchestrator
   Prepare update point:
     comment: orchestrator received response from payment and ready to send update point request to Point service
     end: False
     nextState:
       testCaseId: poc-06
-      state: Update point
-      publisher: Orchestrator
-      subscriber: Point
+      stateName: Update point
+      provider: Orchestrator
+      consumer: Point
   Upate point:
     comment: do update point
     end: False
     options:
       Prepare log:
         testCaseId: poc-07
-        publisher: Point
-        subscriber: Orchestrator
+        provider: Point
+        consumer: Orchestrator
       Update point Fail:
         testCaseId: poc-08
-        publisher: Point
-        subscriber: Orchestrator
+        provider: Point
+        consumer: Orchestrator
   Update point Fail:
     comment: revert points
     end: False
     nextState:
       testCaseId: poc-08
-      state: Revert point
-      publisher: Orchestrator
-      subscriber: Point
+      stateName: Revert point
+      provider: Orchestrator
+      consumer: Point
   Revert point:
     comment: revert points
     end: False
     nextState:
       testCaseId: poc-09
-      state: Prepare reverse payment
-      publisher: Point
-      subscriber: Orchestrator
+      stateName: Prepare reverse payment
+      provider: Point
+      consumer: Orchestrator
   Prepare reverse payment:
     comment: orchestrator received response that point finished compensation , ready to do payment compensation
     end: False
     nextState:
       testCaseId: poc-10
-      state: Payment reverse
-      publisher: Orchestrator
-      subscriber: Payment
+      stateName: Payment reverse
+      provider: Orchestrator
+      consumer: Payment
   Prepare Log:
     comment: orchestrator ready to send Log request
     end: False
     nextState:
       testCaseId: poc-11
-      state: Log
-      publisher: Orchestrator
-      subscriber: Log
+      stateName: Log
+      provider: Orchestrator
+      consumer: Log
   Log:
     comment: logging
     end: False
     nextState:
       testCaseId: poc-12
-      state: Approved top-update
-      publisher: Log
-      subscriber: Orchestrator
+      stateName: Approved top-update
+      provider: Log
+      consumer: Orchestrator
   Approved top-up:
     comment: finishe saga process
     end: True
