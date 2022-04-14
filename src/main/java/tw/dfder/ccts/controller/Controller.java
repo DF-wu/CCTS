@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import tw.dfder.ccts.configuration.ServiceConfigure;
 import tw.dfder.ccts.services.CCTSDocumentParser;
@@ -28,10 +27,11 @@ public class Controller {
     private DBCleaner dbcleaner;
     private final SystemStarter starter;
     @Autowired
-    public Controller(CCTSDocumentParser CCTSDocumentParser, PactBrokerBusyBox pactBrokerBusyBox, ServiceConfigure serviceConfig, SystemStarter starter) {
+    public Controller(CCTSDocumentParser CCTSDocumentParser, PactBrokerBusyBox pactBrokerBusyBox, ServiceConfigure serviceConfig, DBCleaner dbcleaner, SystemStarter starter) {
         this.CCTSDocumentParser = CCTSDocumentParser;
         this.pactBrokerBusyBox = pactBrokerBusyBox;
         this.serviceConfig = serviceConfig;
+        this.dbcleaner = dbcleaner;
         this.starter = starter;
     }
 
