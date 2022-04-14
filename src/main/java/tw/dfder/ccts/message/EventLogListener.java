@@ -43,7 +43,7 @@ public class EventLogListener {
                     System.currentTimeMillis(),
                     message.getMessageProperties().getHeaders().get("provider").toString(),
                     message.getMessageProperties().getHeaders().get("consumer").toString(),
-                    message.getMessageProperties().getHeaders().get("contractTerm").toString()
+                    message.getMessageProperties().getHeaders().get("testCaseId").toString()
                     );
             eventLogRepository.save(el);
 
