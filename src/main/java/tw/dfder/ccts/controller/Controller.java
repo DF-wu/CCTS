@@ -3,12 +3,15 @@ package tw.dfder.ccts.controller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tw.dfder.ccts.configuration.ServiceConfigure;
+import tw.dfder.ccts.entity.CCTSModel.CCTSDocument;
+import tw.dfder.ccts.repository.CCTSDocumentRepository;
 import tw.dfder.ccts.services.CCTSDocumentParser;
 import tw.dfder.ccts.services.DBCleaner;
 import tw.dfder.ccts.services.SystemStarter;
@@ -26,20 +29,29 @@ public class Controller {
     private ServiceConfigure serviceConfig;
     private DBCleaner dbcleaner;
     private final SystemStarter starter;
+
+
+    // for developing only
+    private final CCTSDocumentRepository repo;
     @Autowired
-    public Controller(CCTSDocumentParser CCTSDocumentParser, PactBrokerBusyBox pactBrokerBusyBox, ServiceConfigure serviceConfig, DBCleaner dbcleaner, SystemStarter starter) {
+    public Controller(CCTSDocumentParser CCTSDocumentParser, PactBrokerBusyBox pactBrokerBusyBox, ServiceConfigure serviceConfig, DBCleaner dbcleaner, SystemStarter starter, CCTSDocumentRepository repo) {
         this.CCTSDocumentParser = CCTSDocumentParser;
         this.pactBrokerBusyBox = pactBrokerBusyBox;
         this.serviceConfig = serviceConfig;
         this.dbcleaner = dbcleaner;
         this.starter = starter;
+        this.repo = repo;
     }
 
 
     @PostMapping("/start")
     public ResponseEntity<?> startCCTSVerification(){
-        starter.startCCTSTest();
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        if (starter.startCCTSTest()){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/cleanDB")
@@ -60,6 +72,9 @@ public class Controller {
 
     @PostConstruct
     public void testMethod() throws IOException, InterruptedException {
+        for(CCTSDocument d: repo.findAll()){
+            CCTSDocumentParser.findPathList(d) ;
+        }
 
 
 
@@ -79,7 +94,7 @@ public class Controller {
 //        System.out.println(exitCode);
 
 
-        pactBrokerBusyBox.getContractFromBroker("loggingService", "orchestrator");
+//        pactBrokerBusyBox.getContractFromBroker("loggingService", "orchestrator");
 
     }
 
