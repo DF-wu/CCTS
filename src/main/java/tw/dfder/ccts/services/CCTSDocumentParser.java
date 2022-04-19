@@ -35,35 +35,53 @@ public class CCTSDocumentParser {
             c = yaml.load(fileResource.getInputStream());
 
         }catch (Exception e ){
-            System.out.println("CCTS profile parse error");
+            System.out.println("CCTS profile parse error!");
             System.out.println(e);
-
         }
 
-
         return c;
-
     }
+
 
     public ArrayList<NextState> findPathList(CCTSDocument cctsDocument){
         ArrayList<NextState> pathList = new ArrayList<NextState>();
+        // iterate all possible state
         for (String k : cctsDocument.getStates().keySet()) {
+            // specify a simpleState
             SimpleState simpleState = cctsDocument.getStates().get(k);
-            // next exist
-            if(simpleState.getNextState() != null && simpleState.getOptions() == null){
-                pathList.add(simpleState.getNextState());
-            // options exist
-            }else if(simpleState.getNextState() == null && simpleState.getOptions() != null){
-                pathList.addAll(simpleState.getOptions().values());
-            // not end state exception
-            }else if(!simpleState.getEnd()){
-                System.out.println("exception!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            switch (stateChecker(simpleState)){
+                case "nextSate exist" -> {
+                    // nextSate exist -> add to path list
+                    pathList.add(simpleState.getNextState());
+                }
+                case "options exist" -> {
+                    // options exist
+                    pathList.addAll(simpleState.getOptions().values());
+                }
+                case "not end state exception" -> {
+                    System.out.println("exception!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                }
+                case "End State" -> {
+                    // passed
+                }
             }
         }
-
         return pathList;
     }
 
+    private String stateChecker(SimpleState simpleState){
+        if(simpleState.getNextState() != null && simpleState.getOptions() == null){
+            return "nextSate exist";
+        }else if(simpleState.getNextState() == null && simpleState.getOptions() != null){
+            return "options exist";
+        }else if(!simpleState.getEnd()) {
+            return "not end state exception";
+        }else{
+            return "End State";
+        }
+
+
+    }
 
     public void parseAllCCTSProfilesAndSave2DB(){
         ArrayList<CCTSDocument> cctsDocuments = new ArrayList<>();
@@ -72,4 +90,7 @@ public class CCTSDocumentParser {
         }
         repo.saveAll(cctsDocuments);
     }
+
+
+
 }
