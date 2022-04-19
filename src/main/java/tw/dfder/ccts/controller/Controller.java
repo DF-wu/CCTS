@@ -83,17 +83,6 @@ public class Controller {
 
         Process process;
 
-
-//
-//        process = Runtime.getRuntime().exec("docker run --rm  pactfoundation/pact-cli:latest broker can-i-deploy --pacticipant orchestrator --latest --broker-base-url http://23.dfder.tw:10141");
-//        StreamGobbler streamGobbler =
-//                new StreamGobbler(process.getInputStream(), System.out::println);
-//        Executors.newSingleThreadExecutor().submit(streamGobbler);
-//        int exitCode = process.waitFor();
-//        System.out.println("!!!!!");
-//        System.out.println(exitCode);
-
-
 //        pactBrokerBusyBox.getContractFromBroker("loggingService", "orchestrator");
 
     }

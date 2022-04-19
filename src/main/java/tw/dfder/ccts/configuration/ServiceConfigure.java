@@ -10,6 +10,6 @@ public class ServiceConfigure {
     public Resource[] cctsFiles;
 
     @Value("${CCTS.pact_broker}")
-    public String pactBrokerUrlPrefix;
+    public String pactBrokerUrl;
 
 }

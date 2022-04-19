@@ -50,7 +50,7 @@ public class PactBrokerConnector {
     }
 
     public ResponseEntity<?> retrieveLatestPactDetail(String providerName, String consumerName){
-        String targetUrl = serviceConfig.pactBrokerUrlPrefix + UrlTemplate.getPactDetailURLPath(providerName, consumerName);
+        String targetUrl = serviceConfig.pactBrokerUrl + UrlTemplate.getPactDetailURLPath(providerName, consumerName);
         return sendGetRequest(targetUrl);
     }
 
