@@ -66,14 +66,14 @@ public class PactBrokerBusyBox {
         c.setProviderName(pactJson.getAsJsonObject().get("provider").getAsJsonObject().get("name").getAsString());
 
 
-        // get all contract term in pact
+        // get all contract testcaseid in pact
         ArrayList<String> terms = new ArrayList<>();
 
         for (JsonElement e:
         pactJson.getAsJsonObject().get("messages").getAsJsonArray()) {
             terms.add(e.getAsJsonObject().get("description").getAsString());
         }
-
+        c.setTestCaseIds(terms);
         return c;
 
     }
