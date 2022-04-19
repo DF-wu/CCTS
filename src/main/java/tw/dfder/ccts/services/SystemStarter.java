@@ -40,10 +40,13 @@ public class SystemStarter {
                 "                                                                                                                                      ");
     }
 
-    public void startCCTSTest(){
+    public boolean startCCTSTest(){
         if(isSystemReady){
-            verifier.verifyCCTSProfileSAGAFlow();
+            return verifier.verifyCCTSProfileSAGAFlow();
+        }else{
+            return false;
         }
+
     }
 
 
