@@ -1,4 +1,4 @@
-CCTSversion: "0.6"
+CCTSversion: "0.7"
 title: CCTS saga test case1
 startAt: Create top-up event
 states:
@@ -7,7 +7,7 @@ states:
     end: False
     nextState:
       stateName: payment process
-      testCaseId: poc-01
+      testCaseId: t-orc-payment-01
       provider: orchestrator
       consumer: paymentService
   Payment process:
@@ -15,10 +15,12 @@ states:
     end: False
     options:
       Prepare update point:
-        testCaseId: poc-02
+        stateName: Prepare update point
+        testCaseId: t-payment-orc-01
         provider: paymentService
         consumer: orchestrator
       Payment Fail:
+        stateName: Payment Fail
         testCaseId: poc-03
         provider: paymentService
         consumer: orchestrator
@@ -42,7 +44,7 @@ states:
     comment: orchestrator received response from payment and ready to send update point request to Point service
     end: False
     nextState:
-      testCaseId: poc-06
+      testCaseId: t-orc-point-01
       stateName: Update point
       provider: orchestrator
       consumer: pointService
@@ -51,10 +53,12 @@ states:
     end: False
     options:
       Prepare log:
-        testCaseId: poc-07
+        stateName: Prepare log
+        testCaseId: t-point-orc-01
         provider: pointService
         consumer: orchestrator
       Update point Fail:
+        stateName: Update point Fail
         testCaseId: poc-08
         provider: pointService
         consumer: orchestrator
@@ -86,7 +90,7 @@ states:
     comment: orchestrator ready to send Log request
     end: False
     nextState:
-      testCaseId: poc-11
+      testCaseId: t-orc-logging-01
       stateName: Log
       provider: orchestrator
       consumer: loggingService
@@ -94,7 +98,7 @@ states:
     comment: logging
     end: False
     nextState:
-      testCaseId: poc-12
+      testCaseId: t-logging-orc-01
       stateName: Approved top-update
       provider: loggingService
       consumer: orchestrator
