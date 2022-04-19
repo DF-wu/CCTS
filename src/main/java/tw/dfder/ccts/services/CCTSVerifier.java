@@ -174,7 +174,7 @@ public class CCTSVerifier {
         }
 
         HashMap<String,  CCTSStatusCode> errors = new HashMap<String, CCTSStatusCode>();
-        HashMap<String, Boolean> contractTestresults = fetchContractTestResultConcurrently(participantsServices)
+        HashMap<String, Boolean> contractTestresults = fetchContractTestResultConcurrently(participantsServices);
         for (String service: contractTestresults.keySet()) {
             if(contractTestresults.get(service)){
                 //true = pass
