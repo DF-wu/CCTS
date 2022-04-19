@@ -7,6 +7,18 @@ public class NextState {
     private String testCaseId;
 
 
+
+
+
+    public String toPrretyString() {
+        String s =
+                "  stateName: " + stateName + "\n"+
+                "  provider: " + provider + "\n"+
+                "  consumer: " + consumer+ "\n"+
+                "  testCaseId: "+ testCaseId ;
+        return s;
+    }
+
     /*
     below for getter && setter
      */
