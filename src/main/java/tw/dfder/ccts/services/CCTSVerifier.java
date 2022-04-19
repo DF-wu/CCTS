@@ -3,6 +3,7 @@ package tw.dfder.ccts.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tw.dfder.ccts.configuration.ServiceConfigure;
 import tw.dfder.ccts.entity.CCTSModel.CCTSDocument;
 import tw.dfder.ccts.entity.CCTSModel.NextState;
 import tw.dfder.ccts.entity.Contract;
@@ -12,9 +13,8 @@ import tw.dfder.ccts.repository.CCTSDocumentRepository;
 import tw.dfder.ccts.repository.EventLogRepository;
 import tw.dfder.ccts.services.pact_broker.PactBrokerBusyBox;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.Executors;
 
 @Service("CCTSVerifier")
 public class CCTSVerifier {
@@ -22,13 +22,14 @@ public class CCTSVerifier {
     private final CCTSDocumentRepository cctsDocumentRepository;
     private final EventLogRepository eventLogRepository;
     private final PactBrokerBusyBox busyBox;
-
+    private final ServiceConfigure serviceConfig;
     @Autowired
-    public CCTSVerifier(CCTSDocumentParser documentParser, CCTSDocumentRepository cctsDocumentRepository, EventLogRepository eventLogRepository, PactBrokerBusyBox busyBox) {
+    public CCTSVerifier(CCTSDocumentParser documentParser, CCTSDocumentRepository cctsDocumentRepository, EventLogRepository eventLogRepository, PactBrokerBusyBox busyBox, ServiceConfigure serviceConfig) {
         this.documentParser = documentParser;
         this.cctsDocumentRepository = cctsDocumentRepository;
         this.eventLogRepository = eventLogRepository;
         this.busyBox = busyBox;
+        this.serviceConfig = serviceConfig;
     }
 
     public boolean verifyCCTSProfileSAGAFlow() {
@@ -56,7 +57,7 @@ public class CCTSVerifier {
                     // if error ->  add into errors,
                     // if no error -> passed
                      CCTSStatusCode pathAndElResult = inspectErrors(path, el);
-                if(pathAndElResult == CCTSStatusCode.ALLGREEN){
+                    if(pathAndElResult == CCTSStatusCode.ALLGREEN){
                         // passed
                     }else {
                         // eventlog and path not match. add into errors map.
@@ -73,27 +74,47 @@ public class CCTSVerifier {
                     errorOccursMap.put(path, pathAndContractResult);
                 }
             }
-            isSuccess = errorTeller(errorOccursMap);
-            if(isSuccess){
-                // this CCTS document pass
-            }else {
-                // error happend
-                isSuccess = false;
-            }
+
+
+            // check contract test status
+            isSuccess =  errorTellerContractTestError(validateServiceContractTestResult(document));
+
+
+            // this document's error
+            isSuccess = errorTellerPathMathError(errorOccursMap);
+
+
         }
         return isSuccess;
     }
 
-    private boolean errorTeller(Map<NextState, CCTSStatusCode> errors) {
+
+
+    //for inspect contract test result error
+    private boolean errorTellerContractTestError(Map<String, CCTSStatusCode> errors){
+        if (errors.size() > 0){
+            //error occurred
+            System.out.println("Not Pass Contract Test Services:");
+            for (String service :errors.keySet()) {
+                System.out.println("  Service: " + service);
+                System.out.println("  Error Message: " + errors.get(service).getInfoMessage());
+            }
+            return false;
+        }else{
+            // pass
+            return true;
+        }
+    }
+
+    private boolean errorTellerPathMathError(Map<NextState, CCTSStatusCode> errors) {
         if(errors.size() > 0) {
 //            error occurred
-            System.out.println("error occurred!!!");
-            System.out.println("list below:");
-
-
-//            for (CCTSStatusCode err : errors)  {
-//                System.out.println(err.getInfoMessage());
-//            }
+            System.out.println("Error occurred!!!");
+            System.out.println("List below:");
+            for (NextState state  : errors.keySet()){
+                System.out.println("Error message: " + errors.get(state).getInfoMessage());
+                System.out.println(state.toPrretyString());
+            }
             return false;
         }else
         {
@@ -146,6 +167,57 @@ public class CCTSVerifier {
 
     }
 
+    private Map<String, CCTSStatusCode> validateServiceContractTestResult(CCTSDocument document){
+        // get all participants
+        HashSet<String> participantsServices = new HashSet<String>();
+        for (NextState state: documentParser.findPathList(document)) {
+            participantsServices.add(state.getProvider());
+            participantsServices.add(state.getConsumer());
+        }
+
+        HashMap<String,  CCTSStatusCode> errors = new HashMap<String, CCTSStatusCode>();
+        for (String service: participantsServices) {
+            if(pactCLIProcessInvocker(service)) {
+                //pass
+            }else {
+                // fail
+                errors.put(service, CCTSStatusCode.CONTREACT_TEST_RESULT_NOT_PASS);
+            }
+        }
+        return errors;
+    }
+
+    private Boolean pactCLIProcessInvocker(String participant){
+        // use docker tool
+        String commandTemplate = "docker run --rm  pactfoundation/pact-cli:latest broker can-i-deploy --pacticipant %s --latest --broker-base-url %s";
+        try{
+            // create a process to excute can-i-deploy tool
+            Process process;
+            process = Runtime.getRuntime().exec(String.format(commandTemplate, participant, serviceConfig.pactBrokerUrl));
+
+            // get tool's std out
+            StreamGobbler streamGobbler =
+                    new StreamGobbler(process.getInputStream(), System.out::println);
+            Executors.newSingleThreadExecutor().submit(streamGobbler);
+
+            // retrieve result. 0 for yes, 1 for no
+            int exitCode = process.waitFor();
+
+
+            if(exitCode == 0){
+                // pass
+                return true;
+            }else{
+                // some contracts test not pass
+                return false;
+            }
+
+        }catch (Exception e) {
+                System.out.println("Fetch result of can-i-deploy fail!");
+                System.out.println("Service name: " + participant);
+                return false;
+            }
+    }
 
 
 
