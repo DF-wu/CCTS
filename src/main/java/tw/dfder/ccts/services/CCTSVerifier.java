@@ -1,6 +1,5 @@
 package tw.dfder.ccts.services;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tw.dfder.ccts.configuration.ServiceConfigure;
@@ -138,9 +137,8 @@ public class CCTSVerifier {
                 // not this one
             }
         }
-
         // result
-        return !isValidPath ? CCTSStatusCode.PATH_TESTCASE_NOT_FOUND_IN_CONTRACT : CCTSStatusCode.ALLGREEN;
+        return isValidPath ? CCTSStatusCode.ALLGREEN : CCTSStatusCode.PATH_TESTCASE_NOT_FOUND_IN_CONTRACT;
     }
 
     private CCTSStatusCode inspectErrors(NextState path, EventLog el){
@@ -176,14 +174,16 @@ public class CCTSVerifier {
         }
 
         HashMap<String,  CCTSStatusCode> errors = new HashMap<String, CCTSStatusCode>();
-        for (String service: participantsServices) {
-            if(pactCLIProcessInvocker(service)) {
-                //pass
-            }else {
-                // fail
+        HashMap<String, Boolean> contractTestresults = fetchContractTestResultConcurrently(participantsServices)
+        for (String service: contractTestresults.keySet()) {
+            if(contractTestresults.get(service)){
+                //true = pass
+            }else{
+                // false = error
                 errors.put(service, CCTSStatusCode.CONTREACT_TEST_RESULT_NOT_PASS);
             }
         }
+
         return errors;
     }
 
@@ -196,13 +196,11 @@ public class CCTSVerifier {
             process = Runtime.getRuntime().exec(String.format(commandTemplate, participant, serviceConfig.pactBrokerUrl));
 
             // get tool's std out
-            StreamGobbler streamGobbler =
-                    new StreamGobbler(process.getInputStream(), System.out::println);
+            StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), System.out::println);
             Executors.newSingleThreadExecutor().submit(streamGobbler);
 
             // retrieve result. 0 for yes, 1 for no
             int exitCode = process.waitFor();
-
 
             if(exitCode == 0){
                 // pass
@@ -215,11 +213,37 @@ public class CCTSVerifier {
         }catch (Exception e) {
                 System.out.println("Fetch result of can-i-deploy fail!");
                 System.out.println("Service name: " + participant);
+                e.printStackTrace();
                 return false;
             }
     }
 
+    private HashMap<String, Boolean> fetchContractTestResultConcurrently(HashSet<String> participants) {
+        ArrayList<Thread> threadPool = new ArrayList<>();
+        HashMap<String, Boolean> resultMap = new HashMap<String, Boolean>();
+        // define job
+        for (String participant : participants) {
+            threadPool.add(new Thread( () -> {
+                resultMap.put(participant,pactCLIProcessInvocker(participant));
+            }));
+        }
+        //start
+        for (Thread t :threadPool) {
+            t.start();
+        }
 
+        // join threads
+        try {
+            for (Thread t :threadPool) {
+                t.join();
+            }
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
+
+        return resultMap;
+
+    }
 
 }
 
