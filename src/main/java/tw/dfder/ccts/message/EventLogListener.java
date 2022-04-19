@@ -32,11 +32,11 @@ public class EventLogListener {
     })
     public void fetchEventLogMessage(String msg, Message message, @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag, Channel ch) throws IOException {
 //        System.out.println(message);
-//        ch.basicAck(deliveryTag,false);
+
 //        System.out.println(message.getMessageProperties());
 //        System.out.println(msg);
 
-
+        ch.basicAck(deliveryTag,false);
         //  aspect CCTS message spec
         try {
             EventLog el = new EventLog(
