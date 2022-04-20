@@ -3,10 +3,8 @@ package tw.dfder.ccts.entity.cctsresultmodel;
 import org.springframework.data.mongodb.core.mapping.Document;
 import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.cctsdocumentmodel.CCTSDocument;
-import tw.dfder.ccts.entity.cctsdocumentmodel.NextState;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -15,11 +13,11 @@ public class CCTSResult {
     private boolean testResult;
     private final ArrayList<CCTSDocument> relatedDocuments ;
 
-    private ArrayList<ErrorRecord> resultBetweenPathAndEventLogs;
+    private ArrayList<ResultRecord> resultBetweenPathAndEventLogs;
 
 //    private Map<NextState, CCTSStatusCode> resultBetweenPathAndEventLogs;
 
-    private ArrayList<ErrorRecord> resultBetweenPathAndContract;
+    private ArrayList<ResultRecord> resultBetweenPathAndContract;
 //    private Map<NextState, CCTSStatusCode> resultBetweenPathAndContract;
 
 
@@ -40,14 +38,58 @@ public class CCTSResult {
           path@document name
           ...
         Errors:
-          error msg@ document name
+          path. Message: error msg@ document name
           ...
          */
     public String checkOutReportMessage() {
-        return null;
+
+        String outputMessage = "";
+        outputMessage = outputMessage + "CCTS Test Result: " + (testResult ? "Passed!": "Not.") + System.lineSeparator();
+        outputMessage = outputMessage + "Passed: " + System.lineSeparator();
+
+        // passed
+        for (ResultRecord result: resultBetweenPathAndEventLogs) {
+            if(result.getErrorCode() == CCTSStatusCode.ALLGREEN){
+                String msg = "  Path: " + result.getPath()
+                        + "@" + result.getDocumentTitle()
+                        + System.lineSeparator();
+                outputMessage = outputMessage + msg;
+            }
+        }
+
+        for (ResultRecord result : resultBetweenPathAndContract) {
+            if(result.getErrorCode() == CCTSStatusCode.ALLGREEN){
+                String msg = "  Path: " + result.getPath()
+                        + "@" + result.getDocumentTitle()
+                        + System.lineSeparator();
+                outputMessage = outputMessage + msg;
+            }
+        }
 
 
+        // errors
+        outputMessage = outputMessage + "Errors:" + System.lineSeparator();
+        for (ResultRecord result : resultBetweenPathAndEventLogs) {
+            if(result.getErrorCode() != CCTSStatusCode.ALLGREEN){
+                String msg = "  Path: " + result.getPath()
+                        + ". Message: " + result.getErrorCode().getInfoMessage()
+                        + "@" + result.getDocumentTitle()
+                        + System.lineSeparator();
+                outputMessage = outputMessage + msg;
+            }
+        }
 
+        for (ResultRecord result : resultBetweenPathAndContract) {
+            if(result.getErrorCode() != CCTSStatusCode.ALLGREEN){
+                String msg = "  Path: " + result.getPath()
+                        + ". Message: " + result.getErrorCode().getInfoMessage()
+                        + "@" + result.getDocumentTitle()
+                        + System.lineSeparator();
+                outputMessage = outputMessage + msg;
+            }
+        }
+
+        return outputMessage;
     }
 
 
@@ -63,19 +105,19 @@ public class CCTSResult {
         this.testResult = testResult;
     }
 
-    public ArrayList<ErrorRecord> getResultBetweenPathAndEventLogs() {
+    public ArrayList<ResultRecord> getResultBetweenPathAndEventLogs() {
         return resultBetweenPathAndEventLogs;
     }
 
-    public void setResultBetweenPathAndEventLogs(ArrayList<ErrorRecord> resultBetweenPathAndEventLogs) {
+    public void setResultBetweenPathAndEventLogs(ArrayList<ResultRecord> resultBetweenPathAndEventLogs) {
         this.resultBetweenPathAndEventLogs = resultBetweenPathAndEventLogs;
     }
 
-    public ArrayList<ErrorRecord> getResultBetweenPathAndContract() {
+    public ArrayList<ResultRecord> getResultBetweenPathAndContract() {
         return resultBetweenPathAndContract;
     }
 
-    public void setResultBetweenPathAndContract(ArrayList<ErrorRecord> resultBetweenPathAndContract) {
+    public void setResultBetweenPathAndContract(ArrayList<ResultRecord> resultBetweenPathAndContract) {
         this.resultBetweenPathAndContract = resultBetweenPathAndContract;
     }
 

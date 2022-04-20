@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tw.dfder.ccts.configuration.ServiceConfigure;
 import tw.dfder.ccts.entity.cctsdocumentmodel.CCTSDocument;
+import tw.dfder.ccts.entity.cctsresultmodel.CCTSResult;
 import tw.dfder.ccts.repository.CCTSDocumentRepository;
 import tw.dfder.ccts.services.CCTSDocumentParser;
 import tw.dfder.ccts.services.DBCleaner;
@@ -45,11 +46,11 @@ public class Controller {
 
     @PostMapping("/start")
     public ResponseEntity<?> startCCTSVerification(){
-
-        if (starter.startCCTSTest()){
-            return new ResponseEntity<>(HttpStatus.OK);
+        CCTSResult result = starter.startCCTSTest();
+        if (result != null){
+            return new ResponseEntity<>( result.checkOutReportMessage() ,HttpStatus.OK);
         }else {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("System not ready", HttpStatus.OK);
         }
     }
 

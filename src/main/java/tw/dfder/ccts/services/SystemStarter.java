@@ -4,6 +4,7 @@ package tw.dfder.ccts.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tw.dfder.ccts.configuration.ServiceConfigure;
+import tw.dfder.ccts.entity.cctsresultmodel.CCTSResult;
 
 @Component
 public class SystemStarter {
@@ -40,12 +41,11 @@ public class SystemStarter {
                 "                                                                                                                                      ");
     }
 
-    public boolean startCCTSTest(){
+    public CCTSResult startCCTSTest(){
         if(isSystemReady){
-            verifier.verifyCCTSProfileSAGAFlow();
-            return true;
+            return verifier.verifyCCTSProfileSAGAFlow();
         }else{
-            return false;
+            return null;
         }
 
     }
