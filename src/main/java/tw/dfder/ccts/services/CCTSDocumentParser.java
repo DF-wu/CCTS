@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import tw.dfder.ccts.configuration.ServiceConfigure;
-import tw.dfder.ccts.entity.CCTSModel.CCTSDocument;
-import tw.dfder.ccts.entity.CCTSModel.NextState;
-import tw.dfder.ccts.entity.CCTSModel.SimpleState;
+import tw.dfder.ccts.entity.cctsdocumentmodel.CCTSDocument;
+import tw.dfder.ccts.entity.cctsdocumentmodel.NextState;
+import tw.dfder.ccts.entity.cctsdocumentmodel.SimpleState;
 import tw.dfder.ccts.repository.CCTSDocumentRepository;
 
 import java.util.ArrayList;

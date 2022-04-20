@@ -1,4 +1,4 @@
-package tw.dfder.ccts.entity.CCTSModel;
+package tw.dfder.ccts.entity.cctsdocumentmodel;
 
 public class NextState {
     private String stateName;

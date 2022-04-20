@@ -1,4 +1,4 @@
-package tw.dfder.ccts.entity.CCTSModel;
+package tw.dfder.ccts.entity.cctsdocumentmodel;
 
 
 import org.springframework.data.mongodb.core.mapping.Document;
