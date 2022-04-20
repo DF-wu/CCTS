@@ -15,16 +15,20 @@ public class CCTSResult {
     private boolean testResult;
     private final ArrayList<CCTSDocument> relatedDocuments ;
 
+    private ArrayList<ErrorRecord> resultBetweenPathAndEventLogs;
+
+//    private Map<NextState, CCTSStatusCode> resultBetweenPathAndEventLogs;
+
+    private ArrayList<ErrorRecord> resultBetweenPathAndContract;
+//    private Map<NextState, CCTSStatusCode> resultBetweenPathAndContract;
 
 
-    private Map<NextState, CCTSStatusCode> resultBetweenPathAndEventLogs;
-    private Map<NextState, CCTSStatusCode> resultBetweenPathAndContract;
     private Map<String, CCTSStatusCode> contractVerificationErrors;
 
     public CCTSResult(ArrayList<CCTSDocument> relatedDocuments) {
         this.relatedDocuments = relatedDocuments;
-        this.resultBetweenPathAndEventLogs = new Hashtable<>();
-        this.resultBetweenPathAndContract = new Hashtable<>();
+        this.resultBetweenPathAndEventLogs = new ArrayList<>();
+        this.resultBetweenPathAndContract = new ArrayList<>();
         this.contractVerificationErrors = new Hashtable<>();
     }
 
@@ -59,19 +63,19 @@ public class CCTSResult {
         this.testResult = testResult;
     }
 
-    public Map<NextState, CCTSStatusCode> getResultBetweenPathAndEventLogs() {
+    public ArrayList<ErrorRecord> getResultBetweenPathAndEventLogs() {
         return resultBetweenPathAndEventLogs;
     }
 
-    public void setResultBetweenPathAndEventLogs(Map<NextState, CCTSStatusCode> resultBetweenPathAndEventLogs) {
+    public void setResultBetweenPathAndEventLogs(ArrayList<ErrorRecord> resultBetweenPathAndEventLogs) {
         this.resultBetweenPathAndEventLogs = resultBetweenPathAndEventLogs;
     }
 
-    public Map<NextState, CCTSStatusCode> getResultBetweenPathAndContract() {
+    public ArrayList<ErrorRecord> getResultBetweenPathAndContract() {
         return resultBetweenPathAndContract;
     }
 
-    public void setResultBetweenPathAndContract(Map<NextState, CCTSStatusCode> resultBetweenPathAndContract) {
+    public void setResultBetweenPathAndContract(ArrayList<ErrorRecord> resultBetweenPathAndContract) {
         this.resultBetweenPathAndContract = resultBetweenPathAndContract;
     }
 

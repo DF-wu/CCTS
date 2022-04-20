@@ -9,6 +9,7 @@ import tw.dfder.ccts.entity.Contract;
 import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.EventLog;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSResult;
+import tw.dfder.ccts.entity.cctsresultmodel.ErrorRecord;
 import tw.dfder.ccts.repository.CCTSDocumentRepository;
 import tw.dfder.ccts.repository.EventLogRepository;
 import tw.dfder.ccts.services.pact_broker.PactBrokerBusyBox;
@@ -57,17 +58,19 @@ public class CCTSVerifier {
 
                 // if same route eventlogs not exist -> no related event was produced between the producer and consumer
                 if(sameRouteEventlogs.size() == 0 ){
-                    cctsResult.getResultBetweenPathAndEventLogs().put(path, CCTSStatusCode.ERROR_NO_EVENT_FOUND);
+                    cctsResult.getResultBetweenPathAndEventLogs().add(
+                            new ErrorRecord(document.getTitle(), path, CCTSStatusCode.ERROR_NO_EVENT_FOUND));
                     // jump to next path
                     continue;
                 }
 
                 // verify path and eventlogs and get error code if exist
                 // add errors to result
-                cctsResult.getResultBetweenPathAndEventLogs().putAll(verifyPathAndEventlog(path, sameRouteEventlogs));
+                cctsResult.getResultBetweenPathAndContract().addAll(verifyPathAndEventlog(path, sameRouteEventlogs, document.getTitle()));
+
 
                 // match path and corresponded contract testCaseId
-                cctsResult.getResultBetweenPathAndContract().put(path, verifyPathAndContract(path));
+                cctsResult.getResultBetweenPathAndContract().add(new ErrorRecord(document.getTitle(), path, verifyPathAndContract(path)));
             }
 
             // check contract verification status
@@ -77,21 +80,21 @@ public class CCTSVerifier {
         return cctsResult;
     }
 
-    private Hashtable<NextState, CCTSStatusCode> verifyPathAndEventlog (NextState path, ArrayList<EventLog> sameRouteEventlogs) {
-        Hashtable<NextState, CCTSStatusCode> errorsDict = new Hashtable<>();
+    private ArrayList<ErrorRecord> verifyPathAndEventlog (NextState path, ArrayList<EventLog> sameRouteEventlogs, String documentName) {
+        ArrayList<ErrorRecord> errors = new ArrayList<>();
         // match path and eventlog
         for (EventLog el : sameRouteEventlogs) {
             // if error ->  add into errors,
             // if no error -> passed
-             CCTSStatusCode pathAndElResult = inspectPathAndEventLog(path, el);
-            if(pathAndElResult == CCTSStatusCode.ALLGREEN){
+             CCTSStatusCode inspectResult = inspectPathAndEventLog(path, el);
+            if(inspectResult == CCTSStatusCode.ALLGREEN){
                 // pass
             }else {
                 // eventlog and path not match. add into errors map.
-                errorsDict.put(path, pathAndElResult);
+                errors.add(new ErrorRecord(documentName, path, inspectResult));
             }
         }
-        return errorsDict;
+        return errors;
     }
 
 
