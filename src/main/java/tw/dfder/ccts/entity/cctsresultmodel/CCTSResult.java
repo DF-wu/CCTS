@@ -66,7 +66,7 @@ public class CCTSResult {
         for (ResultRecord result: resultBetweenPathAndEventLogs) {
             if(result.getErrorCode() == CCTSStatusCode.ALLGREEN){
                 String msg =
-                          "  DocumentTitle:" + System.lineSeparator()
+                          "  DocumentTitle:" + result.getDocumentTitle() + System.lineSeparator()
                         + "    stateName: " + result.getPath().getStateName() + System.lineSeparator()
                         + "    provider: " + result.getPath().getProvider() + System.lineSeparator()
                         + "    consumer: " + result.getPath().getConsumer() + System.lineSeparator()
@@ -79,7 +79,7 @@ public class CCTSResult {
         for (ResultRecord result : resultBetweenPathAndContract) {
             if(result.getErrorCode() == CCTSStatusCode.ALLGREEN){
                 String msg =
-                        "  DocumentTitle:" + System.lineSeparator()
+                        "  DocumentTitle:" + result.getDocumentTitle()  + System.lineSeparator()
                       + "    stateName: " + result.getPath().getStateName() + System.lineSeparator()
                       + "    provider: " + result.getPath().getProvider() + System.lineSeparator()
                       + "    consumer: " + result.getPath().getConsumer() + System.lineSeparator()
@@ -95,7 +95,7 @@ public class CCTSResult {
         for (ResultRecord result : resultBetweenPathAndEventLogs) {
             if(result.getErrorCode() != CCTSStatusCode.ALLGREEN){
                 String msg =
-                        "  DocumentTitle:" + System.lineSeparator()
+                        "  DocumentTitle:" + result.getDocumentTitle()  + System.lineSeparator()
                       + "    stateName: " + result.getPath().getStateName() + System.lineSeparator()
                       + "    provider: " + result.getPath().getProvider() + System.lineSeparator()
                       + "    consumer: " + result.getPath().getConsumer() + System.lineSeparator()
@@ -109,7 +109,7 @@ public class CCTSResult {
         for (ResultRecord result : resultBetweenPathAndContract) {
             if(result.getErrorCode() != CCTSStatusCode.ALLGREEN){
                 String msg =
-                        "  DocumentTitle:" + System.lineSeparator()
+                        "  DocumentTitle:" + result.getDocumentTitle()  + System.lineSeparator()
                                 + "    stateName: " + result.getPath().getStateName() + System.lineSeparator()
                                 + "    provider: " + result.getPath().getProvider() + System.lineSeparator()
                                 + "    consumer: " + result.getPath().getConsumer() + System.lineSeparator()
