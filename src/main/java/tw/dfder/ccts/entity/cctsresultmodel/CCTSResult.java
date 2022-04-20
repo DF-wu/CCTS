@@ -35,9 +35,23 @@ public class CCTSResult {
         Sample output
         CCTS Test result: Pass or Not
         Passed:
-          path@document name
+          Document title:
+              stateName:
+              consumer:
+              producer:
+              testCaseId:
+              --------
+
+
           ...
         Errors:
+          Document title:
+              stateName:
+              consumer:
+              producer:
+              testCaseId:
+              Error Message:
+             ...
           path. Message: error msg@ document name
           ...
          */
@@ -48,20 +62,29 @@ public class CCTSResult {
         outputMessage = outputMessage + "Passed: " + System.lineSeparator();
 
         // passed
+
         for (ResultRecord result: resultBetweenPathAndEventLogs) {
             if(result.getErrorCode() == CCTSStatusCode.ALLGREEN){
-                String msg = "  Path: " + result.getPath()
-                        + "@" + result.getDocumentTitle()
-                        + System.lineSeparator();
+                String msg =
+                          "  DocumentTitle:" + System.lineSeparator()
+                        + "    stateName: " + result.getPath().getStateName() + System.lineSeparator()
+                        + "    provider: " + result.getPath().getProvider() + System.lineSeparator()
+                        + "    consumer: " + result.getPath().getConsumer() + System.lineSeparator()
+                        + "    testCaseId: " + result.getPath().getTestCaseId() + System.lineSeparator()
+                        + "-------------" + System.lineSeparator();
                 outputMessage = outputMessage + msg;
             }
         }
 
         for (ResultRecord result : resultBetweenPathAndContract) {
             if(result.getErrorCode() == CCTSStatusCode.ALLGREEN){
-                String msg = "  Path: " + result.getPath()
-                        + "@" + result.getDocumentTitle()
-                        + System.lineSeparator();
+                String msg =
+                        "  DocumentTitle:" + System.lineSeparator()
+                      + "    stateName: " + result.getPath().getStateName() + System.lineSeparator()
+                      + "    provider: " + result.getPath().getProvider() + System.lineSeparator()
+                      + "    consumer: " + result.getPath().getConsumer() + System.lineSeparator()
+                      + "    testCaseId: " + result.getPath().getTestCaseId() + System.lineSeparator()
+                      + "-------------" + System.lineSeparator();
                 outputMessage = outputMessage + msg;
             }
         }
@@ -71,20 +94,28 @@ public class CCTSResult {
         outputMessage = outputMessage + "Errors:" + System.lineSeparator();
         for (ResultRecord result : resultBetweenPathAndEventLogs) {
             if(result.getErrorCode() != CCTSStatusCode.ALLGREEN){
-                String msg = "  Path: " + result.getPath()
-                        + ". Message: " + result.getErrorCode().getInfoMessage()
-                        + "@" + result.getDocumentTitle()
-                        + System.lineSeparator();
+                String msg =
+                        "  DocumentTitle:" + System.lineSeparator()
+                      + "    stateName: " + result.getPath().getStateName() + System.lineSeparator()
+                      + "    provider: " + result.getPath().getProvider() + System.lineSeparator()
+                      + "    consumer: " + result.getPath().getConsumer() + System.lineSeparator()
+                      + "    testCaseId: " + result.getPath().getTestCaseId() + System.lineSeparator()
+                      + "    error message: " + result.getErrorCode().getInfoMessage() + System.lineSeparator()
+                      + "-------------" + System.lineSeparator();
                 outputMessage = outputMessage + msg;
             }
         }
 
         for (ResultRecord result : resultBetweenPathAndContract) {
             if(result.getErrorCode() != CCTSStatusCode.ALLGREEN){
-                String msg = "  Path: " + result.getPath()
-                        + ". Message: " + result.getErrorCode().getInfoMessage()
-                        + "@" + result.getDocumentTitle()
-                        + System.lineSeparator();
+                String msg =
+                        "  DocumentTitle:" + System.lineSeparator()
+                                + "    stateName: " + result.getPath().getStateName() + System.lineSeparator()
+                                + "    provider: " + result.getPath().getProvider() + System.lineSeparator()
+                                + "    consumer: " + result.getPath().getConsumer() + System.lineSeparator()
+                                + "    testCaseId: " + result.getPath().getTestCaseId() + System.lineSeparator()
+                                + "    error message: " + result.getErrorCode().getInfoMessage() + System.lineSeparator()
+                                + "-------------" + System.lineSeparator();
                 outputMessage = outputMessage + msg;
             }
         }
