@@ -1,15 +1,18 @@
 package tw.dfder.ccts.entity;
 
+import org.springframework.data.mongodb.core.mapping.Document;
 import tw.dfder.ccts.entity.cctsdocumentmodel.CCTSDocument;
 import tw.dfder.ccts.entity.cctsdocumentmodel.NextState;
 
 import java.util.ArrayList;
 import java.util.Map;
 
+@Document(collection = "CCTSResult")
 public class CCTSResult {
     private boolean testResult;
     private final ArrayList<CCTSDocument> relatedDocuments ;
-    private Map<NextState, CCTSStatusCode> eventLogErrors;
+    private Map<NextState, CCTSStatusCode> resultBetweenPathAndEventLogs;
+    private Map<NextState, CCTSStatusCode> resultBetweenPathAndContract;
     private Map<String, CCTSStatusCode> contractVerificationErrors;
 
     public CCTSResult(ArrayList<CCTSDocument> relatedDocuments) {
@@ -28,12 +31,20 @@ public class CCTSResult {
         this.testResult = testResult;
     }
 
-    public Map<NextState, CCTSStatusCode> getEventLogErrors() {
-        return eventLogErrors;
+    public Map<NextState, CCTSStatusCode> getResultBetweenPathAndEventLogs() {
+        return resultBetweenPathAndEventLogs;
     }
 
-    public void setEventLogErrors(Map<NextState, CCTSStatusCode> eventLogErrors) {
-        this.eventLogErrors = eventLogErrors;
+    public void setResultBetweenPathAndEventLogs(Map<NextState, CCTSStatusCode> resultBetweenPathAndEventLogs) {
+        this.resultBetweenPathAndEventLogs = resultBetweenPathAndEventLogs;
+    }
+
+    public Map<NextState, CCTSStatusCode> getResultBetweenPathAndContract() {
+        return resultBetweenPathAndContract;
+    }
+
+    public void setResultBetweenPathAndContract(Map<NextState, CCTSStatusCode> resultBetweenPathAndContract) {
+        this.resultBetweenPathAndContract = resultBetweenPathAndContract;
     }
 
     public Map<String, CCTSStatusCode> getContractVerificationErrors() {
