@@ -65,26 +65,26 @@ public class CCTSResult {
 
         for (ResultRecord result: resultBetweenPathAndEventLogs) {
             if(result.getErrorCode() == CCTSStatusCode.ALLGREEN){
-                String msg =
-                          "  DocumentTitle: " + result.getDocumentTitle() + System.lineSeparator()
-                        + "    - stateName: " + result.getPath().getStateName() + System.lineSeparator()
-                        + "      provider: " + result.getPath().getProvider() + System.lineSeparator()
-                        + "      consumer: " + result.getPath().getConsumer() + System.lineSeparator()
-                        + "      testCaseId: " + result.getPath().getTestCaseId() + System.lineSeparator()
-                        + "-------------" + System.lineSeparator();
+                String msg = generateMessageEntity(
+                        result.getDocumentTitle(),
+                        result.getPath().getStateName(),
+                        result.getPath().getProvider(),
+                        result.getPath().getConsumer(),
+                        result.getPath().getTestCaseId()
+                );
                 outputMessage = outputMessage + msg;
             }
         }
 
         for (ResultRecord result : resultBetweenPathAndContract) {
             if(result.getErrorCode() == CCTSStatusCode.ALLGREEN){
-                String msg =
-                        "  DocumentTitle: " + result.getDocumentTitle()  + System.lineSeparator()
-                      + "    - stateName: " + result.getPath().getStateName() + System.lineSeparator()
-                      + "      provider: " + result.getPath().getProvider() + System.lineSeparator()
-                      + "      consumer: " + result.getPath().getConsumer() + System.lineSeparator()
-                      + "      testCaseId: " + result.getPath().getTestCaseId() + System.lineSeparator()
-                      + "-------------" + System.lineSeparator();
+                String msg = generateMessageEntity(
+                        result.getDocumentTitle(),
+                        result.getPath().getStateName(),
+                        result.getPath().getProvider(),
+                        result.getPath().getConsumer(),
+                        result.getPath().getTestCaseId()
+                );
                 outputMessage = outputMessage + msg;
             }
         }
@@ -94,28 +94,28 @@ public class CCTSResult {
         outputMessage = outputMessage + "Errors:" + System.lineSeparator();
         for (ResultRecord result : resultBetweenPathAndEventLogs) {
             if(result.getErrorCode() != CCTSStatusCode.ALLGREEN){
-                String msg =
-                        "  DocumentTitle: " + result.getDocumentTitle()  + System.lineSeparator()
-                      + "    - stateName: " + result.getPath().getStateName() + System.lineSeparator()
-                      + "      provider: " + result.getPath().getProvider() + System.lineSeparator()
-                      + "      consumer: " + result.getPath().getConsumer() + System.lineSeparator()
-                      + "      testCaseId: " + result.getPath().getTestCaseId() + System.lineSeparator()
-                      + "      error message: " + result.getErrorCode().getInfoMessage() + System.lineSeparator()
-                      + "-------------" + System.lineSeparator();
+                String msg = generateMessageEntity(
+                        result.getDocumentTitle(),
+                        result.getPath().getStateName(),
+                        result.getPath().getProvider(),
+                        result.getPath().getConsumer(),
+                        result.getPath().getTestCaseId(),
+                        result.getErrorCode().getInfoMessage()
+                );
                 outputMessage = outputMessage + msg;
             }
         }
 
         for (ResultRecord result : resultBetweenPathAndContract) {
             if(result.getErrorCode() != CCTSStatusCode.ALLGREEN){
-                String msg =
-                        "  DocumentTitle: " + result.getDocumentTitle()  + System.lineSeparator()
-                                + "    - stateName: " + result.getPath().getStateName() + System.lineSeparator()
-                                + "      provider: " + result.getPath().getProvider() + System.lineSeparator()
-                                + "      consumer: " + result.getPath().getConsumer() + System.lineSeparator()
-                                + "      testCaseId: " + result.getPath().getTestCaseId() + System.lineSeparator()
-                                + "      error message: " + result.getErrorCode().getInfoMessage() + System.lineSeparator()
-                                + "-------------" + System.lineSeparator();
+                String msg = generateMessageEntity(
+                        result.getDocumentTitle(),
+                        result.getPath().getStateName(),
+                        result.getPath().getProvider(),
+                        result.getPath().getConsumer(),
+                        result.getPath().getTestCaseId(),
+                        result.getErrorCode().getInfoMessage()
+                );
                 outputMessage = outputMessage + msg;
             }
         }
@@ -124,6 +124,26 @@ public class CCTSResult {
     }
 
 
+    private String generateMessageEntity(String document, String stateName, String provider, String consumer, String testCaseId){
+        String msg =
+                      "  DocumentTitle: " + document  + System.lineSeparator()
+                    + "    stateName: " + stateName + System.lineSeparator()
+                    + "      provider: " + provider + System.lineSeparator()
+                    + "      consumer: " + consumer + System.lineSeparator()
+                    + "      testCaseId: " + testCaseId + System.lineSeparator();
+        return msg;
+    }
+
+    private String generateMessageEntity(String document, String stateName, String provider, String consumer, String testCaseId, String errorMessage){
+        String msg =
+                      "  DocumentTitle: " + document  + System.lineSeparator()
+                    + "    stateName: " + stateName + System.lineSeparator()
+                    + "      provider: " + provider + System.lineSeparator()
+                    + "      consumer: " + consumer + System.lineSeparator()
+                    + "      testCaseId: " + testCaseId + System.lineSeparator()
+                    + "      error message: " + errorMessage + System.lineSeparator();
+        return msg;
+    }
 
     // below for accessors
 
