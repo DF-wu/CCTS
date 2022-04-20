@@ -42,7 +42,8 @@ public class SystemStarter {
 
     public boolean startCCTSTest(){
         if(isSystemReady){
-            return verifier.verifyCCTSProfileSAGAFlow();
+            verifier.verifyCCTSProfileSAGAFlow();
+            return true;
         }else{
             return false;
         }
