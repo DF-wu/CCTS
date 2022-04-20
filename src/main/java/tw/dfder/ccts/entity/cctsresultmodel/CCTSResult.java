@@ -1,4 +1,4 @@
-package tw.dfder.ccts.entity.cctsdocumentmodel;
+package tw.dfder.ccts.entity.cctsresultmodel;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 import tw.dfder.ccts.entity.CCTSStatusCode;
@@ -14,6 +14,9 @@ import java.util.Map;
 public class CCTSResult {
     private boolean testResult;
     private final ArrayList<CCTSDocument> relatedDocuments ;
+
+
+
     private Map<NextState, CCTSStatusCode> resultBetweenPathAndEventLogs;
     private Map<NextState, CCTSStatusCode> resultBetweenPathAndContract;
     private Map<String, CCTSStatusCode> contractVerificationErrors;
@@ -24,6 +27,25 @@ public class CCTSResult {
         this.resultBetweenPathAndContract = new Hashtable<>();
         this.contractVerificationErrors = new Hashtable<>();
     }
+
+
+    /*
+        Sample output
+        CCTS Test result: Pass or Not
+        Passed:
+          path@document name
+          ...
+        Errors:
+          error msg@ document name
+          ...
+         */
+    public String checkOutReportMessage() {
+        return null;
+
+
+
+    }
+
 
 
     // below for accessors
