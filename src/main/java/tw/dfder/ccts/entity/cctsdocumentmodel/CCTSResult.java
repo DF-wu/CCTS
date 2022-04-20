@@ -6,6 +6,8 @@ import tw.dfder.ccts.entity.cctsdocumentmodel.CCTSDocument;
 import tw.dfder.ccts.entity.cctsdocumentmodel.NextState;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 @Document(collection = "CCTSResult")
@@ -18,6 +20,9 @@ public class CCTSResult {
 
     public CCTSResult(ArrayList<CCTSDocument> relatedDocuments) {
         this.relatedDocuments = relatedDocuments;
+        this.resultBetweenPathAndEventLogs = new Hashtable<>();
+        this.resultBetweenPathAndContract = new Hashtable<>();
+        this.contractVerificationErrors = new Hashtable<>();
     }
 
 
