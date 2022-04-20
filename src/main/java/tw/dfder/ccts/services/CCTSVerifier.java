@@ -9,7 +9,7 @@ import tw.dfder.ccts.entity.Contract;
 import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.EventLog;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSResult;
-import tw.dfder.ccts.entity.cctsresultmodel.ErrorRecord;
+import tw.dfder.ccts.entity.cctsresultmodel.ResultRecord;
 import tw.dfder.ccts.repository.CCTSDocumentRepository;
 import tw.dfder.ccts.repository.EventLogRepository;
 import tw.dfder.ccts.services.pact_broker.PactBrokerBusyBox;
@@ -59,7 +59,7 @@ public class CCTSVerifier {
                 // if same route eventlogs not exist -> no related event was produced between the producer and consumer
                 if(sameRouteEventlogs.size() == 0 ){
                     cctsResult.getResultBetweenPathAndEventLogs().add(
-                            new ErrorRecord(document.getTitle(), path, CCTSStatusCode.ERROR_NO_EVENT_FOUND));
+                            new ResultRecord(document.getTitle(), path, CCTSStatusCode.ERROR_NO_EVENT_FOUND));
                     // jump to next path
                     continue;
                 }
@@ -70,7 +70,7 @@ public class CCTSVerifier {
 
 
                 // match path and corresponded contract testCaseId
-                cctsResult.getResultBetweenPathAndContract().add(new ErrorRecord(document.getTitle(), path, verifyPathAndContract(path)));
+                cctsResult.getResultBetweenPathAndContract().add(new ResultRecord(document.getTitle(), path, verifyPathAndContract(path)));
             }
 
             // check contract verification status
@@ -80,8 +80,8 @@ public class CCTSVerifier {
         return cctsResult;
     }
 
-    private ArrayList<ErrorRecord> verifyPathAndEventlog (NextState path, ArrayList<EventLog> sameRouteEventlogs, String documentName) {
-        ArrayList<ErrorRecord> errors = new ArrayList<>();
+    private ArrayList<ResultRecord> verifyPathAndEventlog (NextState path, ArrayList<EventLog> sameRouteEventlogs, String documentName) {
+        ArrayList<ResultRecord> errors = new ArrayList<>();
         // match path and eventlog
         for (EventLog el : sameRouteEventlogs) {
             // if error ->  add into errors,
@@ -91,7 +91,7 @@ public class CCTSVerifier {
                 // pass
             }else {
                 // eventlog and path not match. add into errors map.
-                errors.add(new ErrorRecord(documentName, path, inspectResult));
+                errors.add(new ResultRecord(documentName, path, inspectResult));
             }
         }
         return errors;
