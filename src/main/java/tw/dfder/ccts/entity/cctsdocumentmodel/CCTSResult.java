@@ -1,6 +1,7 @@
-package tw.dfder.ccts.entity;
+package tw.dfder.ccts.entity.cctsdocumentmodel;
 
 import org.springframework.data.mongodb.core.mapping.Document;
+import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.cctsdocumentmodel.CCTSDocument;
 import tw.dfder.ccts.entity.cctsdocumentmodel.NextState;
 
