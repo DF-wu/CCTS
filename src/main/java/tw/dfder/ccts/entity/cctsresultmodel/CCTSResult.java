@@ -66,11 +66,11 @@ public class CCTSResult {
         for (ResultRecord result: resultBetweenPathAndEventLogs) {
             if(result.getErrorCode() == CCTSStatusCode.ALLGREEN){
                 String msg =
-                          "  DocumentTitle:" + result.getDocumentTitle() + System.lineSeparator()
-                        + "    stateName: " + result.getPath().getStateName() + System.lineSeparator()
-                        + "    provider: " + result.getPath().getProvider() + System.lineSeparator()
-                        + "    consumer: " + result.getPath().getConsumer() + System.lineSeparator()
-                        + "    testCaseId: " + result.getPath().getTestCaseId() + System.lineSeparator()
+                          "  DocumentTitle: " + result.getDocumentTitle() + System.lineSeparator()
+                        + "    - stateName: " + result.getPath().getStateName() + System.lineSeparator()
+                        + "      provider: " + result.getPath().getProvider() + System.lineSeparator()
+                        + "      consumer: " + result.getPath().getConsumer() + System.lineSeparator()
+                        + "      testCaseId: " + result.getPath().getTestCaseId() + System.lineSeparator()
                         + "-------------" + System.lineSeparator();
                 outputMessage = outputMessage + msg;
             }
@@ -79,11 +79,11 @@ public class CCTSResult {
         for (ResultRecord result : resultBetweenPathAndContract) {
             if(result.getErrorCode() == CCTSStatusCode.ALLGREEN){
                 String msg =
-                        "  DocumentTitle:" + result.getDocumentTitle()  + System.lineSeparator()
-                      + "    stateName: " + result.getPath().getStateName() + System.lineSeparator()
-                      + "    provider: " + result.getPath().getProvider() + System.lineSeparator()
-                      + "    consumer: " + result.getPath().getConsumer() + System.lineSeparator()
-                      + "    testCaseId: " + result.getPath().getTestCaseId() + System.lineSeparator()
+                        "  DocumentTitle: " + result.getDocumentTitle()  + System.lineSeparator()
+                      + "    - stateName: " + result.getPath().getStateName() + System.lineSeparator()
+                      + "      provider: " + result.getPath().getProvider() + System.lineSeparator()
+                      + "      consumer: " + result.getPath().getConsumer() + System.lineSeparator()
+                      + "      testCaseId: " + result.getPath().getTestCaseId() + System.lineSeparator()
                       + "-------------" + System.lineSeparator();
                 outputMessage = outputMessage + msg;
             }
@@ -95,12 +95,12 @@ public class CCTSResult {
         for (ResultRecord result : resultBetweenPathAndEventLogs) {
             if(result.getErrorCode() != CCTSStatusCode.ALLGREEN){
                 String msg =
-                        "  DocumentTitle:" + result.getDocumentTitle()  + System.lineSeparator()
-                      + "    stateName: " + result.getPath().getStateName() + System.lineSeparator()
-                      + "    provider: " + result.getPath().getProvider() + System.lineSeparator()
-                      + "    consumer: " + result.getPath().getConsumer() + System.lineSeparator()
-                      + "    testCaseId: " + result.getPath().getTestCaseId() + System.lineSeparator()
-                      + "    error message: " + result.getErrorCode().getInfoMessage() + System.lineSeparator()
+                        "  DocumentTitle: " + result.getDocumentTitle()  + System.lineSeparator()
+                      + "    - stateName: " + result.getPath().getStateName() + System.lineSeparator()
+                      + "      provider: " + result.getPath().getProvider() + System.lineSeparator()
+                      + "      consumer: " + result.getPath().getConsumer() + System.lineSeparator()
+                      + "      testCaseId: " + result.getPath().getTestCaseId() + System.lineSeparator()
+                      + "      error message: " + result.getErrorCode().getInfoMessage() + System.lineSeparator()
                       + "-------------" + System.lineSeparator();
                 outputMessage = outputMessage + msg;
             }
@@ -109,12 +109,12 @@ public class CCTSResult {
         for (ResultRecord result : resultBetweenPathAndContract) {
             if(result.getErrorCode() != CCTSStatusCode.ALLGREEN){
                 String msg =
-                        "  DocumentTitle:" + result.getDocumentTitle()  + System.lineSeparator()
-                                + "    stateName: " + result.getPath().getStateName() + System.lineSeparator()
-                                + "    provider: " + result.getPath().getProvider() + System.lineSeparator()
-                                + "    consumer: " + result.getPath().getConsumer() + System.lineSeparator()
-                                + "    testCaseId: " + result.getPath().getTestCaseId() + System.lineSeparator()
-                                + "    error message: " + result.getErrorCode().getInfoMessage() + System.lineSeparator()
+                        "  DocumentTitle: " + result.getDocumentTitle()  + System.lineSeparator()
+                                + "    - stateName: " + result.getPath().getStateName() + System.lineSeparator()
+                                + "      provider: " + result.getPath().getProvider() + System.lineSeparator()
+                                + "      consumer: " + result.getPath().getConsumer() + System.lineSeparator()
+                                + "      testCaseId: " + result.getPath().getTestCaseId() + System.lineSeparator()
+                                + "      error message: " + result.getErrorCode().getInfoMessage() + System.lineSeparator()
                                 + "-------------" + System.lineSeparator();
                 outputMessage = outputMessage + msg;
             }
