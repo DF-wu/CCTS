@@ -68,7 +68,7 @@ public class CCTSVerifier {
                 cctsResult.getResultBetweenPathAndContract().add(
                         verifyPathAndEventlog(path, sameRouteEventlogs, document.getTitle()));
 
-                // match path and corresponded contract testCaseId
+                // match path and corresponded contract testCaseId witch is from pact broker
                 cctsResult.getResultBetweenPathAndContract().add(
                         new ResultRecord(document.getTitle(), path, verifyPathAndContract(path)));
             }
@@ -103,7 +103,7 @@ public class CCTSVerifier {
                 return record;
             }
         }
-        return new ResultRecord(documentName, path, CCTSStatusCode.ERROR_TESTCASEID);
+        return new ResultRecord(documentName, path, CCTSStatusCode.ERROR_NO_MATCH_TESTCASEID_IN_EVENTLOGS);
 
 
 
@@ -189,7 +189,7 @@ public class CCTSVerifier {
                     return CCTSStatusCode.ALLGREEN;
                 } else {
                     // testsCaseId not Match
-                    return CCTSStatusCode.ERROR_TESTCASEID;
+                    return CCTSStatusCode.ERROR_TESTCASEID_IN_CONTRACT;
                 }
             } else {
                 //consumer not match
