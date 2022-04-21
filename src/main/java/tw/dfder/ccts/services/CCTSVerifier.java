@@ -11,6 +11,7 @@ import tw.dfder.ccts.entity.EventLog;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSResult;
 import tw.dfder.ccts.entity.cctsresultmodel.ResultRecord;
 import tw.dfder.ccts.repository.CCTSDocumentRepository;
+import tw.dfder.ccts.repository.CCTSResultRepository;
 import tw.dfder.ccts.repository.EventLogRepository;
 import tw.dfder.ccts.services.pact_broker.PactBrokerBusyBox;
 
@@ -22,13 +23,15 @@ public class CCTSVerifier {
     private final CCTSDocumentParser documentParser;
     private final CCTSDocumentRepository cctsDocumentRepository;
     private final EventLogRepository eventLogRepository;
+    private final CCTSResultRepository cctsResultRepository;
     private final PactBrokerBusyBox busyBox;
     private final ServiceConfigure serviceConfig;
     @Autowired
-    public CCTSVerifier(CCTSDocumentParser documentParser, CCTSDocumentRepository cctsDocumentRepository, EventLogRepository eventLogRepository, PactBrokerBusyBox busyBox, ServiceConfigure serviceConfig) {
+    public CCTSVerifier(CCTSDocumentParser documentParser, CCTSDocumentRepository cctsDocumentRepository, EventLogRepository eventLogRepository, CCTSResultRepository cctsResultRepository, PactBrokerBusyBox busyBox, ServiceConfigure serviceConfig) {
         this.documentParser = documentParser;
         this.cctsDocumentRepository = cctsDocumentRepository;
         this.eventLogRepository = eventLogRepository;
+        this.cctsResultRepository = cctsResultRepository;
         this.busyBox = busyBox;
         this.serviceConfig = serviceConfig;
     }
@@ -38,6 +41,7 @@ public class CCTSVerifier {
         ArrayList<CCTSDocument> documents = (ArrayList<CCTSDocument>) cctsDocumentRepository.findAll();
         ArrayList<EventLog> eventlogs = (ArrayList<EventLog>) eventLogRepository.findAll();
         Hashtable<NextState, CCTSStatusCode> resultDict = new Hashtable<>();
+
         CCTSResult cctsResult  = new CCTSResult(documents);
 
         for (CCTSDocument document : documents) {
@@ -62,24 +66,19 @@ public class CCTSVerifier {
                 // verify path and eventlogs and get error code if exist
                 // add errors to result
                 cctsResult.getResultBetweenPathAndContract().addAll(
-                        verifyPathAndEventlog(
-                                path,
-                                sameRouteEventlogs,
-                                document.getTitle()
-                        ));
+                        verifyPathAndEventlog(path, sameRouteEventlogs, document.getTitle()));
 
                 // match path and corresponded contract testCaseId
                 cctsResult.getResultBetweenPathAndContract().add(
-                        new ResultRecord(
-                                document.getTitle(),
-                                path, verifyPathAndContract(path
-                        )));
+                        new ResultRecord(document.getTitle(), path, verifyPathAndContract(path)));
             }
 
             // check contract verification status
             cctsResult.getContractVerificationErrors().putAll(validateServiceContractTestResult(document));
 
         }
+
+        cctsResultRepository.save(cctsResult);
         return cctsResult;
     }
 
