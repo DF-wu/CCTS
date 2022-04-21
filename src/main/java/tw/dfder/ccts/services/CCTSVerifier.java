@@ -34,14 +34,10 @@ public class CCTSVerifier {
     }
 
     public CCTSResult verifyCCTSProfileSAGAFlow() {
-
-        boolean isSuccess = false;
-
         // retrieve needed data from db to memory for increasing speed
         ArrayList<CCTSDocument> documents = (ArrayList<CCTSDocument>) cctsDocumentRepository.findAll();
         ArrayList<EventLog> eventlogs = (ArrayList<EventLog>) eventLogRepository.findAll();
         Hashtable<NextState, CCTSStatusCode> resultDict = new Hashtable<>();
-
         CCTSResult cctsResult  = new CCTSResult(documents);
 
         for (CCTSDocument document : documents) {
@@ -55,7 +51,6 @@ public class CCTSVerifier {
                         sameRouteEventlogs.add(el);
                     }
                 }
-
                 // if same route eventlogs not exist -> no related event was produced between the producer and consumer
                 if(sameRouteEventlogs.size() == 0 ){
                     cctsResult.getResultBetweenPathAndEventLogs().add(
@@ -66,11 +61,19 @@ public class CCTSVerifier {
 
                 // verify path and eventlogs and get error code if exist
                 // add errors to result
-                cctsResult.getResultBetweenPathAndContract().addAll(verifyPathAndEventlog(path, sameRouteEventlogs, document.getTitle()));
-
+                cctsResult.getResultBetweenPathAndContract().addAll(
+                        verifyPathAndEventlog(
+                                path,
+                                sameRouteEventlogs,
+                                document.getTitle()
+                        ));
 
                 // match path and corresponded contract testCaseId
-                cctsResult.getResultBetweenPathAndContract().add(new ResultRecord(document.getTitle(), path, verifyPathAndContract(path)));
+                cctsResult.getResultBetweenPathAndContract().add(
+                        new ResultRecord(
+                                document.getTitle(),
+                                path, verifyPathAndContract(path
+                        )));
             }
 
             // check contract verification status
