@@ -1,6 +1,8 @@
 package tw.dfder.ccts.entity.cctsresultmodel;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.cctsdocumentmodel.CCTSDocument;
 
@@ -10,17 +12,22 @@ import java.util.Map;
 
 @Document(collection = "CCTSResult")
 public class CCTSResult {
-    private boolean testResult;
-    private final ArrayList<CCTSDocument> relatedDocuments ;
+    @Id
+    private String id;
 
+    @Field
+    private boolean testResult;
+    @Field
+    private final ArrayList<CCTSDocument> relatedDocuments ;
+    @Field
     private ArrayList<ResultRecord> resultBetweenPathAndEventLogs;
 
 //    private Map<NextState, CCTSStatusCode> resultBetweenPathAndEventLogs;
-
+    @Field
     private ArrayList<ResultRecord> resultBetweenPathAndContract;
 //    private Map<NextState, CCTSStatusCode> resultBetweenPathAndContract;
 
-
+    @Field
     private Map<String, CCTSStatusCode> contractVerificationErrors;
 
     public CCTSResult(ArrayList<CCTSDocument> relatedDocuments) {
