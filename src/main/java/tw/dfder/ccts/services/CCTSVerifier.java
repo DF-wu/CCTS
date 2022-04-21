@@ -65,7 +65,7 @@ public class CCTSVerifier {
 
                 // verify path and eventlogs and get error code if exist
                 // add errors to result
-                cctsResult.getResultBetweenPathAndContract().addAll(
+                cctsResult.getResultBetweenPathAndContract().add(
                         verifyPathAndEventlog(path, sameRouteEventlogs, document.getTitle()));
 
                 // match path and corresponded contract testCaseId
@@ -82,21 +82,47 @@ public class CCTSVerifier {
         return cctsResult;
     }
 
-    private ArrayList<ResultRecord> verifyPathAndEventlog (NextState path, ArrayList<EventLog> sameRouteEventlogs, String documentName) {
-        ArrayList<ResultRecord> errors = new ArrayList<>();
+    private ResultRecord verifyPathAndEventlog (NextState path, ArrayList<EventLog> sameRouteEventlogs, String documentName) {
+        ArrayList<ResultRecord> results = new ArrayList<>();
+        boolean isValidPath = false;
         // match path and eventlog
+        CCTSStatusCode inspectResult = null;
+
         for (EventLog el : sameRouteEventlogs) {
-            // if error ->  add into errors,
-            // if no error -> passed
-             CCTSStatusCode inspectResult = inspectPathAndEventLog(path, el);
-            if(inspectResult == CCTSStatusCode.ALLGREEN){
-                // pass
-            }else {
-                // eventlog and path not match. add into errors map.
-                errors.add(new ResultRecord(documentName, path, inspectResult));
+            // add every status of path eventlog pair in to array.
+
+            inspectResult = inspectPathAndEventLog(path, el);
+            results.add(new ResultRecord(documentName, path, inspectResult));
+        }
+
+
+        // check result array
+        for (ResultRecord record : results) {
+            if(record.getErrorCode() == CCTSStatusCode.ALLGREEN){
+                // there is a valid eventlog for this path
+                return record;
             }
         }
-        return errors;
+        return new ResultRecord(documentName, path, CCTSStatusCode.ERROR_TESTCASEID);
+
+
+
+
+
+        // if error ->  add into errors,
+        // if no error -> passed
+//
+//
+//        if(inspectResult == CCTSStatusCode.ALLGREEN){
+//            // found correspond evnetlog with this path
+//            isValidPath = true;
+//        }else {
+//            // not this eventlog
+//            isValidPath = false;
+//        }
+        // eventlog and path not match. add into errors map.
+
+        // for this path only. if error occur, add once and leave loop.
     }
 
 
