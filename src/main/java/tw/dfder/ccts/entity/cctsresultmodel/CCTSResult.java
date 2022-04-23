@@ -7,9 +7,8 @@ import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.cctsdocumentmodel.CCTSDocument;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Document(collection = "CCTSResult")
@@ -38,6 +37,125 @@ public class CCTSResult {
         this.resultBetweenDeliveryAndEventLogs = new ArrayList<>();
         this.resultBetweenDeliveryAndContract = new ArrayList<>();
         this.contractVerificationErrors = new Hashtable<>();
+    }
+
+
+    /*
+        print out in mark down
+        sample:
+
+        # CCTS Test Result
+        ## Info
+        + Test Time:
+        + Pass number
+        + Failure number:
+        [TOC]
+        ## Test Results
+        ### Pass
+        #### $Document name
+        + stateName: $
+            + provider: $
+            + consumer:
+            + testCaseId:
+        #### Contract Verification
+        + service:
+
+        ### Failure
+        #### $Document name
+        + stateName: $
+            + provider: $
+            + consumer:
+            + testCaseId:
+            + failure reason:
+        #### Contract Verification
+        + Service:
+     */
+    public String checkOutReportMessageMD(){
+        ArrayList<CCTSResultRecord> passed = new ArrayList<>();
+        ArrayList<CCTSResultRecord> failed = new ArrayList<>();
+
+        for(CCTSResultRecord n : Stream.concat(resultBetweenDeliveryAndContract.stream(), resultBetweenDeliveryAndContract.stream())
+                .collect(Collectors.toList())
+        ){
+            if(n.getErrorCode().equals(CCTSStatusCode.ALLGREEN)){
+                passed.add(n);
+            }else {
+                failed.add(n);
+            }
+        }
+
+        String outputMessage = "";
+        outputMessage = "# CCTS Test Report" + System.lineSeparator();
+        outputMessage = outputMessage +"## Information" + System.lineSeparator();
+        outputMessage = outputMessage + "+ Test Time: " + LocalDate.now() + System.lineSeparator();
+        outputMessage = outputMessage + "+ Pass number: " + passed.size() + System.lineSeparator();
+        outputMessage = outputMessage + "+ Failure number: " + failed.size() + System.lineSeparator();
+        // based on hackmd syntax
+        outputMessage = outputMessage + "[TOC]" + System.lineSeparator();
+        outputMessage = outputMessage + "## Test Result" + System.lineSeparator();
+        outputMessage = outputMessage + "### Pass" + System.lineSeparator();
+        outputMessage = generateResultPassedEntityMD(outputMessage, true);
+        outputMessage = outputMessage + "### Failure" + System.lineSeparator();
+        outputMessage = generateResultPassedEntityMD(outputMessage, false);
+
+        return outputMessage;
+    }
+
+
+    // collect documented result map .
+    private HashMap<String, ArrayList<CCTSResultRecord>> documentedResultsTogether(ArrayList<CCTSResultRecord> records1, ArrayList<CCTSResultRecord> records2 ){
+        HashMap<String, ArrayList<CCTSResultRecord>> documentedResults = new HashMap<>();
+        // collect documents name set
+        HashSet<String> documentNameSet = new HashSet<>();
+        for (CCTSResultRecord rr : Stream.concat(records1.stream(), records2.stream()).collect(Collectors.toList())) {
+            documentNameSet.add(rr.getDocumentTitle());
+        }
+        // add entity to map
+        for (String document : documentNameSet) {
+            documentedResults.put(document, new ArrayList<>());
+        }
+        // same document name with ResultRecords
+        for (CCTSResultRecord rr : Stream.concat(records1.stream(), records2.stream()).collect(Collectors.toList())) {
+            documentedResults.get(rr.getDocumentTitle()).add(rr);
+        }
+
+        return documentedResults;
+    }
+
+
+
+    private String generateResultPassedEntityMD(String msg, boolean isPassed) {
+        if(isPassed){
+            //passed entity
+            HashMap<String, ArrayList<CCTSResultRecord>> resultMap = documentedResultsTogether(resultBetweenDeliveryAndContract, resultBetweenDeliveryAndEventLogs);
+            for (String documentName : resultMap.keySet()) {
+                msg = msg + "#### " + documentName + System.lineSeparator();
+                ArrayList<CCTSResultRecord> resultRecords = resultMap.get(documentName);
+                for (CCTSResultRecord rr : resultRecords) {
+                    msg = msg + "+ stateName: " + rr.getDelivery().getStateName() + System.lineSeparator();
+                    msg = msg + "    + provider: " + rr.getDelivery().getProvider() + System.lineSeparator();
+                    msg = msg + "    + consumer: " + rr.getDelivery().getConsumer() + System.lineSeparator();
+                    msg = msg + "    + testCaseId: " + rr.getDelivery().getTestCaseId() + System.lineSeparator();
+                }
+            }
+            return msg;
+        }else {
+            //failed entity
+            HashMap<String, ArrayList<CCTSResultRecord>> resultMap = documentedResultsTogether(resultBetweenDeliveryAndContract, resultBetweenDeliveryAndEventLogs);
+            for (String documentName : resultMap.keySet()) {
+                msg = msg + "#### " + documentName + System.lineSeparator();
+                ArrayList<CCTSResultRecord> resultRecords = resultMap.get(documentName);
+                for (CCTSResultRecord rr : resultRecords) {
+                    msg = msg + "+ stateName: " + rr.getDelivery().getStateName() + System.lineSeparator();
+                    msg = msg + "    + provider: " + rr.getDelivery().getProvider() + System.lineSeparator();
+                    msg = msg + "    + consumer: " + rr.getDelivery().getConsumer() + System.lineSeparator();
+                    msg = msg + "    + testCaseId: " + rr.getDelivery().getTestCaseId() + System.lineSeparator();
+                    msg = msg + "    + failure message: " + rr.getErrorCode().getInfoMessage() + System.lineSeparator();
+                }
+            }
+            return msg;
+        }
+
     }
 
 

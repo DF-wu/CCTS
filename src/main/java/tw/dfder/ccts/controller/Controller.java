@@ -48,7 +48,7 @@ public class Controller {
     public ResponseEntity<?> startCCTSVerification(){
         CCTSResult result = starter.startCCTSTest();
         if (result != null){
-            return new ResponseEntity<>( result.checkOutReportMessage() ,HttpStatus.OK);
+            return new ResponseEntity<>( result.checkOutReportMessageMD() ,HttpStatus.OK);
         }else {
             return new ResponseEntity<>("System not ready", HttpStatus.OK);
         }
