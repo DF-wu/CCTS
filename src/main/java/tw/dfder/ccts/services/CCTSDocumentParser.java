@@ -43,8 +43,8 @@ public class CCTSDocumentParser {
     }
 
 
-    public ArrayList<NextState> findPathList(CCTSDocument cctsDocument){
-        ArrayList<NextState> pathList = new ArrayList<NextState>();
+    public ArrayList<NextState> findDeliveryList(CCTSDocument cctsDocument){
+        ArrayList<NextState> delieveryList = new ArrayList<NextState>();
         // iterate all possible state
         for (String k : cctsDocument.getStates().keySet()) {
             // specify a simpleState
@@ -52,11 +52,11 @@ public class CCTSDocumentParser {
             switch (stateChecker(simpleState)){
                 case "nextSate exist" -> {
                     // nextSate exist -> add to path list
-                    pathList.add(simpleState.getNextState());
+                    delieveryList.add(simpleState.getNextState());
                 }
                 case "options exist" -> {
                     // options exist
-                    pathList.addAll(simpleState.getOptions().values());
+                    delieveryList.addAll(simpleState.getOptions().values());
                 }
                 case "not end state exception" -> {
                     System.out.println("exception!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -66,7 +66,7 @@ public class CCTSDocumentParser {
                 }
             }
         }
-        return pathList;
+        return delieveryList;
     }
 
     private String stateChecker(SimpleState simpleState){

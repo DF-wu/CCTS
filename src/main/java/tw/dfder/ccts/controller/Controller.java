@@ -73,7 +73,7 @@ public class Controller {
     @PostConstruct
     public void testMethod() throws IOException, InterruptedException {
         for(CCTSDocument d: repo.findAll()){
-            CCTSDocumentParser.findPathList(d) ;
+            CCTSDocumentParser.findDeliveryList(d) ;
         }
 
 

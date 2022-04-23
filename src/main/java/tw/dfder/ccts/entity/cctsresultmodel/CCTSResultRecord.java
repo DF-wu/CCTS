@@ -3,14 +3,14 @@ package tw.dfder.ccts.entity.cctsresultmodel;
 import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.cctsdocumentmodel.NextState;
 
-public class ResultRecord {
+public class CCTSResultRecord {
     private final String documentTitle;
-    private final NextState path;
+    private final NextState delivery;
     private final CCTSStatusCode errorCode;
 
-    public ResultRecord(String documentTitle, NextState path, CCTSStatusCode errorCode) {
+    public CCTSResultRecord(String documentTitle, NextState delivery, CCTSStatusCode errorCode) {
         this.documentTitle = documentTitle;
-        this.path = path;
+        this.delivery = delivery;
         this.errorCode = errorCode;
     }
 
@@ -21,8 +21,8 @@ public class ResultRecord {
         return documentTitle;
     }
 
-    public NextState getPath() {
-        return path;
+    public NextState getDelivery() {
+        return delivery;
     }
 
     public CCTSStatusCode getErrorCode() {

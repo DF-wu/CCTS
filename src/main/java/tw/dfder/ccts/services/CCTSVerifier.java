@@ -9,7 +9,7 @@ import tw.dfder.ccts.entity.Contract;
 import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.EventLog;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSResult;
-import tw.dfder.ccts.entity.cctsresultmodel.ResultRecord;
+import tw.dfder.ccts.entity.cctsresultmodel.CCTSResultRecord;
 import tw.dfder.ccts.repository.CCTSDocumentRepository;
 import tw.dfder.ccts.repository.CCTSResultRepository;
 import tw.dfder.ccts.repository.EventLogRepository;
@@ -46,31 +46,31 @@ public class CCTSVerifier {
 
         for (CCTSDocument document : documents) {
             // specify a path as baseline.
-            for (NextState path : documentParser.findPathList(document)) {
+            for (NextState delivery : documentParser.findDeliveryList(document)) {
                 //extract same provider and consumer eventlog
                 ArrayList<EventLog> sameRouteEventlogs = new ArrayList<>();
                 for (EventLog el : eventlogs) {
                     // same provider consumer
-                    if (path.getConsumer().equals(el.getConsumerName()) && path.getProvider().equals(el.getProviderName())) {
+                    if (delivery.getConsumer().equals(el.getConsumerName()) && delivery.getProvider().equals(el.getProviderName())) {
                         sameRouteEventlogs.add(el);
                     }
                 }
                 // if same route eventlogs not exist -> no related event was produced between the producer and consumer
                 if(sameRouteEventlogs.size() == 0 ){
-                    cctsResult.getResultBetweenPathAndEventLogs().add(
-                            new ResultRecord(document.getTitle(), path, CCTSStatusCode.ERROR_NO_EVENT_FOUND));
-                    // jump to next path
+                    cctsResult.getResultBetweenDeliveryAndEventLogs().add(
+                            new CCTSResultRecord(document.getTitle(), delivery, CCTSStatusCode.ERROR_NO_EVENT_FOUND));
+                    // jump to next delivery
                     continue;
                 }
 
-                // verify path and eventlogs and get error code if exist
+                // verify delivery and eventlogs and get error code if exist
                 // add errors to result
-                cctsResult.getResultBetweenPathAndContract().add(
-                        verifyPathAndEventlog(path, sameRouteEventlogs, document.getTitle()));
+                cctsResult.getResultBetweenDeliveryAndContract().add(
+                        verifyDeliveryAndEventlog(delivery, sameRouteEventlogs, document.getTitle()));
 
-                // match path and corresponded contract testCaseId witch is from pact broker
-                cctsResult.getResultBetweenPathAndContract().add(
-                        new ResultRecord(document.getTitle(), path, verifyPathAndContract(path)));
+                // match delivery and corresponded contract testCaseId witch is from pact broker
+                cctsResult.getResultBetweenDeliveryAndContract().add(
+                        new CCTSResultRecord(document.getTitle(), delivery, verifyDeliveryAndContract(delivery)));
             }
 
             // check contract verification status
@@ -82,28 +82,27 @@ public class CCTSVerifier {
         return cctsResult;
     }
 
-    private ResultRecord verifyPathAndEventlog (NextState path, ArrayList<EventLog> sameRouteEventlogs, String documentName) {
-        ArrayList<ResultRecord> results = new ArrayList<>();
-        boolean isValidPath = false;
-        // match path and eventlog
+    private CCTSResultRecord verifyDeliveryAndEventlog(NextState delivery, ArrayList<EventLog> sameRouteEventlogs, String documentName) {
+        ArrayList<CCTSResultRecord> results = new ArrayList<>();
+        // match delivery and eventlog
         CCTSStatusCode inspectResult = null;
 
         for (EventLog el : sameRouteEventlogs) {
-            // add every status of path eventlog pair in to array.
+            // add every status of delivery eventlog pair in to array.
 
-            inspectResult = inspectPathAndEventLog(path, el);
-            results.add(new ResultRecord(documentName, path, inspectResult));
+            inspectResult = inspectDeliveryAndEventLog(delivery, el);
+            results.add(new CCTSResultRecord(documentName, delivery, inspectResult));
         }
 
 
         // check result array
-        for (ResultRecord record : results) {
+        for (CCTSResultRecord record : results) {
             if(record.getErrorCode() == CCTSStatusCode.ALLGREEN){
-                // there is a valid eventlog for this path
+                // there is a valid eventlog for this delivery
                 return record;
             }
         }
-        return new ResultRecord(documentName, path, CCTSStatusCode.ERROR_NO_MATCH_TESTCASEID_IN_EVENTLOGS);
+        return new CCTSResultRecord(documentName, delivery, CCTSStatusCode.ERROR_NO_MATCH_TESTCASEID_IN_EVENTLOGS);
 
 
 
@@ -114,15 +113,15 @@ public class CCTSVerifier {
 //
 //
 //        if(inspectResult == CCTSStatusCode.ALLGREEN){
-//            // found correspond evnetlog with this path
-//            isValidPath = true;
+//            // found correspond evnetlog with this delivery
+//            isValidDelivery = true;
 //        }else {
 //            // not this eventlog
-//            isValidPath = false;
+//            isValidDelivery = false;
 //        }
-        // eventlog and path not match. add into errors map.
+        // eventlog and delivery not match. add into errors map.
 
-        // for this path only. if error occur, add once and leave loop.
+        // for this delivery only. if error occur, add once and leave loop.
     }
 
 
@@ -159,33 +158,33 @@ public class CCTSVerifier {
         }
     }
 
-    private CCTSStatusCode verifyPathAndContract(NextState path) {
-        // pull contract with path's provider & consumer
+    private CCTSStatusCode verifyDeliveryAndContract(NextState delivery) {
+        // pull contract with delivery's provider & consumer
         Contract contract = busyBox.getContractFromBroker(
-                path.getProvider(),
-                path.getConsumer()
+                delivery.getProvider(),
+                delivery.getConsumer()
         );
-        boolean isValidPath = false;
+        boolean isValidDelivery = false;
         for (String id : contract.getTestCaseIds()) {
-            if(path.getTestCaseId().equals(id)){
+            if(delivery.getTestCaseId().equals(id)){
                 // found
-                isValidPath = true;
+                isValidDelivery = true;
             }else {
                 // not this one
             }
         }
         // result
-        return isValidPath ? CCTSStatusCode.ALLGREEN : CCTSStatusCode.PATH_TESTCASE_NOT_FOUND_IN_CONTRACT;
+        return isValidDelivery ? CCTSStatusCode.ALLGREEN : CCTSStatusCode.DELIVERY_TESTCASE_NOT_FOUND_IN_CONTRACT;
     }
 
-    private CCTSStatusCode inspectPathAndEventLog(NextState path, EventLog el){
-        if (path.getProvider().equals(el.getProviderName())) {
+    private CCTSStatusCode inspectDeliveryAndEventLog(NextState delivery, EventLog el){
+        if (delivery.getProvider().equals(el.getProviderName())) {
             // provider match
-            if (path.getConsumer().equals(el.getConsumerName())) {
+            if (delivery.getConsumer().equals(el.getConsumerName())) {
                 // consumer match
-                if (path.getTestCaseId().equals(el.gettestCaseId())) {
+                if (delivery.getTestCaseId().equals(el.gettestCaseId())) {
                     // testCaseId match
-                    // all condition match -> path passed
+                    // all condition match -> delivery passed
                     return CCTSStatusCode.ALLGREEN;
                 } else {
                     // testsCaseId not Match
@@ -205,7 +204,7 @@ public class CCTSVerifier {
     private Map<String, CCTSStatusCode> validateServiceContractTestResult(CCTSDocument document){
         // get all participants
         HashSet<String> participantsServices = new HashSet<String>();
-        for (NextState state: documentParser.findPathList(document)) {
+        for (NextState state: documentParser.findDeliveryList(document)) {
             participantsServices.add(state.getProvider());
             participantsServices.add(state.getConsumer());
         }

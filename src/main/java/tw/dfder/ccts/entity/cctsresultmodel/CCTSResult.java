@@ -6,9 +6,11 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.cctsdocumentmodel.CCTSDocument;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @Document(collection = "CCTSResult")
 public class CCTSResult {
@@ -19,21 +21,22 @@ public class CCTSResult {
     private boolean testResult;
     @Field
     private final ArrayList<CCTSDocument> relatedDocuments ;
-    @Field
-    private ArrayList<ResultRecord> resultBetweenPathAndEventLogs;
 
-//    private Map<NextState, CCTSStatusCode> resultBetweenPathAndEventLogs;
+    // match result of delivery and eventlog
     @Field
-    private ArrayList<ResultRecord> resultBetweenPathAndContract;
-//    private Map<NextState, CCTSStatusCode> resultBetweenPathAndContract;
+    private ArrayList<CCTSResultRecord> resultBetweenDeliveryAndEventLogs;
+
+    // match result of delivery and it's contract from pact broker
+    @Field
+    private ArrayList<CCTSResultRecord> resultBetweenDeliveryAndContract;
 
     @Field
     private Map<String, CCTSStatusCode> contractVerificationErrors;
 
     public CCTSResult(ArrayList<CCTSDocument> relatedDocuments) {
         this.relatedDocuments = relatedDocuments;
-        this.resultBetweenPathAndEventLogs = new ArrayList<>();
-        this.resultBetweenPathAndContract = new ArrayList<>();
+        this.resultBetweenDeliveryAndEventLogs = new ArrayList<>();
+        this.resultBetweenDeliveryAndContract = new ArrayList<>();
         this.contractVerificationErrors = new Hashtable<>();
     }
 
@@ -70,27 +73,27 @@ public class CCTSResult {
 
         // passed
 
-        for (ResultRecord result: resultBetweenPathAndEventLogs) {
+        for (CCTSResultRecord result: resultBetweenDeliveryAndEventLogs) {
             if(result.getErrorCode() == CCTSStatusCode.ALLGREEN){
                 String msg = generateMessageEntity(
                         result.getDocumentTitle(),
-                        result.getPath().getStateName(),
-                        result.getPath().getProvider(),
-                        result.getPath().getConsumer(),
-                        result.getPath().getTestCaseId()
+                        result.getDelivery().getStateName(),
+                        result.getDelivery().getProvider(),
+                        result.getDelivery().getConsumer(),
+                        result.getDelivery().getTestCaseId()
                 );
                 outputMessage = outputMessage + msg;
             }
         }
 
-        for (ResultRecord result : resultBetweenPathAndContract) {
+        for (CCTSResultRecord result : resultBetweenDeliveryAndContract) {
             if(result.getErrorCode() == CCTSStatusCode.ALLGREEN){
                 String msg = generateMessageEntity(
                         result.getDocumentTitle(),
-                        result.getPath().getStateName(),
-                        result.getPath().getProvider(),
-                        result.getPath().getConsumer(),
-                        result.getPath().getTestCaseId()
+                        result.getDelivery().getStateName(),
+                        result.getDelivery().getProvider(),
+                        result.getDelivery().getConsumer(),
+                        result.getDelivery().getTestCaseId()
                 );
                 outputMessage = outputMessage + msg;
             }
@@ -99,28 +102,28 @@ public class CCTSResult {
 
         // errors
         outputMessage = outputMessage + "Errors:" + System.lineSeparator();
-        for (ResultRecord result : resultBetweenPathAndEventLogs) {
+        for (CCTSResultRecord result : resultBetweenDeliveryAndEventLogs) {
             if(result.getErrorCode() != CCTSStatusCode.ALLGREEN){
                 String msg = generateMessageEntity(
                         result.getDocumentTitle(),
-                        result.getPath().getStateName(),
-                        result.getPath().getProvider(),
-                        result.getPath().getConsumer(),
-                        result.getPath().getTestCaseId(),
+                        result.getDelivery().getStateName(),
+                        result.getDelivery().getProvider(),
+                        result.getDelivery().getConsumer(),
+                        result.getDelivery().getTestCaseId(),
                         result.getErrorCode().getInfoMessage()
                 );
                 outputMessage = outputMessage + msg;
             }
         }
 
-        for (ResultRecord result : resultBetweenPathAndContract) {
+        for (CCTSResultRecord result : resultBetweenDeliveryAndContract) {
             if(result.getErrorCode() != CCTSStatusCode.ALLGREEN){
                 String msg = generateMessageEntity(
                         result.getDocumentTitle(),
-                        result.getPath().getStateName(),
-                        result.getPath().getProvider(),
-                        result.getPath().getConsumer(),
-                        result.getPath().getTestCaseId(),
+                        result.getDelivery().getStateName(),
+                        result.getDelivery().getProvider(),
+                        result.getDelivery().getConsumer(),
+                        result.getDelivery().getTestCaseId(),
                         result.getErrorCode().getInfoMessage()
                 );
                 outputMessage = outputMessage + msg;
@@ -129,7 +132,6 @@ public class CCTSResult {
 
         return outputMessage;
     }
-
 
     private String generateMessageEntity(String document, String stateName, String provider, String consumer, String testCaseId){
         String msg =
@@ -163,20 +165,20 @@ public class CCTSResult {
         this.testResult = testResult;
     }
 
-    public ArrayList<ResultRecord> getResultBetweenPathAndEventLogs() {
-        return resultBetweenPathAndEventLogs;
+    public ArrayList<CCTSResultRecord> getResultBetweenDeliveryAndEventLogs() {
+        return resultBetweenDeliveryAndEventLogs;
     }
 
-    public void setResultBetweenPathAndEventLogs(ArrayList<ResultRecord> resultBetweenPathAndEventLogs) {
-        this.resultBetweenPathAndEventLogs = resultBetweenPathAndEventLogs;
+    public void setResultBetweenDeliveryAndEventLogs(ArrayList<CCTSResultRecord> resultBetweenDeliveryAndEventLogs) {
+        this.resultBetweenDeliveryAndEventLogs = resultBetweenDeliveryAndEventLogs;
     }
 
-    public ArrayList<ResultRecord> getResultBetweenPathAndContract() {
-        return resultBetweenPathAndContract;
+    public ArrayList<CCTSResultRecord> getResultBetweenDeliveryAndContract() {
+        return resultBetweenDeliveryAndContract;
     }
 
-    public void setResultBetweenPathAndContract(ArrayList<ResultRecord> resultBetweenPathAndContract) {
-        this.resultBetweenPathAndContract = resultBetweenPathAndContract;
+    public void setResultBetweenDeliveryAndContract(ArrayList<CCTSResultRecord> resultBetweenDeliveryAndContract) {
+        this.resultBetweenDeliveryAndContract = resultBetweenDeliveryAndContract;
     }
 
     public Map<String, CCTSStatusCode> getContractVerificationErrors() {
