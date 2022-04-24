@@ -164,10 +164,10 @@ public class CCTSResult {
                 msg = msg + "#### Document: " + documentName + System.lineSeparator();
                 ArrayList<CCTSResultRecord> resultRecords = aggregateMap.get(documentName);
                 for (CCTSResultRecord rr : resultRecords) {
-                    msg = msg + "+ stateName: " + rr.getDelivery().getStateName() + System.lineSeparator();
-                    msg = msg + "    + provider: " + rr.getDelivery().getProvider() + System.lineSeparator();
-                    msg = msg + "    + consumer: " + rr.getDelivery().getConsumer() + System.lineSeparator();
-                    msg = msg + "    + testCaseId: " + rr.getDelivery().getTestCaseId() + System.lineSeparator();
+                    msg = msg + "+ State Name: " + rr.getDelivery().getStateName() + System.lineSeparator();
+                    msg = msg + "    + Provider: " + rr.getDelivery().getProvider() + System.lineSeparator();
+                    msg = msg + "    + Consumer: " + rr.getDelivery().getConsumer() + System.lineSeparator();
+                    msg = msg + "    + TestCaseId: " + rr.getDelivery().getTestCaseId() + System.lineSeparator();
                 }
             }
 
@@ -177,11 +177,11 @@ public class CCTSResult {
                 msg = msg + "#### Document: " + documentName + System.lineSeparator();
                 ArrayList<CCTSResultRecord> resultRecords = aggregateMap.get(documentName);
                 for (CCTSResultRecord rr : resultRecords) {
-                    msg = msg + "+ stateName: " + rr.getDelivery().getStateName() + System.lineSeparator();
-                    msg = msg + "    + provider: " + rr.getDelivery().getProvider() + System.lineSeparator();
-                    msg = msg + "    + consumer: " + rr.getDelivery().getConsumer() + System.lineSeparator();
-                    msg = msg + "    + testCaseId: " + rr.getDelivery().getTestCaseId() + System.lineSeparator();
-                    msg = msg + "    + failure message: " + rr.getErrorCode().getInfoMessage() + System.lineSeparator();
+                    msg = msg + "+ State Name: " + rr.getDelivery().getStateName() + System.lineSeparator();
+                    msg = msg + "    + Provider: " + rr.getDelivery().getProvider() + System.lineSeparator();
+                    msg = msg + "    + Consumer: " + rr.getDelivery().getConsumer() + System.lineSeparator();
+                    msg = msg + "    + TestCaseId: " + rr.getDelivery().getTestCaseId() + System.lineSeparator();
+                    msg = msg + "    + Failure message: " + rr.getErrorCode().getInfoMessage() + System.lineSeparator();
                 }
             }
         }
