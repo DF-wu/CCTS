@@ -24,10 +24,6 @@ public class SystemStarter {
 
 
     public void systemInit(){
-        // clean ccts db
-        cleaner.cleanCCTSProfileDB();
-        parser.parseAllCCTSProfilesAndSave2DB();
-        isSystemReady = true;
 
         System.out.println(" .oooooo..o                          .                                    ooooooooo.                             .o8              .o. \n" +
                 "d8P'    `Y8                        .o8                                    `888   `Y88.                          \"888              888 \n" +
@@ -39,9 +35,15 @@ public class SystemStarter {
                 "            .o..P'                                                                                                    .o..P'          \n" +
                 "            `Y8P'                                                                                                     `Y8P'           \n" +
                 "                                                                                                                                      ");
+        isSystemReady = true;
     }
 
     public CCTSResult startCCTSTest(){
+        // clean ccts db
+        cleaner.cleanCCTSProfileDB();
+        parser.parseAllCCTSProfilesAndSave2DB();
+
+
         if(isSystemReady){
             return verifier.verifyCCTSProfileSAGAFlow();
         }else{
