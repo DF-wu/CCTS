@@ -74,7 +74,7 @@ public class CCTSVerifier {
             }
 
             // check contract verification status
-            cctsResult.getContractVerificationErrors().putAll(validateServiceContractTestResult(document));
+            cctsResult.getContractVerificationResults().putAll(validateServiceContractTestResult(document));
 
         }
 
@@ -209,19 +209,20 @@ public class CCTSVerifier {
             participantsServices.add(state.getConsumer());
         }
 
-        // create an errors Dict
-        HashMap<String,  CCTSStatusCode> errors = new HashMap<String, CCTSStatusCode>();
+        // create an results Dict
+        HashMap<String,  CCTSStatusCode> results = new HashMap<String, CCTSStatusCode>();
         HashMap<String, Boolean> contractTestresults = fetchContractTestResultConcurrently(participantsServices);
         for (String service: contractTestresults.keySet()) {
             if(contractTestresults.get(service)){
                 //true = pass
+                results.put(service, CCTSStatusCode.ALLGREEN);
             }else{
                 // false = error
-                errors.put(service, CCTSStatusCode.CONTREACT_TEST_RESULT_NOT_PASS);
+                results.put(service, CCTSStatusCode.CONTREACT_TEST_RESULT_NOT_PASS);
             }
         }
 
-        return errors;
+        return results;
     }
 
     private Boolean pactCLIProcessInvocker(String participant){

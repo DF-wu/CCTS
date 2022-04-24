@@ -30,13 +30,13 @@ public class CCTSResult {
     private ArrayList<CCTSResultRecord> resultBetweenDeliveryAndContract;
 
     @Field
-    private Map<String, CCTSStatusCode> contractVerificationErrors;
+    private Map<String, CCTSStatusCode> contractVerificationResults;
 
     public CCTSResult(ArrayList<CCTSDocument> relatedDocuments) {
         this.relatedDocuments = relatedDocuments;
         this.resultBetweenDeliveryAndEventLogs = new ArrayList<>();
         this.resultBetweenDeliveryAndContract = new ArrayList<>();
-        this.contractVerificationErrors = new Hashtable<>();
+        this.contractVerificationResults = new Hashtable<>();
     }
 
 
@@ -52,22 +52,26 @@ public class CCTSResult {
         [TOC]
         ## Test Results
         ### Pass
-        #### $Document name
+        #### Document: $
         + stateName: $
             + provider: $
-            + consumer:
-            + testCaseId:
+            + consumer: $
+            + testCaseId: $
+
         #### Contract Verification
         + service:
-
+        ...
         ### Failure
-        #### $Document name
+        #### Document: $
         + stateName: $
             + provider: $
-            + consumer:
-            + testCaseId:
-            + failure reason:
+            + consumer: $
+            + testCaseId: $
+            + failure reason: $
+
         #### Contract Verification
+
+
         + Service:
      */
     public String checkOutReportMessageMD(){
@@ -94,15 +98,45 @@ public class CCTSResult {
         outputMessage = outputMessage + "[TOC]" + System.lineSeparator();
         outputMessage = outputMessage + "## Test Result" + System.lineSeparator();
         outputMessage = outputMessage + "### Pass" + System.lineSeparator();
-        outputMessage = generateResultPassedEntityMD(outputMessage, true);
+        outputMessage = generateResultEntityMD(outputMessage, true);
+        outputMessage = outputMessage + "#### Contract Verification" + System.lineSeparator();
+        outputMessage = generateContractVerificationResultEntityMD(outputMessage, true);
+
         outputMessage = outputMessage + "### Failure" + System.lineSeparator();
-        outputMessage = generateResultPassedEntityMD(outputMessage, false);
+        outputMessage = generateResultEntityMD(outputMessage, false);
+        outputMessage = generateContractVerificationResultEntityMD(outputMessage, true);
+
 
         return outputMessage;
     }
 
 
+
     // collect documented result map .
+
+
+    private String generateContractVerificationResultEntityMD(String outputMessage, boolean isPass){
+        String resultMessage = outputMessage;
+        if(isPass){
+            resultMessage = resultMessage + "#### Contract Verification" + System.lineSeparator();
+            for (String service  : contractVerificationResults.keySet()) {
+                if(contractVerificationResults.get(service).equals(CCTSStatusCode.ALLGREEN) ){
+                    resultMessage = resultMessage + "+"+ service + " | " + contractVerificationResults.get(service) + System.lineSeparator();
+                }
+            }
+            return resultMessage;
+        }
+        else{
+            resultMessage = resultMessage + "#### Contract Verification" + System.lineSeparator();
+            for (String service  : contractVerificationResults.keySet()) {
+                if(!contractVerificationResults.get(service).equals(CCTSStatusCode.ALLGREEN) ){
+                    resultMessage = resultMessage + "+"+ service + " | " + contractVerificationResults.get(service) + System.lineSeparator();
+                }
+            }
+            return resultMessage;
+        }
+    }
+
     private HashMap<String, ArrayList<CCTSResultRecord>> documentedResultsTogether(ArrayList<CCTSResultRecord> records1, ArrayList<CCTSResultRecord> records2 ){
         HashMap<String, ArrayList<CCTSResultRecord>> documentedResults = new HashMap<>();
         // collect documents name set
@@ -122,15 +156,13 @@ public class CCTSResult {
         return documentedResults;
     }
 
-
-
-    private String generateResultPassedEntityMD(String msg, boolean isPassed) {
+    private String generateResultEntityMD(String msg, boolean isPassed) {
+        HashMap<String, ArrayList<CCTSResultRecord>> aggregateMap = documentedResultsTogether(resultBetweenDeliveryAndContract, resultBetweenDeliveryAndEventLogs);
         if(isPassed){
             //passed entity
-            HashMap<String, ArrayList<CCTSResultRecord>> resultMap = documentedResultsTogether(resultBetweenDeliveryAndContract, resultBetweenDeliveryAndEventLogs);
-            for (String documentName : resultMap.keySet()) {
-                msg = msg + "#### " + documentName + System.lineSeparator();
-                ArrayList<CCTSResultRecord> resultRecords = resultMap.get(documentName);
+            for (String documentName : aggregateMap.keySet()) {
+                msg = msg + "#### Document: " + documentName + System.lineSeparator();
+                ArrayList<CCTSResultRecord> resultRecords = aggregateMap.get(documentName);
                 for (CCTSResultRecord rr : resultRecords) {
                     msg = msg + "+ stateName: " + rr.getDelivery().getStateName() + System.lineSeparator();
                     msg = msg + "    + provider: " + rr.getDelivery().getProvider() + System.lineSeparator();
@@ -138,13 +170,12 @@ public class CCTSResult {
                     msg = msg + "    + testCaseId: " + rr.getDelivery().getTestCaseId() + System.lineSeparator();
                 }
             }
-            return msg;
+
         }else {
             //failed entity
-            HashMap<String, ArrayList<CCTSResultRecord>> resultMap = documentedResultsTogether(resultBetweenDeliveryAndContract, resultBetweenDeliveryAndEventLogs);
-            for (String documentName : resultMap.keySet()) {
-                msg = msg + "#### " + documentName + System.lineSeparator();
-                ArrayList<CCTSResultRecord> resultRecords = resultMap.get(documentName);
+            for (String documentName : aggregateMap.keySet()) {
+                msg = msg + "#### Document: " + documentName + System.lineSeparator();
+                ArrayList<CCTSResultRecord> resultRecords = aggregateMap.get(documentName);
                 for (CCTSResultRecord rr : resultRecords) {
                     msg = msg + "+ stateName: " + rr.getDelivery().getStateName() + System.lineSeparator();
                     msg = msg + "    + provider: " + rr.getDelivery().getProvider() + System.lineSeparator();
@@ -153,8 +184,8 @@ public class CCTSResult {
                     msg = msg + "    + failure message: " + rr.getErrorCode().getInfoMessage() + System.lineSeparator();
                 }
             }
-            return msg;
         }
+        return msg;
 
     }
 
@@ -299,11 +330,11 @@ public class CCTSResult {
         this.resultBetweenDeliveryAndContract = resultBetweenDeliveryAndContract;
     }
 
-    public Map<String, CCTSStatusCode> getContractVerificationErrors() {
-        return contractVerificationErrors;
+    public Map<String, CCTSStatusCode> getContractVerificationResults() {
+        return contractVerificationResults;
     }
 
-    public void setContractVerificationErrors(Map<String, CCTSStatusCode> contractVerificationErrors) {
-        this.contractVerificationErrors = contractVerificationErrors;
+    public void setContractVerificationResults(Map<String, CCTSStatusCode> contractVerificationResults) {
+        this.contractVerificationResults = contractVerificationResults;
     }
 }
