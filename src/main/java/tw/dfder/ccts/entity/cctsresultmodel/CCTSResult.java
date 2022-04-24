@@ -90,21 +90,20 @@ public class CCTSResult {
 
         String outputMessage = "";
         outputMessage = "# CCTS Test Report" + System.lineSeparator();
+        // based on hackmd syntax
+        outputMessage = outputMessage + "[TOC]" + System.lineSeparator();
         outputMessage = outputMessage +"## Information" + System.lineSeparator();
         outputMessage = outputMessage + "+ Test Time: " + LocalDate.now() + System.lineSeparator();
         outputMessage = outputMessage + "+ Pass number: " + passed.size() + System.lineSeparator();
         outputMessage = outputMessage + "+ Failure number: " + failed.size() + System.lineSeparator();
-        // based on hackmd syntax
-        outputMessage = outputMessage + "[TOC]" + System.lineSeparator();
         outputMessage = outputMessage + "## Test Result" + System.lineSeparator();
         outputMessage = outputMessage + "### Pass" + System.lineSeparator();
         outputMessage = generateResultEntityMD(outputMessage, true);
-        outputMessage = outputMessage + "#### Contract Verification" + System.lineSeparator();
         outputMessage = generateContractVerificationResultEntityMD(outputMessage, true);
 
         outputMessage = outputMessage + "### Failure" + System.lineSeparator();
         outputMessage = generateResultEntityMD(outputMessage, false);
-        outputMessage = generateContractVerificationResultEntityMD(outputMessage, true);
+        outputMessage = generateContractVerificationResultEntityMD(outputMessage, false);
 
 
         return outputMessage;
