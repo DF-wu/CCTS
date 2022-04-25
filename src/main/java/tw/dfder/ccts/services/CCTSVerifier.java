@@ -133,7 +133,7 @@ public class CCTSVerifier {
             System.out.println("Not Pass Contract Test Services:");
             for (String service :errors.keySet()) {
                 System.out.println("  Service: " + service);
-                System.out.println("  Error Message: " + errors.get(service).getInfoMessage());
+                System.out.println("  Error Message: " + errors.get(service).getMessage());
             }
             return false;
         }else{
@@ -148,7 +148,7 @@ public class CCTSVerifier {
             System.out.println("Error occurred!!!");
             System.out.println("List below:");
             for (NextState state  : errors.keySet()){
-                System.out.println("Error message: " + errors.get(state).getInfoMessage());
+                System.out.println("Error message: " + errors.get(state).getMessage());
                 System.out.println(state.toPrretyString());
             }
             return false;
@@ -175,7 +175,7 @@ public class CCTSVerifier {
             }
         }
         // result
-        return isValidDelivery ? CCTSStatusCode.ALLGREEN : CCTSStatusCode.DELIVERY_TESTCASE_NOT_FOUND_IN_CONTRACT;
+        return isValidDelivery ? CCTSStatusCode.ALLGREEN : CCTSStatusCode.DELIVERY_TESTCASEID_NOT_FOUND_IN_CONTRACT;
     }
 
     private CCTSStatusCode inspectDeliveryAndEventLog(NextState delivery, EventLog el){
