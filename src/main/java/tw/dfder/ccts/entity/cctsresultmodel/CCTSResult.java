@@ -7,6 +7,7 @@ import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.cctsdocumentmodel.CCTSDocument;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -130,11 +131,11 @@ public class CCTSResult {
         return resultMessage;
     }
 
-    private HashMap<String, ArrayList<CCTSResultRecord>> documentedResultsTogether(ArrayList<CCTSResultRecord> records1, ArrayList<CCTSResultRecord> records2 ){
+    private HashMap<String, ArrayList<CCTSResultRecord>> documentedResultsTogether(ArrayList<CCTSResultRecord> records ){
         HashMap<String, ArrayList<CCTSResultRecord>> documentedResults = new HashMap<>();
         // collect documents name set
         HashSet<String> documentNameSet = new HashSet<>();
-        for (CCTSResultRecord rr : Stream.concat(records1.stream(), records2.stream()).collect(Collectors.toList())) {
+        for (CCTSResultRecord rr : records) {
             documentNameSet.add(rr.getDocumentTitle());
         }
         // add entity to map
@@ -142,18 +143,18 @@ public class CCTSResult {
             documentedResults.put(document, new ArrayList<>());
         }
         // same document name with ResultRecords
-        for (CCTSResultRecord rr : Stream.concat(records1.stream(), records2.stream()).collect(Collectors.toList())) {
+        for (CCTSResultRecord rr : records) {
             documentedResults.get(rr.getDocumentTitle()).add(rr);
         }
 
         return documentedResults;
     }
 
-    private String generateResultEntityMD(String msg, ArrayList<?> list, boolean isPassed) {
-        HashMap<String, ArrayList<CCTSResultRecord>> aggregateMap = documentedResultsTogether(resultBetweenDeliveryAndContract, resultBetweenDeliveryAndEventLogs);
-        for (String documentName : aggregateMap.keySet()) {
+    private String generateResultEntityMD(String msg, ArrayList<CCTSResultRecord> list, boolean isPassed) {
+        HashMap<String, ArrayList<CCTSResultRecord>> documentedResultRecordMap = documentedResultsTogether(list);
+        for (String documentName : documentedResultRecordMap.keySet()) {
             msg = msg + "#### Document: " + documentName + System.lineSeparator();
-            ArrayList<CCTSResultRecord> resultRecords = aggregateMap.get(documentName);
+            ArrayList<CCTSResultRecord> resultRecords = documentedResultRecordMap.get(documentName);
             for (CCTSResultRecord rr : resultRecords) {
                 msg = msg + "+ State Name: " + rr.getDelivery().getStateName() + System.lineSeparator();
                 msg = msg + "    + Provider: " + rr.getDelivery().getProvider() + System.lineSeparator();
