@@ -7,16 +7,16 @@ public enum CCTSStatusCode {
 
     ERROR_NO_MATCH_TESTCASEID_IN_EVENTLOGS("There is no correspond testCaseId for this delivery."),
     ERROR_NO_EVENT_FOUND("There is no event between the provider and consumer"),
-    DELIVERY_TESTCASE_NOT_FOUND_IN_CONTRACT("the testCaseId is not found in contract"),
+    DELIVERY_TESTCASEID_NOT_FOUND_IN_CONTRACT("the testCaseId is not found in contract"),
     CONTREACT_TEST_RESULT_NOT_PASS("The service's contract test hasn't done fully");
-    private final String infoMessage;
+    private final String message;
 
-    CCTSStatusCode(String infoMessage) {
-        this.infoMessage = infoMessage;
+    CCTSStatusCode(String message) {
+        this.message = message;
     }
 
 
-    public String getInfoMessage() {
-        return infoMessage;
+    public String getMessage() {
+        return message;
     }
 }
