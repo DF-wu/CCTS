@@ -98,16 +98,13 @@ public class CCTSResult {
         outputMessage = outputMessage + "+ Failure number: " + failedList.size() + System.lineSeparator();
         outputMessage = outputMessage + "## Test Result" + System.lineSeparator();
         outputMessage = outputMessage + "### Pass" + System.lineSeparator();
-        outputMessage = generateResultEntityMD(outputMessage, true);
-
-
+        outputMessage = generateResultEntityMD(outputMessage, passedList, true);
         outputMessage = outputMessage + "### Failure" + System.lineSeparator();
-        outputMessage = generateResultEntityMD(outputMessage, false);
-        outputMessage = generateContractVerificationResultEntityMD(outputMessage, false);
-
+        outputMessage = generateResultEntityMD(outputMessage, failedList, false);
 
         return outputMessage;
     }
+
 
 
 
@@ -149,38 +146,24 @@ public class CCTSResult {
         return documentedResults;
     }
 
-    private String generateResultEntityMD(String msg, boolean isPassed) {
+    private String generateResultEntityMD(String msg, ArrayList<?> list, boolean isPassed) {
         HashMap<String, ArrayList<CCTSResultRecord>> aggregateMap = documentedResultsTogether(resultBetweenDeliveryAndContract, resultBetweenDeliveryAndEventLogs);
-        if(isPassed){
-            //passed entity
-            for (String documentName : aggregateMap.keySet()) {
-                msg = msg + "#### Document: " + documentName + System.lineSeparator();
-                ArrayList<CCTSResultRecord> resultRecords = aggregateMap.get(documentName);
-                for (CCTSResultRecord rr : resultRecords) {
-                    msg = msg + "+ State Name: " + rr.getDelivery().getStateName() + System.lineSeparator();
-                    msg = msg + "    + Provider: " + rr.getDelivery().getProvider() + System.lineSeparator();
-                    msg = msg + "    + Consumer: " + rr.getDelivery().getConsumer() + System.lineSeparator();
-                    msg = msg + "    + TestCaseId: " + rr.getDelivery().getTestCaseId() + System.lineSeparator();
-                }
-            }
-
-        }else {
-            //failed entity
-            for (String documentName : aggregateMap.keySet()) {
-                msg = msg + "#### Document: " + documentName + System.lineSeparator();
-                ArrayList<CCTSResultRecord> resultRecords = aggregateMap.get(documentName);
-                for (CCTSResultRecord rr : resultRecords) {
-                    msg = msg + "+ State Name: " + rr.getDelivery().getStateName() + System.lineSeparator();
-                    msg = msg + "    + Provider: " + rr.getDelivery().getProvider() + System.lineSeparator();
-                    msg = msg + "    + Consumer: " + rr.getDelivery().getConsumer() + System.lineSeparator();
-                    msg = msg + "    + TestCaseId: " + rr.getDelivery().getTestCaseId() + System.lineSeparator();
+        for (String documentName : aggregateMap.keySet()) {
+            msg = msg + "#### Document: " + documentName + System.lineSeparator();
+            ArrayList<CCTSResultRecord> resultRecords = aggregateMap.get(documentName);
+            for (CCTSResultRecord rr : resultRecords) {
+                msg = msg + "+ State Name: " + rr.getDelivery().getStateName() + System.lineSeparator();
+                msg = msg + "    + Provider: " + rr.getDelivery().getProvider() + System.lineSeparator();
+                msg = msg + "    + Consumer: " + rr.getDelivery().getConsumer() + System.lineSeparator();
+                msg = msg + "    + TestCaseId: " + rr.getDelivery().getTestCaseId() + System.lineSeparator();
+                if(isPassed){
                     msg = msg + "    + Failure message: " + rr.getErrorCode().getMessage() + System.lineSeparator();
+
                 }
             }
         }
         msg = generateContractVerificationResultEntityMD(msg, isPassed);
         return msg;
-
     }
 
 
