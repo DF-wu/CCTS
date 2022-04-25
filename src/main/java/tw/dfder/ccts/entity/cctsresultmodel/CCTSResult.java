@@ -104,6 +104,7 @@ public class CCTSResult {
         outputMessage = outputMessage + "## Test Result" + System.lineSeparator();
         outputMessage = outputMessage + "### Pass" + System.lineSeparator();
         outputMessage = generateResultEntityMD(outputMessage, passedList, true);
+        outputMessage = outputMessage + "---" + System.lineSeparator();
         outputMessage = outputMessage + "### Failure" + System.lineSeparator();
         outputMessage = generateResultEntityMD(outputMessage, failedList, false);
 
