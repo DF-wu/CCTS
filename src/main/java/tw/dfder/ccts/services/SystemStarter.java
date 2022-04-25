@@ -25,7 +25,8 @@ public class SystemStarter {
 
     public void systemInit(){
 
-        System.out.println(" .oooooo..o                          .                                    ooooooooo.                             .o8              .o. \n" +
+        System.out.println(
+                " .oooooo..o                          .                                    ooooooooo.                             .o8              .o. \n" +
                 "d8P'    `Y8                        .o8                                    `888   `Y88.                          \"888              888 \n" +
                 "Y88bo.      oooo    ooo  .oooo.o .o888oo  .ooooo.  ooo. .oo.  .oo.         888   .d88'  .ooooo.   .oooo.    .oooo888  oooo    ooo 888 \n" +
                 " `\"Y8888o.   `88.  .8'  d88(  \"8   888   d88' `88b `888P\"Y88bP\"Y88b        888ooo88P'  d88' `88b `P  )88b  d88' `888   `88.  .8'  Y8P \n" +
