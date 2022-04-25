@@ -99,7 +99,7 @@ public class CCTSResult {
         outputMessage = outputMessage + "## Test Result" + System.lineSeparator();
         outputMessage = outputMessage + "### Pass" + System.lineSeparator();
         outputMessage = generateResultEntityMD(outputMessage, true);
-        outputMessage = generateContractVerificationResultEntityMD(outputMessage, true);
+
 
         outputMessage = outputMessage + "### Failure" + System.lineSeparator();
         outputMessage = generateResultEntityMD(outputMessage, false);
@@ -120,7 +120,7 @@ public class CCTSResult {
             resultMessage = resultMessage + "#### Contract Verification" + System.lineSeparator();
             for (String service  : contractVerificationResults.keySet()) {
                 if(contractVerificationResults.get(service).equals(CCTSStatusCode.ALLGREEN) ){
-                    resultMessage = resultMessage + "+"+ service + " | " + contractVerificationResults.get(service) + System.lineSeparator();
+                    resultMessage = resultMessage + "+ "+ service + ": " + contractVerificationResults.get(service) + System.lineSeparator();
                 }
             }
             return resultMessage;
@@ -129,7 +129,7 @@ public class CCTSResult {
             resultMessage = resultMessage + "#### Contract Verification" + System.lineSeparator();
             for (String service  : contractVerificationResults.keySet()) {
                 if(!contractVerificationResults.get(service).equals(CCTSStatusCode.ALLGREEN) ){
-                    resultMessage = resultMessage + "+"+ service + " | " + contractVerificationResults.get(service) + System.lineSeparator();
+                    resultMessage = resultMessage + "+ "+ service + ": " + contractVerificationResults.get(service) + System.lineSeparator();
                 }
             }
             return resultMessage;
@@ -180,10 +180,11 @@ public class CCTSResult {
                     msg = msg + "    + Provider: " + rr.getDelivery().getProvider() + System.lineSeparator();
                     msg = msg + "    + Consumer: " + rr.getDelivery().getConsumer() + System.lineSeparator();
                     msg = msg + "    + TestCaseId: " + rr.getDelivery().getTestCaseId() + System.lineSeparator();
-                    msg = msg + "    + Failure message: " + rr.getErrorCode().getInfoMessage() + System.lineSeparator();
+                    msg = msg + "    + Failure message: " + rr.getErrorCode().getMessage() + System.lineSeparator();
                 }
             }
         }
+        msg = generateContractVerificationResultEntityMD(msg, isPassed);
         return msg;
 
     }
@@ -258,7 +259,7 @@ public class CCTSResult {
                         result.getDelivery().getProvider(),
                         result.getDelivery().getConsumer(),
                         result.getDelivery().getTestCaseId(),
-                        result.getErrorCode().getInfoMessage()
+                        result.getErrorCode().getMessage()
                 );
                 outputMessage = outputMessage + msg;
             }
@@ -272,7 +273,7 @@ public class CCTSResult {
                         result.getDelivery().getProvider(),
                         result.getDelivery().getConsumer(),
                         result.getDelivery().getTestCaseId(),
-                        result.getErrorCode().getInfoMessage()
+                        result.getErrorCode().getMessage()
                 );
                 outputMessage = outputMessage + msg;
             }
