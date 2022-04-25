@@ -78,7 +78,7 @@ public class CCTSResult {
         ArrayList<CCTSResultRecord> passed = new ArrayList<>();
         ArrayList<CCTSResultRecord> failed = new ArrayList<>();
 
-        for(CCTSResultRecord n : Stream.concat(resultBetweenDeliveryAndContract.stream(), resultBetweenDeliveryAndContract.stream())
+        for(CCTSResultRecord n : Stream.concat(resultBetweenDeliveryAndEventLogs.stream(), resultBetweenDeliveryAndContract.stream())
                 .collect(Collectors.toList())
         ){
             if(n.getErrorCode().equals(CCTSStatusCode.ALLGREEN)){
