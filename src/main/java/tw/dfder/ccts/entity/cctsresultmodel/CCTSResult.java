@@ -75,16 +75,16 @@ public class CCTSResult {
         + Service:
      */
     public String checkOutReportMessageMD(){
-        ArrayList<CCTSResultRecord> passed = new ArrayList<>();
-        ArrayList<CCTSResultRecord> failed = new ArrayList<>();
+        ArrayList<CCTSResultRecord> passedList = new ArrayList<>();
+        ArrayList<CCTSResultRecord> failedList = new ArrayList<>();
 
         for(CCTSResultRecord n : Stream.concat(resultBetweenDeliveryAndEventLogs.stream(), resultBetweenDeliveryAndContract.stream())
                 .collect(Collectors.toList())
         ){
             if(n.getErrorCode().equals(CCTSStatusCode.ALLGREEN)){
-                passed.add(n);
+                passedList.add(n);
             }else {
-                failed.add(n);
+                failedList.add(n);
             }
         }
 
@@ -94,8 +94,8 @@ public class CCTSResult {
         outputMessage = outputMessage + "[TOC]" + System.lineSeparator();
         outputMessage = outputMessage +"## Information" + System.lineSeparator();
         outputMessage = outputMessage + "+ Test Time: " + LocalDate.now() + System.lineSeparator();
-        outputMessage = outputMessage + "+ Pass number: " + passed.size() + System.lineSeparator();
-        outputMessage = outputMessage + "+ Failure number: " + failed.size() + System.lineSeparator();
+        outputMessage = outputMessage + "+ Pass number: " + passedList.size() + System.lineSeparator();
+        outputMessage = outputMessage + "+ Failure number: " + failedList.size() + System.lineSeparator();
         outputMessage = outputMessage + "## Test Result" + System.lineSeparator();
         outputMessage = outputMessage + "### Pass" + System.lineSeparator();
         outputMessage = generateResultEntityMD(outputMessage, true);
