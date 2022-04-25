@@ -65,7 +65,7 @@ public class CCTSVerifier {
 
                 // verify delivery and eventlogs and get error code if exist
                 // add errors to result
-                cctsResult.getResultBetweenDeliveryAndContract().add(
+                cctsResult.getResultBetweenDeliveryAndEventLogs().add(
                         verifyDeliveryAndEventlog(delivery, sameRouteEventlogs, document.getTitle()));
 
                 // match delivery and corresponded contract testCaseId witch is from pact broker
@@ -102,6 +102,7 @@ public class CCTSVerifier {
                 return record;
             }
         }
+        // if no one valid eventlog found.
         return new CCTSResultRecord(documentName, delivery, CCTSStatusCode.ERROR_NO_MATCH_TESTCASEID_IN_EVENTLOGS);
 
 
