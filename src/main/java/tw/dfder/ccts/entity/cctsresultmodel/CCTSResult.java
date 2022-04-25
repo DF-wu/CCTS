@@ -94,7 +94,10 @@ public class CCTSResult {
         outputMessage = outputMessage + "[TOC]" + System.lineSeparator();
         outputMessage = outputMessage +"## Information" + System.lineSeparator();
         outputMessage = outputMessage + "+ Test Time: " + LocalDate.now() + System.lineSeparator();
-        outputMessage = outputMessage + "+ Pass number: " + passedList.size() + System.lineSeparator();
+        outputMessage = outputMessage + "+ Test Time: " + LocalDate
+                .now()
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                + System.lineSeparator();
         outputMessage = outputMessage + "+ Failure number: " + failedList.size() + System.lineSeparator();
         outputMessage = outputMessage + "## Test Result" + System.lineSeparator();
         outputMessage = outputMessage + "### Pass" + System.lineSeparator();
