@@ -112,28 +112,22 @@ public class CCTSResult {
 
 
     // collect documented result map .
-
-
-    private String generateContractVerificationResultEntityMD(String outputMessage, boolean isPass){
+    private String generateContractVerificationResultEntityMD(String outputMessage, boolean isPassed){
         String resultMessage = outputMessage;
-        if(isPass){
-            resultMessage = resultMessage + "#### Contract Verification" + System.lineSeparator();
-            for (String service  : contractVerificationResults.keySet()) {
+        resultMessage = resultMessage + "#### Contract Verification" + System.lineSeparator();
+        for (String service  : contractVerificationResults.keySet()) {
+            if(isPassed){
                 if(contractVerificationResults.get(service).equals(CCTSStatusCode.ALLGREEN) ){
-                    resultMessage = resultMessage + "+ "+ service + ": " + contractVerificationResults.get(service) + System.lineSeparator();
+                    resultMessage = resultMessage + "+ "+ service + System.lineSeparator();
                 }
-            }
-            return resultMessage;
-        }
-        else{
-            resultMessage = resultMessage + "#### Contract Verification" + System.lineSeparator();
-            for (String service  : contractVerificationResults.keySet()) {
+            }else {
                 if(!contractVerificationResults.get(service).equals(CCTSStatusCode.ALLGREEN) ){
                     resultMessage = resultMessage + "+ "+ service + ": " + contractVerificationResults.get(service) + System.lineSeparator();
                 }
             }
-            return resultMessage;
         }
+
+        return resultMessage;
     }
 
     private HashMap<String, ArrayList<CCTSResultRecord>> documentedResultsTogether(ArrayList<CCTSResultRecord> records1, ArrayList<CCTSResultRecord> records2 ){
