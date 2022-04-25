@@ -161,7 +161,8 @@ public class CCTSResult {
                 msg = msg + "    + Provider: " + rr.getDelivery().getProvider() + System.lineSeparator();
                 msg = msg + "    + Consumer: " + rr.getDelivery().getConsumer() + System.lineSeparator();
                 msg = msg + "    + TestCaseId: " + rr.getDelivery().getTestCaseId() + System.lineSeparator();
-                if(isPassed){
+                if(!isPassed){
+                    // if failed, show the error message
                     msg = msg + "    + Failure message: " + rr.getErrorCode().getMessage() + System.lineSeparator();
 
                 }
