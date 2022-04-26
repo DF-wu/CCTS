@@ -3,12 +3,14 @@ package tw.dfder.ccts.entity.cctsdocumentmodel;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @Document(collection = "CCTSDocuments")
 public class CCTSDocument {
     private String CCTSversion;
     private String title;
+    private ArrayList<String> caseSequences;
     private String startAt;
     private HashMap<String, SimpleState> states;
 
@@ -49,5 +51,13 @@ public class CCTSDocument {
 
     public void setStates(HashMap<String, SimpleState> states) {
         this.states = states;
+    }
+
+    public ArrayList<String> getCaseSequences() {
+        return caseSequences;
+    }
+
+    public void setCaseSequences(ArrayList<String> caseSequences) {
+        this.caseSequences = caseSequences;
     }
 }
