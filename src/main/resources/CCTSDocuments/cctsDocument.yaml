@@ -1,110 +1,126 @@
-CCTSversion: "0.7"
+CCTSversion: "0.9"
 title: CCTS saga test case1
+caseSequence:
+  - 1,2,6,9,8
+  - 1,5,6,9,10
 startAt: Create top-up event
 states:
   Create top-up event:
     comment: initial state
-    end: False
+    isEnd: False
     nextState:
       stateName: payment process
+      timeSequenceLable: 1
       testCaseId: t-orc-payment-01
       provider: orchestrator
       consumer: paymentService
   Payment process:
     comment: make payment
-    end: False
+    isEnd: False
     options:
       Prepare update point:
         stateName: Prepare update point
+        timeSequenceLable: 2
         testCaseId: t-payment-orc-01
         provider: paymentService
         consumer: orchestrator
       Payment Fail:
         stateName: Payment Fail
-        testCaseId: poc-03
+        timeSequenceLable: 7
+        testCaseId: t-payment-orc-02
         provider: paymentService
         consumer: orchestrator
   Payment Fail:
     comment: do payment fail compensation
-    end: False
+    isEnd: False
     nextState:
-      testCaseId: poc-04
       stateName: Payment reversed
+      timeSequenceLable: 8
+      testCaseId: t-orc-payment-02
       provider: orchestrator
       consumer: paymentService
   Payment reversed:
     comment: reverse Payment
-    end: False
+    isEnd: False
     nextState:
-      testCaseId: poc-05
       stateName: Top-up cancel
+      timeSequenceLable: 13
+      testCaseId: t-payment-orc-04
       provider: paymentService
       consumer: orchestrator
   Prepare update point:
     comment: orchestrator received response from payment and ready to send update point request to Point service
-    end: False
+    isEnd: False
     nextState:
-      testCaseId: t-orc-point-01
       stateName: Update point
+      timeSequenceLable: 3
+      testCaseId: t-orc-point-01
       provider: orchestrator
       consumer: pointService
   Upate point:
     comment: do update point
-    end: False
+    isEnd: False
     options:
       Prepare log:
         stateName: Prepare log
+        timeSequenceLable: 4
         testCaseId: t-point-orc-01
         provider: pointService
         consumer: orchestrator
       Update point Fail:
         stateName: Update point Fail
-        testCaseId: poc-08
+        timeSequenceLable: 9
+        testCaseId: t-point-orc-02
         provider: pointService
         consumer: orchestrator
   Update point Fail:
     comment: revert points
-    end: False
+    isEnd: False
     nextState:
-      testCaseId: poc-08
       stateName: Revert point
+      timeSequenceLable: 10
+      testCaseId: t-orc-point-02
       provider: orchestrator
       consumer: pointService
   Revert point:
     comment: revert points
-    end: False
+    isEnd: False
     nextState:
-      testCaseId: poc-09
       stateName: Prepare reverse payment
+      timeSequenceLable: 11
+      testCaseId: t-point-orc-03
       provider: pointService
       consumer: orchestrator
   Prepare reverse payment:
     comment: orchestrator received response that point finished compensation , ready to do payment compensation
-    end: False
+    isEnd: False
     nextState:
-      testCaseId: poc-10
-      stateName: Payment reverse
+      stateName: Payment reversed
+      timeSequenceLable: 12
+      testCaseId: t-orc-payment-03
       provider: orchestrator
       consumer: paymentService
   Prepare Log:
     comment: orchestrator ready to send Log request
-    end: False
+    isEnd: False
     nextState:
-      testCaseId: t-orc-logging-01
       stateName: Log
+      timeSequenceLable: 5
+      testCaseId: t-orc-logging-01
       provider: orchestrator
       consumer: loggingService
   Log:
     comment: logging
-    end: False
+    isEnd: False
     nextState:
-      testCaseId: t-logging-orc-01
       stateName: Approved top-update
+      timeSequenceLable: 6
+      testCaseId: t-logging-orc-01
       provider: loggingService
       consumer: orchestrator
   Approved top-up:
     comment: finishe saga process
-    end: True
+    isEnd: True
   Top-up cancel:
     comment: finishe compensation process and finishe saga
-    end: True
+    isEnd: True
