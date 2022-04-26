@@ -12,7 +12,9 @@ public enum CCTSStatusCode {
     CONTREACT_TEST_RESULT_NOT_PASS("The service's contract test hasn't done fully"),
 
     // parser error
-    CCTSDOCUMENT_ERROR("Some properties cause error while parsing CCTS document");
+    CCTSDOCUMENT_ERROR("Some properties cause error while parsing CCTS document"),
+    CCTSDOCUMENT_ERROR_STATENAME_NOT_FOUND("some state name may not correspond to CCTS document"),
+    CCTSDOCUMENT_ERROR_CASESEQUENCE_NOT_LEGAL("Case sequence is not legal");
 
 
 
