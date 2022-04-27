@@ -42,8 +42,9 @@ public class CCTSResult {
     private ArrayList<CCTSResultRecord> failedList ;
 
 
+    // key is case sequence
     @Field
-    private Map<ArrayList<Integer>, CCTSStatusCode> caseSequenceResults ;
+    private Map<String, CCTSStatusCode> caseSequenceResults ;
 
     public CCTSResult(ArrayList<CCTSDocument> relatedDocuments) {
         this.relatedDocuments = relatedDocuments;
@@ -395,11 +396,11 @@ public class CCTSResult {
         this.verifiedResult = verifiedResult;
     }
 
-    public Map<ArrayList<Integer>, CCTSStatusCode> getCaseSequenceResults() {
+    public Map<String, CCTSStatusCode> getCaseSequenceResults() {
         return caseSequenceResults;
     }
 
-    public void setCaseSequenceResults(Map<ArrayList<Integer>, CCTSStatusCode> caseSequenceResults) {
+    public void setCaseSequenceResults(Map<String, CCTSStatusCode> caseSequenceResults) {
         this.caseSequenceResults = caseSequenceResults;
     }
 }
