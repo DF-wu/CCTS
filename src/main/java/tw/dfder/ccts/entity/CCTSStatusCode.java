@@ -14,7 +14,9 @@ public enum CCTSStatusCode {
     // parser error
     CCTSDOCUMENT_ERROR("Some properties cause error while parsing CCTS document"),
     CCTSDOCUMENT_ERROR_STATENAME_NOT_FOUND("some state name may not correspond to CCTS document"),
-    CCTSDOCUMENT_ERROR_CASESEQUENCE_NOT_LEGAL("Case sequence is not legal");
+    CCTSDOCUMENT_ERROR_CASESEQUENCE_NOT_LEGAL("Case sequence is not legal"),
+
+    CASESEQUENCE_ERROR("Eventlog produced time are not quilified the sequence");
 
 
 
