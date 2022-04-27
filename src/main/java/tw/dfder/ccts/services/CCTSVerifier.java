@@ -75,9 +75,9 @@ public class CCTSVerifier {
             // check contract verification status
             cctsResult.getContractVerificationResults().putAll(validateServiceContractTestResult(document));
 
-
+            // verify case sequence
             for (ArrayList<Integer> caseSequence : documentParser.caseSequencesParser(document)) {
-                cctsResult.getCaseSequenceResults().put(caseSequence, verifyEventlogSequence(eventlogs, document, caseSequence));
+                cctsResult.getCaseSequenceResults().put(caseSequence.toString(), verifyEventlogSequence(eventlogs, document, caseSequence));
             }
 
 

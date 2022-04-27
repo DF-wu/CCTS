@@ -117,23 +117,33 @@ public class CCTSResult {
         outputMessage = outputMessage + "#### Contract Verification" + System.lineSeparator();
         outputMessage = generateContractVerificationResultEntityMD(outputMessage, false);
         outputMessage = outputMessage + "#### Case Sequence Verification" + System.lineSeparator();
-        outputMessage = generateCaseSequenceResultEntityMD(outputMessage, true);
+        outputMessage = generateCaseSequenceResultEntityMD(outputMessage, false);
 
         return outputMessage;
     }
 
-    private String generateCaseSequenceResultEntityMD(String outputMessage, boolean b) {
-        for(ArrayList<Integer> key : caseSequenceResults.keySet()){
-            if( caseSequenceResults.get(key).equals(CCTSStatusCode.ALLGREEN) == b){
+    private String generateCaseSequenceResultEntityMD(String outputMessage, boolean flag) {
+        String msgT = "";
+        String msgF = "";
+
+        for(String key : caseSequenceResults.keySet()){
+            if( caseSequenceResults.get(key).equals(CCTSStatusCode.ALLGREEN)){
                 // passed
-                outputMessage = outputMessage +   "+ " + key + System.lineSeparator();
+                msgT = msgT +   "+ " + key + System.lineSeparator();
             }else{
                 // failed
-                outputMessage = outputMessage +   "+ " + key + System.lineSeparator();
-                outputMessage = outputMessage +   "  + Failure reason: " + caseSequenceResults.get(key).getMessage() + System.lineSeparator();
+                msgF = msgF +   "+ " + key + System.lineSeparator();
+                msgF = msgF +   "  + Failure reason: " + caseSequenceResults.get(key).getMessage() + System.lineSeparator();
             }
         }
+
+        if(flag){
+            outputMessage = outputMessage + msgT;
+        }else {
+            outputMessage = outputMessage + msgF;
+        }
         return outputMessage;
+
     }
 
     private void gernerateFinalPassedAndFailList() {
