@@ -50,7 +50,7 @@ public class CCTSDocumentParser {
             // specify a simpleState
             SimpleState simpleState = cctsDocument.getStates().get(k);
             switch (stateChecker(simpleState)){
-                case "nextSate exist" -> {
+                case "nextState exist" -> {
                     // nextSate exist -> add to path list
                     delieveryList.add(simpleState.getNextState());
                 }
@@ -71,10 +71,10 @@ public class CCTSDocumentParser {
 
     private String stateChecker(SimpleState simpleState){
         if(simpleState.getNextState() != null && simpleState.getOptions() == null){
-            return "nextSate exist";
+            return "nextState exist";
         }else if(simpleState.getNextState() == null && simpleState.getOptions() != null){
             return "options exist";
-        }else if(!simpleState.getEnd()) {
+        }else if(!simpleState.isEnd()) {
             return "not end state exception";
         }else{
             return "End State";
