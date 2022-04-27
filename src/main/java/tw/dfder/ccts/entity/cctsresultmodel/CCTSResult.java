@@ -6,7 +6,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.cctsdocumentmodel.CCTSDocument;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -74,8 +73,6 @@ public class CCTSResult {
             + failure reason: $
 
         #### Contract Verification
-
-
         + Service:
      */
     public String checkOutReportMessageMD(){
@@ -92,18 +89,21 @@ public class CCTSResult {
             }
         }
 
+
+
         String outputMessage = "";
         outputMessage = "# CCTS Test Report" + System.lineSeparator();
         // based on hackmd syntax
         outputMessage = outputMessage + "[TOC]" + System.lineSeparator();
         outputMessage = outputMessage +"## Information" + System.lineSeparator();
+        outputMessage = outputMessage + "+ Test Result: " + checkTestResult(failedList) + System.lineSeparator();
         outputMessage = outputMessage + "+ Test Time: " + LocalDateTime
                 .now()
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
                 + System.lineSeparator();
-        outputMessage = outputMessage + "+ Passed number: " + passedList.size() + System.lineSeparator();
-        outputMessage = outputMessage + "+ Failure number: " + failedList.size() + System.lineSeparator();
-        outputMessage = outputMessage + "## Test Result" + System.lineSeparator();
+        outputMessage = outputMessage + "+ Passed delivery: " + passedList.size() + System.lineSeparator();
+        outputMessage = outputMessage + "+ Failure delivery: " + failedList.size() + System.lineSeparator();
+        outputMessage = outputMessage + "## Test detail" + System.lineSeparator();
         outputMessage = outputMessage + "### Pass" + System.lineSeparator();
         outputMessage = generateResultEntityMD(outputMessage, passedList, true);
         outputMessage = outputMessage + "---" + System.lineSeparator();
@@ -113,7 +113,16 @@ public class CCTSResult {
         return outputMessage;
     }
 
+    private String checkTestResult(ArrayList<CCTSResultRecord> failedList) {
+        for (CCTSStatusCode code: contractVerificationResults.values()) {
+            if(code != CCTSStatusCode.ALLGREEN){
+                return "Fail.";
+            }
+        }
 
+        if (failedList.size() == 0 ) return "Pass!!!";
+        return "Fail.";
+    }
 
 
     // collect documented result map .
