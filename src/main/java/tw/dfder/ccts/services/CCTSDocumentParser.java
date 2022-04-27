@@ -1,19 +1,23 @@
 package tw.dfder.ccts.services;
 
 
+import org.bson.io.BsonOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import tw.dfder.ccts.configuration.ServiceConfigure;
+import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.cctsdocumentmodel.CCTSDocument;
 import tw.dfder.ccts.entity.cctsdocumentmodel.NextState;
 import tw.dfder.ccts.entity.cctsdocumentmodel.SimpleState;
 import tw.dfder.ccts.repository.CCTSDocumentRepository;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 
 @Service
@@ -25,6 +29,17 @@ public class CCTSDocumentParser {
         this.serviceConfigure = serviceConfigure;
         this.repo = repo;
     }
+
+
+
+    public void parseAllCCTSProfilesAndSave2DB(){
+        ArrayList<CCTSDocument> cctsDocuments = new ArrayList<>();
+        for (Resource r : serviceConfigure.cctsFiles) {
+            cctsDocuments.add(parse2CCTSProfile(r));
+        }
+        repo.saveAll(cctsDocuments);
+    }
+
 
     private CCTSDocument parse2CCTSProfile(Resource fileResource) {
         Yaml yaml = new Yaml(new Constructor(CCTSDocument.class));
@@ -201,14 +216,6 @@ public class CCTSDocumentParser {
         }
 
 
-    }
-
-    public void parseAllCCTSProfilesAndSave2DB(){
-        ArrayList<CCTSDocument> cctsDocuments = new ArrayList<>();
-        for (Resource r : serviceConfigure.cctsFiles) {
-            cctsDocuments.add(parse2CCTSProfile(r));
-        }
-        repo.saveAll(cctsDocuments);
     }
 
 
