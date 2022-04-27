@@ -77,7 +77,7 @@ public class CCTSVerifier {
             cctsResult.getContractVerificationResults().putAll(validateServiceContractTestResult(document));
 
         }
-
+        cctsResult.checkOut();
         cctsResultRepository.save(cctsResult);
         return cctsResult;
     }

@@ -35,11 +35,20 @@ public class CCTSResult {
     @Field
     private Map<String, CCTSStatusCode> contractVerificationResults;
 
+
+    @Field
+    private ArrayList<CCTSResultRecord> passedList ;
+
+    @Field
+    private ArrayList<CCTSResultRecord> failedList ;
+
     public CCTSResult(ArrayList<CCTSDocument> relatedDocuments) {
         this.relatedDocuments = relatedDocuments;
         this.resultBetweenDeliveryAndEventLogs = new ArrayList<>();
         this.resultBetweenDeliveryAndContract = new ArrayList<>();
         this.contractVerificationResults = new Hashtable<>();
+        this.passedList = new ArrayList<>();
+        this.failedList = new ArrayList<>();
     }
 
 
@@ -76,19 +85,6 @@ public class CCTSResult {
         + Service:
      */
     public String checkOutReportMessageMD(){
-        ArrayList<CCTSResultRecord> passedList = new ArrayList<>();
-        ArrayList<CCTSResultRecord> failedList = new ArrayList<>();
-
-        for(CCTSResultRecord n : Stream.concat(resultBetweenDeliveryAndEventLogs.stream(), resultBetweenDeliveryAndContract.stream())
-                .collect(Collectors.toList())
-        ){
-            if(n.getErrorCode().equals(CCTSStatusCode.ALLGREEN)){
-                passedList.add(n);
-            }else {
-                failedList.add(n);
-            }
-        }
-
 
 
         String outputMessage = "";
@@ -96,7 +92,7 @@ public class CCTSResult {
         // based on hackmd syntax
         outputMessage = outputMessage + "[TOC]" + System.lineSeparator();
         outputMessage = outputMessage +"## Information" + System.lineSeparator();
-        outputMessage = outputMessage + "+ Test Result: " + checkTestResult(failedList) + System.lineSeparator();
+        outputMessage = outputMessage + "+ Test Result: " + (testResult ? "Pass!!!" : "Fail.") + System.lineSeparator();
         outputMessage = outputMessage + "+ Test Time: " + LocalDateTime
                 .now()
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
@@ -113,15 +109,33 @@ public class CCTSResult {
         return outputMessage;
     }
 
-    private String checkTestResult(ArrayList<CCTSResultRecord> failedList) {
-        for (CCTSStatusCode code: contractVerificationResults.values()) {
-            if(code != CCTSStatusCode.ALLGREEN){
-                return "Fail.";
+    private void gernerateFinalPassedAndFailList() {
+        for(CCTSResultRecord n : Stream.concat(resultBetweenDeliveryAndEventLogs.stream(), resultBetweenDeliveryAndContract.stream())
+                .collect(Collectors.toList())
+        ){
+            if(n.getErrorCode().equals(CCTSStatusCode.ALLGREEN)){
+                passedList.add(n);
+            }else {
+                failedList.add(n);
             }
         }
+    }
 
-        if (failedList.size() == 0 ) return "Pass!!!";
-        return "Fail.";
+    public Boolean checkOut(){
+        gernerateFinalPassedAndFailList();
+        for (CCTSStatusCode code: contractVerificationResults.values()) {
+            if(code != CCTSStatusCode.ALLGREEN){
+                this.testResult = false;
+                return false;
+            }
+        }
+        if (failedList.size() == 0 ) {
+            this.testResult = true;
+            return true;
+        }else {
+            this.testResult = false;
+            return false;
+        }
     }
 
 
