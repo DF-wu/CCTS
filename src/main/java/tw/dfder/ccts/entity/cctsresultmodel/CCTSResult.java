@@ -35,12 +35,15 @@ public class CCTSResult {
     @Field
     private Map<String, CCTSStatusCode> contractVerificationResults;
 
-
     @Field
     private ArrayList<CCTSResultRecord> passedList ;
 
     @Field
     private ArrayList<CCTSResultRecord> failedList ;
+
+
+    @Field
+    private Map<ArrayList<Integer>, CCTSStatusCode> caseSequenceResults ;
 
     public CCTSResult(ArrayList<CCTSDocument> relatedDocuments) {
         this.relatedDocuments = relatedDocuments;
@@ -49,6 +52,7 @@ public class CCTSResult {
         this.contractVerificationResults = new Hashtable<>();
         this.passedList = new ArrayList<>();
         this.failedList = new ArrayList<>();
+        this.caseSequenceResults = new HashMap<>();
     }
 
 
@@ -102,10 +106,32 @@ public class CCTSResult {
         outputMessage = outputMessage + "## Test detail" + System.lineSeparator();
         outputMessage = outputMessage + "### Pass" + System.lineSeparator();
         outputMessage = generateResultEntityMD(outputMessage, passedList, true);
+        outputMessage = outputMessage + "#### Contract Verification" + System.lineSeparator();
+        outputMessage = generateContractVerificationResultEntityMD(outputMessage, true);
+        outputMessage = outputMessage + "#### Case Sequence Verification" + System.lineSeparator();
+        outputMessage = generateCaseSequenceResultEntityMD(outputMessage, true);
         outputMessage = outputMessage + "---" + System.lineSeparator();
         outputMessage = outputMessage + "### Failure" + System.lineSeparator();
         outputMessage = generateResultEntityMD(outputMessage, failedList, false);
+        outputMessage = outputMessage + "#### Contract Verification" + System.lineSeparator();
+        outputMessage = generateContractVerificationResultEntityMD(outputMessage, false);
+        outputMessage = outputMessage + "#### Case Sequence Verification" + System.lineSeparator();
+        outputMessage = generateCaseSequenceResultEntityMD(outputMessage, true);
 
+        return outputMessage;
+    }
+
+    private String generateCaseSequenceResultEntityMD(String outputMessage, boolean b) {
+        for(ArrayList<Integer> key : caseSequenceResults.keySet()){
+            if( caseSequenceResults.get(key).equals(CCTSStatusCode.ALLGREEN) == b){
+                // passed
+                outputMessage = outputMessage +   "+ " + key + System.lineSeparator();
+            }else{
+                // failed
+                outputMessage = outputMessage +   "+ " + key + System.lineSeparator();
+                outputMessage = outputMessage +   "  + Failure reason: " + caseSequenceResults.get(key).getMessage() + System.lineSeparator();
+            }
+        }
         return outputMessage;
     }
 
@@ -123,26 +149,40 @@ public class CCTSResult {
 
     public Boolean checkOut(){
         gernerateFinalPassedAndFailList();
+        boolean flag = false;
         for (CCTSStatusCode code: contractVerificationResults.values()) {
             if(code != CCTSStatusCode.ALLGREEN){
-                this.testResult = false;
-                return false;
+                flag = false;
+                this.testResult = flag;
+                return flag;
             }
         }
+
+        for(CCTSStatusCode code : caseSequenceResults.values()){
+            if(code != CCTSStatusCode.ALLGREEN){
+                flag = false;
+                this.testResult = flag;
+                return flag;
+            }
+        }
+
         if (failedList.size() == 0 ) {
-            this.testResult = true;
-            return true;
+            flag = true;
+            this.testResult = flag;
+            return flag;
+
         }else {
+            flag = false;
             this.testResult = false;
             return false;
         }
+
     }
 
 
     // collect documented result map .
     private String generateContractVerificationResultEntityMD(String outputMessage, boolean isPassed){
         String resultMessage = outputMessage;
-        resultMessage = resultMessage + "#### Contract Verification" + System.lineSeparator();
         for (String service  : contractVerificationResults.keySet()) {
             if(isPassed){
                 if(contractVerificationResults.get(service).equals(CCTSStatusCode.ALLGREEN) ){
@@ -194,7 +234,7 @@ public class CCTSResult {
                 }
             }
         }
-        msg = generateContractVerificationResultEntityMD(msg, isPassed);
+
         return msg;
     }
 
@@ -353,5 +393,13 @@ public class CCTSResult {
 
     public void setVerifiedResult(CCTSStatusCode verifiedResult) {
         this.verifiedResult = verifiedResult;
+    }
+
+    public Map<ArrayList<Integer>, CCTSStatusCode> getCaseSequenceResults() {
+        return caseSequenceResults;
+    }
+
+    public void setCaseSequenceResults(Map<ArrayList<Integer>, CCTSStatusCode> caseSequenceResults) {
+        this.caseSequenceResults = caseSequenceResults;
     }
 }
