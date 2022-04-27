@@ -16,7 +16,7 @@ public class EventLog {
 
     // when it parsed to this obj
     @Field
-    private long timeInMillis;
+    private long timeStamp;
 
     @Field
     private String providerName;
@@ -28,15 +28,17 @@ public class EventLog {
     private String testCaseId;
 
     @Field
-    private boolean isValidated;
+    private Integer caseSequenceLabel;
 
 
 
-    public EventLog(long timeInMillis, String providerName, String consumerName, String testCaseId) {
-        this.timeInMillis = timeInMillis;
+
+    public EventLog(long timeStamp, String providerName, String consumerName, String testCaseId, Integer caseSequenceLabel) {
+        this.timeStamp = timeStamp;
         this.providerName = providerName;
         this.consumerName = consumerName;
         this.testCaseId = testCaseId;
+        this.caseSequenceLabel = caseSequenceLabel;
     }
 
 
@@ -48,12 +50,12 @@ public class EventLog {
         this.CCTSProfileName = CCTSProfileName;
     }
 
-    public long getTimeInMillis() {
-        return timeInMillis;
+    public long getTimeStamp() {
+        return timeStamp;
     }
 
-    public void setTimeInMillis(long timeInMillis) {
-        this.timeInMillis = timeInMillis;
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     public String getProviderName() {
@@ -72,19 +74,19 @@ public class EventLog {
         this.consumerName = consumerName;
     }
 
-    public String gettestCaseId() {
+    public String getTestCaseId() {
         return testCaseId;
     }
 
-    public void settestCaseId(String term) {
+    public void setTestCaseId(String term) {
         this.testCaseId = term;
     }
 
-    public boolean getValidated() {
-        return isValidated;
+    public Integer getCaseSequenceLabel() {
+        return caseSequenceLabel;
     }
 
-    public void setValidated(boolean validated) {
-        isValidated = validated;
+    public void setCaseSequenceLabel(Integer caseSequenceLabel) {
+        this.caseSequenceLabel = caseSequenceLabel;
     }
 }

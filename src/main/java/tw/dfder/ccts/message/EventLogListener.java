@@ -40,10 +40,11 @@ public class EventLogListener {
         //  aspect CCTS message spec
         try {
             EventLog el = new EventLog(
-                    System.currentTimeMillis(),
+                    Long.parseLong(message.getMessageProperties().getHeaders().get("CCTSTimestamp").toString()),
                     message.getMessageProperties().getHeaders().get("provider").toString(),
                     message.getMessageProperties().getHeaders().get("consumer").toString(),
-                    message.getMessageProperties().getHeaders().get("testCaseId").toString()
+                    message.getMessageProperties().getHeaders().get("testCaseId").toString(),
+                    Integer.valueOf(message.getMessageProperties().getHeaders().get("timeSequenceLabel").toString())
                     );
             eventLogRepository.save(el);
 
