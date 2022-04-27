@@ -40,7 +40,6 @@ public class CCTSVerifier {
         // retrieve needed data from db to memory for increasing speed
         ArrayList<CCTSDocument> documents = (ArrayList<CCTSDocument>) cctsDocumentRepository.findAll();
         ArrayList<EventLog> eventlogs = (ArrayList<EventLog>) eventLogRepository.findAll();
-        Hashtable<NextState, CCTSStatusCode> resultDict = new Hashtable<>();
 
         CCTSResult cctsResult  = new CCTSResult(documents);
 
@@ -76,11 +75,58 @@ public class CCTSVerifier {
             // check contract verification status
             cctsResult.getContractVerificationResults().putAll(validateServiceContractTestResult(document));
 
+
+            for (ArrayList<Integer> caseSequence : documentParser.caseSequencesParser(document)) {
+                cctsResult.getCaseSequenceResults().put(caseSequence, verifyEventlogSequence(eventlogs, document, caseSequence));
+            }
+
+
         }
         cctsResult.checkOut();
         cctsResultRepository.save(cctsResult);
         return cctsResult;
     }
+
+    private CCTSStatusCode verifyEventlogSequence(ArrayList<EventLog> eventlogs, CCTSDocument document, ArrayList<Integer> caseSequence) {
+        ArrayList<NextState> referenceNextStates =  findCaseSequenceNextStates(caseSequence, document);
+        ArrayList<EventLog> caseSequenceEventLogs = new ArrayList<>();
+        for (NextState nextState : referenceNextStates) {
+            for (EventLog eventLog : eventlogs) {
+                if (nextState.getConsumer().equals(eventLog.getConsumerName())
+                        && nextState.getProvider().equals(eventLog.getProviderName())
+                        && nextState.getTestCaseId().equals(eventLog.getTestCaseId())
+                        && nextState.getTimeSequenceLabel().equals(eventLog.getCaseSequenceLabel())) {
+                    // may have multiple eventlogs qualified the nextstate, but we only need one to prove the delivery is valid
+                    caseSequenceEventLogs.add(eventLog);
+                    break;
+                }
+            }
+        }
+
+        // verify sequence of time to fit the case sequence
+        for (int i = 1; i < caseSequenceEventLogs.size(); i++) {
+            if (caseSequenceEventLogs.get(i).getTimeStamp() > caseSequenceEventLogs.get(i - 1).getTimeStamp()){
+                // right sequence
+            }else {
+                // wrong sequence
+                return CCTSStatusCode.CASESEQUENCE_ERROR;
+            }
+        }
+        return CCTSStatusCode.ALLGREEN;
+    }
+
+    private ArrayList<NextState> findCaseSequenceNextStates(ArrayList<Integer> caseSequence, CCTSDocument document) {
+        ArrayList<NextState> nextStateSequence = new ArrayList<>();
+        for (Integer integer : caseSequence) {
+            for (NextState nextState : documentParser.findDeliveryList(document)) {
+                if (nextState.getTimeSequenceLabel().equals(integer)) {
+                    nextStateSequence.add(nextState);
+                }
+            }
+        }
+        return nextStateSequence;
+    }
+
 
     private CCTSResultRecord verifyDeliveryAndEventlog(NextState delivery, ArrayList<EventLog> sameRouteEventlogs, String documentName) {
         ArrayList<CCTSResultRecord> results = new ArrayList<>();
@@ -183,7 +229,7 @@ public class CCTSVerifier {
             // provider match
             if (delivery.getConsumer().equals(el.getConsumerName())) {
                 // consumer match
-                if (delivery.getTestCaseId().equals(el.gettestCaseId())) {
+                if (delivery.getTestCaseId().equals(el.getTestCaseId())) {
                     // testCaseId match
                     // all condition match -> delivery passed
                     return CCTSStatusCode.ALLGREEN;
