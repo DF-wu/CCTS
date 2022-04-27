@@ -45,7 +45,7 @@ states:
     nextState:
       stateName: Top-up cancel
       timeSequenceLabel: 13
-      testCaseId: t-payment-orc-04
+      testCaseId: t-payment-orc-03
       provider: paymentService
       consumer: orchestrator
   Prepare update point:
