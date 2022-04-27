@@ -19,6 +19,8 @@ public class CCTSResult {
     private String id;
 
     @Field
+    private CCTSStatusCode verifiedResult ;
+    @Field
     private boolean testResult;
     @Field
     private final ArrayList<CCTSDocument> relatedDocuments ;
@@ -320,5 +322,13 @@ public class CCTSResult {
 
     public void setContractVerificationResults(Map<String, CCTSStatusCode> contractVerificationResults) {
         this.contractVerificationResults = contractVerificationResults;
+    }
+
+    public CCTSStatusCode getVerifiedResult() {
+        return verifiedResult;
+    }
+
+    public void setVerifiedResult(CCTSStatusCode verifiedResult) {
+        this.verifiedResult = verifiedResult;
     }
 }
