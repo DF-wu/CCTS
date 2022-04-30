@@ -10,7 +10,6 @@ import java.util.HashMap;
 public class CCTSDocument {
     private String CCTSversion;
     private String title;
-    private ArrayList<String> caseSequences;
     private String startAt;
     private HashMap<String, SimpleState> states;
 
@@ -53,11 +52,4 @@ public class CCTSDocument {
         this.states = states;
     }
 
-    public ArrayList<String> getCaseSequences() {
-        return caseSequences;
-    }
-
-    public void setCaseSequences(ArrayList<String> caseSequences) {
-        this.caseSequences = caseSequences;
-    }
 }
