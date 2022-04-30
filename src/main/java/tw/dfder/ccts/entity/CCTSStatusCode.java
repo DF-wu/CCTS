@@ -1,7 +1,5 @@
 package tw.dfder.ccts.entity;
 
-import tw.dfder.ccts.entity.cctsdocumentmodel.CCTSDocument;
-
 public enum CCTSStatusCode {
     ALLGREEN("All conditions passed."),
     ERROR_PARTICIPANT("provider or consumer not match CCTS document"),
@@ -16,7 +14,10 @@ public enum CCTSStatusCode {
     CCTSDOCUMENT_ERROR_STATENAME_NOT_FOUND("some state name may not correspond to CCTS document"),
     CCTSDOCUMENT_ERROR_CASESEQUENCE_NOT_LEGAL("Case sequence is not legal"),
 
-    CASESEQUENCE_ERROR("Eventlog produced time are not quilified the sequence");
+    CASESEQUENCE_SEQUENCE_ERROR("Eventlog produced time are not qualified the sequence"),
+
+    CASESEQUENCE_NOT_CONNECTED("nextstate consumer is not connected by previous state");
+
 
 
 

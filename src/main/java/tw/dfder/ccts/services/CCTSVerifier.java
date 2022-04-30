@@ -95,6 +95,8 @@ public class CCTSVerifier {
 
 
         }
+
+        // gererate final result
         cctsResult.checkOut();
         cctsResultRepository.save(cctsResult);
         return cctsResult;
@@ -104,16 +106,26 @@ public class CCTSVerifier {
         ArrayList<NextState> referenceNextStates =  findCaseSequenceNextStates(caseSequence, document);
         ArrayList<EventLog> caseSequenceEventLogs = new ArrayList<>();
         for (NextState nextState : referenceNextStates) {
+            ArrayList<EventLog> sameNextStateEventLogs = new ArrayList<>();
             for (EventLog eventLog : eventlogs) {
+                // may be more than one eventlogs for one nextState
                 if (nextState.getConsumer().equals(eventLog.getConsumerName())
                         && nextState.getProvider().equals(eventLog.getProviderName())
                         && nextState.getTestCaseId().equals(eventLog.getTestCaseId())
                         && nextState.getTimeSequenceLabel().equals(eventLog.getCaseSequenceLabel())) {
-                    // may have multiple eventlogs qualified the nextstate, but we only need one to prove the delivery is valid
-                    caseSequenceEventLogs.add(eventLog);
-                    break;
+                    sameNextStateEventLogs.add(eventLog);
                 }
             }
+
+            // may have multiple eventlogs qualified the nextstate, but we only need one to prove the delivery is valid
+            EventLog earliestEventLog = new EventLog(Long.MAX_VALUE,"", "", "", 0);
+            for (EventLog el : sameNextStateEventLogs) {
+                // collect and find the earliest eventlog as the reference eventlog
+                if(el.getTimeStamp() <= earliestEventLog.getTimeStamp()){
+                    earliestEventLog = el;
+                }
+            }
+            caseSequenceEventLogs.add(earliestEventLog);
         }
 
         // verify sequence of time to fit the case sequence
@@ -122,9 +134,20 @@ public class CCTSVerifier {
                 // right sequence
             }else {
                 // wrong sequence
-                return CCTSStatusCode.CASESEQUENCE_ERROR;
+                return CCTSStatusCode.CASESEQUENCE_SEQUENCE_ERROR;
             }
         }
+
+        // verify each nextState provider should be connected by previous nextState consumer
+        for (int i = 1; i < referenceNextStates.size(); i++) {
+            if (referenceNextStates.get(i).getProvider().equals(referenceNextStates.get(i - 1).getConsumer())) {
+                // provider and consumer are the same,  the previous nextState provider is the same as current nextState consumer
+            }else {
+                // provider and consumer are not the same,  return error code
+                return CCTSStatusCode.CASESEQUENCE_NOT_CONNECTED;
+            }
+        }
+
         return CCTSStatusCode.ALLGREEN;
     }
 
