@@ -75,6 +75,19 @@ public class CCTSVerifier {
             // check contract verification status
             cctsResult.getContractVerificationResults().putAll(validateServiceContractTestResult(document));
 
+
+            //TODO: auto propose every path
+            ArrayList<ArrayList<NextState>> paths = new ArrayList<>();
+            ArrayList<NextState> path = new ArrayList<>();
+            documentParser.pathFinder(document, document.getStates().get(document.getStartAt()), path , paths);
+            for (ArrayList<NextState> p : paths) {
+                p.forEach(nextState -> {
+                    System.out.print(nextState.getTimeSequenceLabel() +" ");
+                });
+                System.out.println();
+            }
+
+
             // verify case sequence
             for (ArrayList<Integer> caseSequence : documentParser.caseSequencesParser(document)) {
                 cctsResult.getCaseSequenceResults().put(caseSequence.toString(), verifyEventlogSequence(eventlogs, document, caseSequence));

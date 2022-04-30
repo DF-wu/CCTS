@@ -1,7 +1,6 @@
 package tw.dfder.ccts.services;
 
 
-import org.bson.io.BsonOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -67,6 +66,29 @@ public class CCTSDocumentParser {
 
     }
 
+
+    /*
+        TODO:
+        find path(case sequence) from start state to end state.
+     */
+    public void pathFinder(CCTSDocument cctsDocument, SimpleState state, ArrayList<NextState> path, ArrayList<ArrayList<NextState>> finalLists) {
+        if(state.isEnd()){
+            // final state
+            finalLists.add(path);
+        }else if(state.getNextState() != null && state.getOptions() == null){
+            // has one next state
+            ArrayList<NextState> newPathList = new ArrayList<>(path);
+            newPathList.add(state.getNextState());
+            pathFinder(cctsDocument, cctsDocument.getStates().get(state.getNextState().getStateName()), newPathList, finalLists);
+        }else if(state.getNextState() == null && state.getOptions() != null){
+            // options
+            for (NextState ns : state.getOptions().values())  {
+                ArrayList<NextState> newPathList = new ArrayList<>(path);
+                newPathList.add(ns);
+                pathFinder(cctsDocument, cctsDocument.getStates().get(ns.getStateName()), newPathList, finalLists);
+            }
+        }
+    }
 
     public ArrayList<ArrayList<Integer>> caseSequencesParser(CCTSDocument cctsDocument){
         ArrayList<ArrayList<Integer>> caseSequences = new ArrayList<>();
