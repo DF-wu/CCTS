@@ -1,8 +1,5 @@
 CCTSversion: "0.9"
 title: CCTS saga test case1
-caseSequences:
-  - 1,2,6,8,9
-  - 1,5,6,9,10
 startAt: Create top-up event
 states:
   Create top-up event:
