@@ -90,35 +90,13 @@ public class CCTSDocumentParser {
         }
     }
 
-    public ArrayList<ArrayList<Integer>> caseSequencesParser(CCTSDocument cctsDocument){
-        ArrayList<ArrayList<Integer>> caseSequences = new ArrayList<>();
-        for (String str : cctsDocument.getCaseSequences()) {
-            ArrayList<Integer> caseInt = new ArrayList<>();
-            // clean string and split by comma.
-            for (String token : str.trim().replace(" ","").split(",")) {
-                caseInt.add(Integer.valueOf(token));
-            }
-
-            // verify
-            for (int i = 1; i < caseInt.size(); i++) {
-                // should be increased integer
-                if( !(caseInt.get(i) > caseInt.get(i-1)) ){
-                    return null;
-                }
-            }
-            caseSequences.add(caseInt);
-        }
-        return caseSequences;
-    }
-
 
     private CCTSStatusCode verifyDocumentProperties(CCTSDocument cctsDocument){
         // verify title version startAt states caseSequences are not null
         if(cctsDocument.getTitle() == null
                 || cctsDocument.getCCTSversion() == null
                 || cctsDocument.getStartAt() == null
-                || cctsDocument.getStates() == null
-                || cctsDocument.getCaseSequences() == null){
+                || cctsDocument.getStates() == null){
             System.out.println("CCTS document properties are not complete!");
             return CCTSStatusCode.CCTSDOCUMENT_ERROR;
         }
@@ -139,12 +117,6 @@ public class CCTSDocumentParser {
             if (result != CCTSStatusCode.ALLGREEN) return result;
         }
 
-        // logically verify CaseSequences .
-        for (ArrayList<Integer> caseInt : caseSequencesParser(cctsDocument)){
-            if(caseInt == null ){
-                return CCTSStatusCode.CCTSDOCUMENT_ERROR_CASESEQUENCE_NOT_LEGAL;
-            }
-        }
 
         return CCTSStatusCode.ALLGREEN;
     }
