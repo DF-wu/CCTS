@@ -3,6 +3,7 @@ package tw.dfder.ccts.entity.cctsdocumentmodel;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @Document(collection = "SimpleState")
@@ -10,20 +11,13 @@ public class SimpleState {
     private String comment;
     private boolean end;
     private NextState nextState;
-    private HashMap<String, NextState> options;
+    private ArrayList<NextState> options;
 
 
     /*
     below for getter && setter
      */
 
-    public HashMap<String, NextState> getOptions() {
-        return options;
-    }
-
-    public void setOptions(HashMap<String, NextState> options) {
-        this.options = options;
-    }
 
     public String getComment() {
         return comment;
@@ -47,5 +41,13 @@ public class SimpleState {
 
     public void setEnd(boolean end) {
         this.end = end;
+    }
+
+    public ArrayList<NextState> getOptions() {
+        return options;
+    }
+
+    public void setOptions(ArrayList<NextState> options) {
+        this.options = options;
     }
 }

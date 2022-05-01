@@ -9,8 +9,6 @@ public class NextState {
 
 
 
-
-
     public String toPrretyString() {
         String s =
                 "  stateName: " + stateName + "\n"+

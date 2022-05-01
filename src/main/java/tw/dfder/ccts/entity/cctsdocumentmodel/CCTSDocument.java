@@ -11,7 +11,7 @@ public class CCTSDocument {
     private String CCTSversion;
     private String title;
     private String startAt;
-    private HashMap<String, SimpleState> states;
+    private ArrayList<SimpleState> states;
 
 
 
@@ -44,12 +44,11 @@ public class CCTSDocument {
         this.startAt = startAt;
     }
 
-    public HashMap<String, SimpleState> getStates() {
+    public ArrayList<SimpleState> getStates() {
         return states;
     }
 
-    public void setStates(HashMap<String, SimpleState> states) {
+    public void setStates(ArrayList<SimpleState> states) {
         this.states = states;
     }
-
 }
