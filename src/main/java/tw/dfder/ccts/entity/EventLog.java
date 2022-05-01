@@ -28,17 +28,17 @@ public class EventLog {
     private String testCaseId;
 
     @Field
-    private Integer caseSequenceLabel;
+    private Integer timeSequenceLabel;
 
 
 
 
-    public EventLog(long timeStamp, String providerName, String consumerName, String testCaseId, Integer caseSequenceLabel) {
+    public EventLog(long timeStamp, String providerName, String consumerName, String testCaseId, Integer timeSequenceLabel) {
         this.timeStamp = timeStamp;
         this.providerName = providerName;
         this.consumerName = consumerName;
         this.testCaseId = testCaseId;
-        this.caseSequenceLabel = caseSequenceLabel;
+        this.timeSequenceLabel = timeSequenceLabel;
     }
 
 
@@ -82,11 +82,11 @@ public class EventLog {
         this.testCaseId = term;
     }
 
-    public Integer getCaseSequenceLabel() {
-        return caseSequenceLabel;
+    public Integer getTimeSequenceLabel() {
+        return timeSequenceLabel;
     }
 
-    public void setCaseSequenceLabel(Integer caseSequenceLabel) {
-        this.caseSequenceLabel = caseSequenceLabel;
+    public void setTimeSequenceLabel(Integer timeSequenceLabel) {
+        this.timeSequenceLabel = timeSequenceLabel;
     }
 }
