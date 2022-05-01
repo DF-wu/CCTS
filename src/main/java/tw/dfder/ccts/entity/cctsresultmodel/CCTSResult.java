@@ -105,20 +105,43 @@ public class CCTSResult {
         outputMessage = outputMessage + "+ Passed delivery: " + passedList.size() + System.lineSeparator();
         outputMessage = outputMessage + "+ Failure delivery: " + failedList.size() + System.lineSeparator();
         outputMessage = outputMessage + "## Test detail" + System.lineSeparator();
+        outputMessage = outputMessage + "### Potential Path: " + System.lineSeparator();
+        for (String s : pathVerificationResults.keySet()) {
+            outputMessage = outputMessage + "+ " + s + System.lineSeparator();
+        }
         outputMessage = outputMessage + "### Pass" + System.lineSeparator();
         outputMessage = generateResultEntityMD(outputMessage, passedList, true);
         outputMessage = outputMessage + "#### Contract Verification" + System.lineSeparator();
         outputMessage = generateContractVerificationResultEntityMD(outputMessage, true);
-
-
+        outputMessage = outputMessage + "#### Path:" + System.lineSeparator();
+        outputMessage = generateResultPathEntityMD(outputMessage, true);
         outputMessage = outputMessage + "---" + System.lineSeparator();
         outputMessage = outputMessage + "### Failure" + System.lineSeparator();
         outputMessage = generateResultEntityMD(outputMessage, failedList, false);
         outputMessage = outputMessage + "#### Contract Verification" + System.lineSeparator();
         outputMessage = generateContractVerificationResultEntityMD(outputMessage, false);
+        outputMessage = outputMessage + "#### Path:" + System.lineSeparator();
+        outputMessage = generateResultPathEntityMD(outputMessage, false);
 
 
         return outputMessage;
+    }
+
+    private String generateResultPathEntityMD(String outputMessage, boolean isPassed) {
+        String msg = outputMessage;
+        for (String s : pathVerificationResults.keySet()){
+            if(isPassed){
+                if(pathVerificationResults.get(s) == CCTSStatusCode.ALLGREEN){
+                    msg = msg + "+ " + s + System.lineSeparator();
+                }
+            }else{
+                if(pathVerificationResults.get(s) != CCTSStatusCode.ALLGREEN){
+                    msg = msg + "+ " + s  + System.lineSeparator();
+                    msg = msg + "   + Reason:  "+ pathVerificationResults.get(s) + System.lineSeparator();
+                }
+            }
+        }
+        return msg;
     }
 
 
@@ -145,8 +168,12 @@ public class CCTSResult {
             }
         }
 
-        //TODO : path check
-
+        //  path check
+        for (CCTSStatusCode code : pathVerificationResults.values()) {
+            if(code != CCTSStatusCode.ALLGREEN){
+                flag = false;
+            }
+        }
 
         if (failedList.size() == 0 ) {
             flag = true;

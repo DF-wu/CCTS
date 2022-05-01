@@ -107,6 +107,9 @@ public class CCTSVerifier {
         for (NextState nextState : path) {
             s += nextState.getStateName() + " -> ";
         }
+
+        // remove last " -> "
+        s = s.substring(0, s.length() - 4);
         return s;
     }
 
