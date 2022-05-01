@@ -1,0 +1,123 @@
+CCTSversion: "0.10"
+title: PDVPS saga fail CASE. states name wrong
+startAt: Create top-up event
+states:
+  Create top-up event:
+    comment: initial state
+    end: False
+    nextState:
+      stateName: payment process
+      timeSequenceLabel: 1
+      testCaseId: t-orc-payment-01
+      provider: orchestrator
+      consumer: paymentService
+  Payment process:
+    comment: make payment
+    end: False
+    options:
+      Prepare update point:
+        stateName: Prepare update point
+        timeSequenceLabel: 2
+        testCaseId: t-payment-orc-01
+        provider: paymentService
+        consumer: orchestrator
+      Payment Fail:
+        stateName: Payment Fail
+        timeSequenceLabel: 7
+        testCaseId: t-payment-orc-02
+        provider: paymentService
+        consumer: orchestrator
+  Payment Fail:
+    comment: do payment fail compensation
+    end: False
+    nextState:
+      stateName: Payment reversed
+      timeSequenceLabel: 8
+      testCaseId: t-orc-payment-02
+      provider: orchestrator
+      consumer: paymentService
+  Payment reversed:
+    comment: reverse Payment
+    end: False
+    nextState:
+      stateName: Top-up cancel
+      timeSequenceLabel: 13
+      testCaseId: t-payment-orc-03
+      provider: paymentService
+      consumer: orchestrator
+  Prepare update point:
+    comment: orchestrator received response from payment and ready to send update point request to Point service
+    end: False
+    nextState:
+      stateName: Update point
+      timeSequenceLabel: 3
+      testCaseId: t-orc-point-01
+      provider: orchestrator
+      consumer: pointService
+  Update point:
+    comment: do update point
+    end: False
+    options:
+      Prepare log:
+        stateName: Prepare log
+        timeSequenceLabel: 4
+        testCaseId: t-point-orc-01
+        provider: pointService
+        consumer: orchestrator
+      Update point Fail:
+        stateName: Update point Fail
+        timeSequenceLabel: 9
+        testCaseId: t-point-orc-02
+        provider: pointService
+        consumer: orchestrator
+  Update point Fail:
+    comment: to revert points
+    end: False
+    nextState:
+      stateName: Revert point
+      timeSequenceLabel: 10
+      testCaseId: t-orc-point-02
+      provider: orchestrator
+      consumer: pointService
+  Revert point:
+    comment: revert points
+    end: False
+    nextState:
+      stateName: Prepare reverse payment
+      timeSequenceLabel: 11
+      testCaseId: t-point-orc-03
+      provider: pointService
+      consumer: orchestrator
+  Prepare reverse payment:
+    comment: orchestrator received response that point finished compensation , ready to do payment compensation
+    end: False
+    nextState:
+      stateName: Payment reversed
+      timeSequenceLabel: 12
+      testCaseId: t-orc-payment-03
+      provider: orchestrator
+      consumer: paymentService
+  Prepare log:
+    comment: orchestrator ready to send Log request
+    end: False
+    nextState:
+      stateName: Log
+      timeSequenceLabel: 5
+      testCaseId: t-orc-logging-01
+      provider: orchestrator
+      consumer: loggingService
+  Log:
+    comment: logging
+    end: False
+    nextState:
+      stateName: Approved top-up
+      timeSequenceLabel: 6
+      testCaseId: t-logging-orc-01
+      provider: loggingService
+      consumer: orchestrator
+  Approved top-up:
+    comment: finish saga process
+    end: True
+  Top-up cancel:
+    comment: finish compensation process and finish saga
+    end: True
