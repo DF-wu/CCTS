@@ -36,15 +36,15 @@ public class CCTSResult {
     private Map<String, CCTSStatusCode> contractVerificationResults;
 
     @Field
+    private Map<String, CCTSStatusCode> pathVerificationResults;
+
+
+    @Field
     private ArrayList<CCTSResultRecord> passedList ;
 
     @Field
     private ArrayList<CCTSResultRecord> failedList ;
 
-
-    // key is case sequence
-    @Field
-    private Map<String, CCTSStatusCode> caseSequenceResults ;
 
     public CCTSResult(ArrayList<CCTSDocument> relatedDocuments) {
         this.relatedDocuments = relatedDocuments;
@@ -53,7 +53,7 @@ public class CCTSResult {
         this.contractVerificationResults = new Hashtable<>();
         this.passedList = new ArrayList<>();
         this.failedList = new ArrayList<>();
-        this.caseSequenceResults = new HashMap<>();
+        this.pathVerificationResults = new Hashtable<>();
     }
 
 
@@ -109,42 +109,18 @@ public class CCTSResult {
         outputMessage = generateResultEntityMD(outputMessage, passedList, true);
         outputMessage = outputMessage + "#### Contract Verification" + System.lineSeparator();
         outputMessage = generateContractVerificationResultEntityMD(outputMessage, true);
-        outputMessage = outputMessage + "#### Case Sequence Verification" + System.lineSeparator();
-        outputMessage = generateCaseSequenceResultEntityMD(outputMessage, true);
+
+
         outputMessage = outputMessage + "---" + System.lineSeparator();
         outputMessage = outputMessage + "### Failure" + System.lineSeparator();
         outputMessage = generateResultEntityMD(outputMessage, failedList, false);
         outputMessage = outputMessage + "#### Contract Verification" + System.lineSeparator();
         outputMessage = generateContractVerificationResultEntityMD(outputMessage, false);
-        outputMessage = outputMessage + "#### Case Sequence Verification" + System.lineSeparator();
-        outputMessage = generateCaseSequenceResultEntityMD(outputMessage, false);
+
 
         return outputMessage;
     }
 
-    private String generateCaseSequenceResultEntityMD(String outputMessage, boolean flag) {
-        String msgT = "";
-        String msgF = "";
-
-        for(String key : caseSequenceResults.keySet()){
-            if( caseSequenceResults.get(key).equals(CCTSStatusCode.ALLGREEN)){
-                // passed
-                msgT = msgT +   "+ " + key + System.lineSeparator();
-            }else{
-                // failed
-                msgF = msgF +   "+ " + key + System.lineSeparator();
-                msgF = msgF +   "  + Failure reason: " + caseSequenceResults.get(key).getMessage() + System.lineSeparator();
-            }
-        }
-
-        if(flag){
-            outputMessage = outputMessage + msgT;
-        }else {
-            outputMessage = outputMessage + msgF;
-        }
-        return outputMessage;
-
-    }
 
     private void gernerateFinalPassedAndFailList() {
         for(CCTSResultRecord n : Stream.concat(resultBetweenDeliveryAndEventLogs.stream(), resultBetweenDeliveryAndContract.stream())
@@ -169,13 +145,8 @@ public class CCTSResult {
             }
         }
 
-        for(CCTSStatusCode code : caseSequenceResults.values()){
-            if(code != CCTSStatusCode.ALLGREEN){
-                flag = false;
-                this.testResult = flag;
-                return flag;
-            }
-        }
+        //TODO : path check
+
 
         if (failedList.size() == 0 ) {
             flag = true;
@@ -406,11 +377,11 @@ public class CCTSResult {
         this.verifiedResult = verifiedResult;
     }
 
-    public Map<String, CCTSStatusCode> getCaseSequenceResults() {
-        return caseSequenceResults;
+    public Map<String, CCTSStatusCode> getPathVerificationResults() {
+        return pathVerificationResults;
     }
 
-    public void setCaseSequenceResults(Map<String, CCTSStatusCode> caseSequenceResults) {
-        this.caseSequenceResults = caseSequenceResults;
+    public void setPathVerificationResults(Map<String, CCTSStatusCode> pathVerificationResults) {
+        this.pathVerificationResults = pathVerificationResults;
     }
 }
