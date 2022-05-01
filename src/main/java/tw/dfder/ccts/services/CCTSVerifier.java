@@ -125,25 +125,26 @@ public class CCTSVerifier {
                 return CCTSStatusCode.PATH_NOT_CONNECTED;
             }
 
-            // verify eventlog time sequence and consumer provider follow the path
-            for (NextState ns : path) {
-                // find eventlog with same time sequence and consumer provider
-                boolean flag=false;
-                for (EventLog eventlog : eventlogs) {
-                    if (eventlog.getTimeSequenceLabel().equals(ns.getTimeSequenceLabel())
-                            && eventlog.getConsumerName().equals(ns.getConsumer())
-                            && eventlog.getProviderName().equals(ns.getProvider())) {
-                        // if found, go next round
-                        // any one found == valid path
-                        flag=true;
-                        break;
-                    }
-                }
-                if(!flag){
-                    // no eventlog found for this path, return error code
-                    return CCTSStatusCode.PATH_NOT_EVENTLOG_FOUND;
-                }
-            }
+//            TODO: decide the verify process is path base or document with eventlog base
+//            // verify eventlog time sequence and consumer provider follow the path
+//            for (NextState ns : path) {
+//                // find eventlog with same time sequence and consumer provider
+//                boolean flag=false;
+//                for (EventLog eventlog : eventlogs) {
+//                    if (eventlog.getTimeSequenceLabel().equals(ns.getTimeSequenceLabel())
+//                            && eventlog.getConsumerName().equals(ns.getConsumer())
+//                            && eventlog.getProviderName().equals(ns.getProvider())) {
+//                        // if found, go next round
+//                        // any one found == valid path
+//                        flag=true;
+//                        break;
+//                    }
+//                }
+//                if(!flag){
+//                    // no eventlog found for this path, return error code
+//                    return CCTSStatusCode.PATH_NOT_EVENTLOG_FOUND;
+//                }
+//            }
 
 
 
