@@ -8,6 +8,7 @@ import tw.dfder.ccts.entity.cctsdocumentmodel.NextState;
 import tw.dfder.ccts.entity.Contract;
 import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.EventLog;
+import tw.dfder.ccts.entity.cctsdocumentmodel.SimpleState;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSResult;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSResultRecord;
 import tw.dfder.ccts.repository.CCTSDocumentRepository;
@@ -15,6 +16,7 @@ import tw.dfder.ccts.repository.CCTSResultRepository;
 import tw.dfder.ccts.repository.EventLogRepository;
 import tw.dfder.ccts.services.pact_broker.PactBrokerBusyBox;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.Executors;
 
@@ -37,15 +39,53 @@ public class CCTSVerifier {
         this.serviceConfig = serviceConfig;
     }
 
-    public CCTSResult verifyCCTSProfileSAGAFlow() {
+
+
+    public CCTSResult verifyCCTSDelivery() {
         // retrieve needed data from db to memory for increasing speed
         ArrayList<CCTSDocument> documents = (ArrayList<CCTSDocument>) cctsDocumentRepository.findAll();
         ArrayList<EventLog> eventlogs = (ArrayList<EventLog>) eventLogRepository.findAll();
 
         CCTSResult cctsResult = new CCTSResult(documents);
-
         for (CCTSDocument document : documents) {
-            // specify a path as baseline.
+
+//            HashSet<NextState> reachableStatesSet = flatenPaths(paths);
+
+            // get all possible paths
+            ArrayList<ArrayList<NextState>> paths = new ArrayList<ArrayList<NextState>>();
+            documentParser.pathFinder(
+                    document,
+                    document.findSimpleState(document.getStartAt()),
+                    new ArrayList<>(),
+                    paths);
+
+            // verify timeSequenceLabel
+            for (ArrayList<NextState> path : paths) {
+                for (int i = 1; i < path.size(); i++) {
+                    // timeSequenceLabel always be increased
+                    if (path.get(i).getTimeSequenceLabel() > path.get(i - 1).getTimeSequenceLabel()) {
+
+
+                    }
+
+                }
+            }
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+//        --------------------------old flow------------------------
+        for (CCTSDocument document : documents) {
+            // specify a delivery as baseline.
             for (NextState delivery : documentParser.findDeliveryList(document)) {
                 //extract same provider and consumer eventlog
                 ArrayList<EventLog> sameRouteEventlogs = new ArrayList<>();
@@ -80,8 +120,15 @@ public class CCTSVerifier {
             // traversal all potential valid path.
             ArrayList<ArrayList<NextState>> traversalPaths = new ArrayList<>();
             ArrayList<NextState> processingList = new ArrayList<>();
+            // find initial simple state
+            SimpleState initialState = null;
+            for (SimpleState state : document.getStates()){
+                if(state.getStateName().equals(document.getStartAt())) {
+                    initialState = state;
+                }
+            }
             // start from initial state
-            documentParser.pathFinder(document, document.getStates().get(document.getStartAt()), processingList, traversalPaths);
+            documentParser.pathFinder(document, initialState, processingList, traversalPaths);
 
 
             // check if all paths are valid
@@ -99,6 +146,16 @@ public class CCTSVerifier {
         cctsResult.checkOut();
         cctsResultRepository.save(cctsResult);
         return cctsResult;
+    }
+
+    private HashSet<NextState> flatenPaths(ArrayList<ArrayList<NextState>> paths){
+        HashSet<NextState> pathSet = new HashSet<>();
+        for (ArrayList<NextState> path : paths){
+            for ( NextState state : path){
+                pathSet.add(state);
+            }
+        }
+        return pathSet;
     }
 
     // To store as key
