@@ -4,7 +4,7 @@ package tw.dfder.ccts.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tw.dfder.ccts.configuration.ServiceConfigure;
-import tw.dfder.ccts.entity.cctsresultmodel.CCTSResult;
+import tw.dfder.ccts.entity.CCTSStatusCode;
 
 @Component
 public class SystemStarter {
@@ -13,13 +13,14 @@ public class SystemStarter {
     private final CCTSDocumentParser parser;
     private final CCTSVerifier verifier;
     private final DBCleaner cleaner;
-
+    private final DocumentVerifier documentVerifier;
     @Autowired
-    public SystemStarter(ServiceConfigure serviceConfig, CCTSDocumentParser parser, CCTSVerifier verifier, DBCleaner cleaner) {
+    public SystemStarter(ServiceConfigure serviceConfig, CCTSDocumentParser parser, CCTSVerifier verifier, DBCleaner cleaner, DocumentVerifier documentVerifier) {
         this.serviceConfig = serviceConfig;
         this.parser = parser;
         this.verifier = verifier;
         this.cleaner = cleaner;
+        this.documentVerifier = documentVerifier;
     }
 
 
@@ -39,16 +40,19 @@ public class SystemStarter {
         isSystemReady = true;
     }
 
-    public CCTSResult startCCTSTest(){
+    public String startCCTSTest(){
         // clean ccts db
         cleaner.cleanCCTSProfileDB();
-        parser.parseAllCCTSProfilesAndSave2DB();
-
-
         if(isSystemReady){
-            return verifier.verifyCCTSProfileSAGAFlow();
+            CCTSStatusCode documentVerifiedResult = documentVerifier.VerifyDirector();
+            if( documentVerifiedResult.equals(CCTSStatusCode.ALLGREEN)) {
+                return verifier.verifyCCTSDelivery().checkOutReportMessageMD();
+            }else{
+                // document error
+                return "Document: " + documentVerifier.currentDocumentTitle + "\n" +  documentVerifiedResult.getMessage() ;
+            }
         }else{
-            return null;
+            return "System is not ready";
         }
 
     }
