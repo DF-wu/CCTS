@@ -46,12 +46,7 @@ public class Controller {
 
     @PostMapping("/start")
     public ResponseEntity<?> startCCTSVerification(){
-        CCTSResult result = starter.startCCTSTest();
-        if (result != null){
-            return new ResponseEntity<>( result.checkOutReportMessageMD() ,HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>("System not ready", HttpStatus.OK);
-        }
+        return new ResponseEntity<>( starter.startCCTSTest() ,HttpStatus.OK);
     }
 
     @PostMapping("/cleanDB")

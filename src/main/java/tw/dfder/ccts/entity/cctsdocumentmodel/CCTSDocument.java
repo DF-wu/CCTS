@@ -15,6 +15,14 @@ public class CCTSDocument {
 
 
 
+    public SimpleState findSimpleState(String stateName) {
+        for (SimpleState state : states) {
+            if (state.getStateName().equals(stateName)) {
+                return state;
+            }
+        }
+        return null;
+    }
 
     /*
     below for getter && setter
