@@ -8,6 +8,8 @@ import java.util.HashMap;
 
 @Document(collection = "SimpleState")
 public class SimpleState {
+
+    private String stateName;
     private String comment;
     private boolean end;
     private NextState nextState;
@@ -49,5 +51,13 @@ public class SimpleState {
 
     public void setOptions(ArrayList<NextState> options) {
         this.options = options;
+    }
+
+    public String getStateName() {
+        return stateName;
+    }
+
+    public void setStateName(String stateName) {
+        this.stateName = stateName;
     }
 }
