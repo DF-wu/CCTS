@@ -17,7 +17,7 @@ public class DBCleaner {
         this.eventLogRepository = eventLogRepository;
     }
 
-    public void cleanCCTSProfileDB(){
+    public void cleanCCTSDocumentDB(){
         cctsDocumentRepository.deleteAll();
     }
 

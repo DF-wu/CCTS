@@ -42,7 +42,9 @@ public class SystemStarter {
 
     public String startCCTSTest(){
         // clean ccts db
-        cleaner.cleanCCTSProfileDB();
+        cleaner.cleanCCTSDocumentDB();
+
+
         if(isSystemReady){
             CCTSStatusCode documentVerifiedResult = documentVerifier.VerifyDirector();
             if( documentVerifiedResult.equals(CCTSStatusCode.ALLGREEN)) {
