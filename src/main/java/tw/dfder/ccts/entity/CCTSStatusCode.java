@@ -21,6 +21,8 @@ public enum CCTSStatusCode {
     PATH_NOT_CONNECTED("nextstate consumer is not connected by previous state"),
 
     PATH_NOT_EVENTLOG_FOUND("There is no corresponded eventlog found for this path"),
+    PATH_SEQUENCELABEL_NOT_UNIQUE("some sequence label is not unique"),
+    PATH_SEQUENCELABEL_NOT_SEQUENTIAL("some path's sequence label is not sequential"),
     DOCUMENT_DUPLICATED_STATE_NAME_ERROR("There are duplicated state name in CCTS document");
 
 
