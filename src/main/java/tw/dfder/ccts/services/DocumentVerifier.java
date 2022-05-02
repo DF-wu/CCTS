@@ -8,6 +8,7 @@ import tw.dfder.ccts.entity.EventLog;
 import tw.dfder.ccts.entity.cctsdocumentmodel.CCTSDocument;
 import tw.dfder.ccts.entity.cctsdocumentmodel.NextState;
 import tw.dfder.ccts.entity.cctsdocumentmodel.SimpleState;
+import tw.dfder.ccts.entity.cctsresultmodel.CCTSResult;
 import tw.dfder.ccts.repository.CCTSDocumentRepository;
 import tw.dfder.ccts.repository.EventLogRepository;
 
@@ -25,6 +26,9 @@ public class DocumentVerifier {
     private final CCTSDocumentRepository cctsDocumentRepository;
     private final EventLogRepository eventLogRepository;
 
+    public CCTSStatusCode documentVerifiedResult;
+
+
     @Autowired
     public DocumentVerifier(CCTSDocumentParser documentParser, CCTSDocumentRepository cctsDocumentRepository, EventLogRepository eventLogRepository) {
         this.documentParser = documentParser;
@@ -32,32 +36,34 @@ public class DocumentVerifier {
         this.eventLogRepository = eventLogRepository;
     }
 
-    public CCTSStatusCode VerifyDirector() {
-        ArrayList<EventLog> eventlogs = (ArrayList<EventLog>) eventLogRepository.findAll();
-
+    public CCTSResult VerifyDirector() {
+        CCTSResult result = null;
+        documentVerifiedResult = null;
         try {
             ArrayList<CCTSDocument> documents = documentParser.parseAllCCTSProfilesAndSave2DB();
+            result = new CCTSResult(documents);
 
             //verify all documents have unique title
-            CCTSStatusCode cctsdocumentDuplicatedTitleError = documentTitleVerifier(documents);
-            if (cctsdocumentDuplicatedTitleError != CCTSStatusCode.ALLGREEN) return cctsdocumentDuplicatedTitleError;
-
+            documentVerifiedResult = documentTitleVerifier(documents);
+            if (documentVerifiedResult != CCTSStatusCode.ALLGREEN) return result;
             //
             for (CCTSDocument cctsDocument : documents) {
-                CCTSStatusCode documentVerifiedResult = verifyDocumentLegality(cctsDocument);
+                documentVerifiedResult = verifyDocumentLegality(cctsDocument);
                 if (documentVerifiedResult != CCTSStatusCode.ALLGREEN) {
-                    return documentVerifiedResult;
+                    return result;
                 }
             }
             // all pass
             currentDocumentTitle = "" ;
-            return CCTSStatusCode.ALLGREEN;
+
+            return result;
 
         } catch (Exception e) {
             // TODO: return error message to frontend
             System.out.println("CCTS Documenet parse error");
             e.printStackTrace();
-            return CCTSStatusCode.CCTSDOCUMENT_PARSE_ERROR;
+            documentVerifiedResult = CCTSStatusCode.CCTSDOCUMENT_PARSE_ERROR;
+            return result;
         }
 
     }
