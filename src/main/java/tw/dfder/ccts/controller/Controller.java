@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tw.dfder.ccts.configuration.ServiceConfigure;
 import tw.dfder.ccts.entity.cctsdocumentmodel.CCTSDocument;
-import tw.dfder.ccts.entity.cctsresultmodel.CCTSResult;
 import tw.dfder.ccts.repository.CCTSDocumentRepository;
 import tw.dfder.ccts.services.CCTSDocumentParser;
 import tw.dfder.ccts.services.DBCleaner;
@@ -52,7 +51,7 @@ public class Controller {
     @PostMapping("/cleanDB")
     public ResponseEntity<?> cleanAllDB(){
         dbcleaner.cleanEventLogDB();
-        dbcleaner.cleanCCTSProfileDB();
+        dbcleaner.cleanCCTSDocumentDB();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
