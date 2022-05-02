@@ -31,12 +31,15 @@ public class CCTSResult {
     // match result of delivery and it's contract from pact broker
     @Field
     private ArrayList<CCTSResultRecord> resultBetweenDeliveryAndContract;
+    @Field
+    private Map<String, CCTSStatusCode> pathVerificationResults;
 
     @Field
     private Map<String, CCTSStatusCode> contractVerificationResults;
 
+    //stage -> result
     @Field
-    private Map<String, CCTSStatusCode> pathVerificationResults;
+    private TreeMap<Integer, Integer> progressResult;
 
 
     @Field
@@ -54,6 +57,7 @@ public class CCTSResult {
         this.passedList = new ArrayList<>();
         this.failedList = new ArrayList<>();
         this.pathVerificationResults = new Hashtable<>();
+        this.progressResult = new TreeMap<>();
     }
 
 
@@ -410,5 +414,14 @@ public class CCTSResult {
 
     public void setPathVerificationResults(Map<String, CCTSStatusCode> pathVerificationResults) {
         this.pathVerificationResults = pathVerificationResults;
+    }
+
+
+    public TreeMap<Integer, Integer> getProgressResult() {
+        return progressResult;
+    }
+
+    public void setProgressResult(TreeMap<Integer, Integer> progressResult) {
+        this.progressResult = progressResult;
     }
 }
