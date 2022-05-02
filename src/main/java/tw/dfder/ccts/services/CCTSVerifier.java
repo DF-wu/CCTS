@@ -16,7 +16,6 @@ import tw.dfder.ccts.repository.CCTSResultRepository;
 import tw.dfder.ccts.repository.EventLogRepository;
 import tw.dfder.ccts.services.pact_broker.PactBrokerBusyBox;
 
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.Executors;
 
@@ -41,12 +40,11 @@ public class CCTSVerifier {
 
 
 
-    public CCTSResult verifyCCTSDelivery() {
+    public CCTSResult verifyCCTSDelivery(CCTSResult cctsResult) {
         // retrieve needed data from db to memory for increasing speed
         ArrayList<CCTSDocument> documents = (ArrayList<CCTSDocument>) cctsDocumentRepository.findAll();
         ArrayList<EventLog> eventlogs = (ArrayList<EventLog>) eventLogRepository.findAll();
 
-        CCTSResult cctsResult = new CCTSResult(documents);
         for (CCTSDocument document : documents) {
 
 //            HashSet<NextState> reachableStatesSet = flatenPaths(paths);
