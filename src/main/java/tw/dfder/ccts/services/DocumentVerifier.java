@@ -169,7 +169,8 @@ public class DocumentVerifier {
         documentParser.pathFinder(cctsDocument, cctsDocument.findSimpleState(cctsDocument.getStartAt()), new ArrayList<>(), paths);
         for ( ArrayList<NextState> path :  paths){
             for (int i = 1; i < path.size(); i++) {
-                if(path.get(i).getTimeSequenceLabel() > path.get(i-1).getTimeSequenceLabel()){
+                // should be increased
+                if(path.get(i).getTimeSequenceLabel() <= path.get(i-1).getTimeSequenceLabel()){
                     System.out.println("CCTS document has timeSequenceLabel not increased in path!");
                     return CCTSStatusCode.PATH_TIMESEQUENCELABEL_NOT_INCREASED;
                 }
