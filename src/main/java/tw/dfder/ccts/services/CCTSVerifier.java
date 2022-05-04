@@ -91,10 +91,10 @@ public class CCTSVerifier {
             }
         }
 
-
-        // find a valid path through all eventlogs by path
+        // path verify stage
+        // find at least a valid path through all eventlogs by path
         for ( ArrayList<NextState> path : paths) {
-            cctsResult.getPathVerificationResults().put(path2String(path), findValidEventlogComposition(path, eventlogs, cctsResult));
+            cctsResult.getPathVerificationResults().put(CCTSDocumentParser.path2StringName(path), findValidEventlogComposition(path, eventlogs, cctsResult));
         }
 
         // contract stage
@@ -177,17 +177,7 @@ public class CCTSVerifier {
         return pathSet;
     }
 
-    // To store as key
-    private String path2String(ArrayList<NextState> path) {
-        String s = "";
-        for (NextState nextState : path) {
-            s += nextState.getStateName() + " -> ";
-        }
 
-        // remove last " -> "
-        s = s.substring(0, s.length() - 4);
-        return s;
-    }
 
 
     private CCTSStatusCode verifyPathResult(ArrayList<NextState> path, ArrayList<EventLog> eventlogs) {
