@@ -57,7 +57,7 @@ public class CCTSDocumentParser {
         TODO:
         find path(case sequence) from start state to end state.
      */
-    public void pathFinder(CCTSDocument document, SimpleState state, ArrayList<NextState> path, ArrayList<ArrayList<NextState>> finalLists) {
+    public static void pathFinder(CCTSDocument document, SimpleState state, ArrayList<NextState> path, ArrayList<ArrayList<NextState>> finalLists) {
         // nextState and options should be mutually exclusive
         if (state.getNextState() != null && state.getOptions() == null && !state.isEnd()) {
             // nextState is not null, but options is null.
@@ -145,7 +145,29 @@ public class CCTSDocumentParser {
     }
 
 
-    public ArrayList<NextState> findDeliveryList(CCTSDocument cctsDocument){
+    public static HashSet<String> findAllParticipants(CCTSDocument cctsDocument) {
+        HashSet<String> participantsSet = new HashSet<>();
+        for (NextState delivery : CCTSDocumentParser.findDeliveryList(cctsDocument)) {
+            participantsSet.add(delivery.getProvider());
+            participantsSet.add(delivery.getConsumer());
+        }
+        return participantsSet;
+    }
+
+    // To store as key
+    public static String path2StringName(ArrayList<NextState> path) {
+        String s = "";
+        for (NextState nextState : path) {
+            s += nextState.getStateName() + " -> ";
+        }
+
+        // remove last " -> "
+        s = s.substring(0, s.length() - 4);
+        return s;
+    }
+
+
+    public static ArrayList<NextState> findDeliveryList(CCTSDocument cctsDocument){
         ArrayList<NextState> delieveryList = new ArrayList<NextState>();
         // iterate all possible state
         for (SimpleState state : cctsDocument.getStates()) {
@@ -170,7 +192,7 @@ public class CCTSDocumentParser {
         return delieveryList;
     }
 
-    private String stateChecker(SimpleState simpleState){
+    private static String stateChecker(SimpleState simpleState){
 
         // nextState and options should be mutually exclusive
         if (simpleState.getNextState() != null && simpleState.getOptions() == null && !simpleState.isEnd()) {

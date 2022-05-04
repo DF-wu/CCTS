@@ -134,7 +134,7 @@ public class DocumentVerifier {
 
         // get all paths
         ArrayList<ArrayList<NextState>> paths = new ArrayList<>();
-        documentParser.pathFinder(cctsDocument, cctsDocument.findSimpleState(cctsDocument.getStartAt()), new ArrayList<>(), paths);
+        CCTSDocumentParser.pathFinder(cctsDocument, cctsDocument.findSimpleState(cctsDocument.getStartAt()), new ArrayList<>(), paths);
 
 
         if(paths.size() == 0){
@@ -146,7 +146,7 @@ public class DocumentVerifier {
 
     private CCTSStatusCode timeSequenceLabelChecker(CCTSDocument cctsDocument) {
         //get all delivery
-        ArrayList<NextState> deliverys =  documentParser.findDeliveryList(cctsDocument);
+        ArrayList<NextState> deliverys =  CCTSDocumentParser.findDeliveryList(cctsDocument);
         //get all timeSequenceLabel
         ArrayList<Integer> timeSequenceLabels = new ArrayList<>();
         for ( NextState delivery : deliverys){
