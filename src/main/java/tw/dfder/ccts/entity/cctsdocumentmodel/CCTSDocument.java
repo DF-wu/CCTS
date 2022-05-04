@@ -13,9 +13,7 @@ public class CCTSDocument {
     private String title;
     private String startAt;
 
-
     private ArrayList<SimpleState> states;
-
 
 
     public SimpleState findSimpleState(String stateName) {
