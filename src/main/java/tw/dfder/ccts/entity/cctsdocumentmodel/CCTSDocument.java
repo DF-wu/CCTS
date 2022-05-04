@@ -5,12 +5,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Document(collection = "CCTSDocuments")
 public class CCTSDocument {
     private String CCTSversion;
     private String title;
     private String startAt;
+
+
     private ArrayList<SimpleState> states;
 
 
@@ -52,11 +55,11 @@ public class CCTSDocument {
         this.startAt = startAt;
     }
 
-    public ArrayList<SimpleState> getStates() {
-        return states;
-    }
-
     public void setStates(ArrayList<SimpleState> states) {
         this.states = states;
+    }
+
+    public ArrayList<SimpleState> getStates() {
+        return states;
     }
 }

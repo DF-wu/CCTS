@@ -12,8 +12,8 @@ public class SimpleState {
     private String stateName;
     private String comment;
     private boolean end;
-    private NextState nextState;
     private ArrayList<NextState> options;
+    private NextState nextState;
 
 
     /*
