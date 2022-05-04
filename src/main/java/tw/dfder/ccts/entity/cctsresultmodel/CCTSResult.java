@@ -6,11 +6,14 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.cctsdocumentmodel.CCTSDocument;
 
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.lang.System.lineSeparator;
 
 @Document(collection = "CCTSResult")
 public class CCTSResult {
@@ -27,7 +30,6 @@ public class CCTSResult {
     @Field
     private CCTSStatusCode documentStageError;
 
-    @Field
     private ArrayList<CCTSStatusCode> documentVerifiedResult;
 
     // match result of delivery and eventlog
@@ -67,6 +69,14 @@ public class CCTSResult {
         this.failedList = new ArrayList<>();
         this.pathVerificationResults = new Hashtable<>();
         this.testProgress = new ArrayList<>();
+        List<CCTSTestCase> list = Arrays.asList(
+                new CCTSTestCase(CCTSTestStage.PREPARE_DOCUMENT_STAGE, false),
+                new CCTSTestCase(CCTSTestStage.DOCUMENT_STAGE, false),
+                new CCTSTestCase(CCTSTestStage.EVENTLOG_STAGE, false),
+                new CCTSTestCase(CCTSTestStage.PATH_STAGE, false),
+                new CCTSTestCase(CCTSTestStage.CONTRACT_STAGE, false),
+                new CCTSTestCase(CCTSTestStage.CONTRACT_TEST_STAGE, false));
+        this.testProgress.addAll(list);
 
     }
 
@@ -109,34 +119,34 @@ public class CCTSResult {
 
 
         String outputMessage = "";
-        outputMessage = "# CCTS Test Report" + System.lineSeparator();
+        outputMessage = "# CCTS Test Report" + lineSeparator();
         // based on hackmd syntax
-        outputMessage = outputMessage + "[TOC]" + System.lineSeparator();
-        outputMessage = outputMessage +"## Information" + System.lineSeparator();
-        outputMessage = outputMessage + "+ Test Result: " + (testResult ? "Pass!!!" : "Fail.") + System.lineSeparator();
+        outputMessage = outputMessage + "[TOC]" + lineSeparator();
+        outputMessage = outputMessage +"## Information" + lineSeparator();
+        outputMessage = outputMessage + "+ Test Result: " + (testResult ? "Pass!!!" : "Fail.") + lineSeparator();
         outputMessage = outputMessage + "+ Test Time: " + LocalDateTime
                 .now()
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                + System.lineSeparator();
-        outputMessage = outputMessage + "+ Passed delivery: " + passedList.size() + System.lineSeparator();
-        outputMessage = outputMessage + "+ Failure delivery: " + failedList.size() + System.lineSeparator();
-        outputMessage = outputMessage + "## Test detail" + System.lineSeparator();
-        outputMessage = outputMessage + "### Potential Path: " + System.lineSeparator();
+                + lineSeparator();
+        outputMessage = outputMessage + "+ Passed delivery: " + passedList.size() + lineSeparator();
+        outputMessage = outputMessage + "+ Failure delivery: " + failedList.size() + lineSeparator();
+        outputMessage = outputMessage + "## Test detail" + lineSeparator();
+        outputMessage = outputMessage + "### Potential Path: " + lineSeparator();
         for (String s : pathVerificationResults.keySet()) {
-            outputMessage = outputMessage + "+ " + s + System.lineSeparator();
+            outputMessage = outputMessage + "+ " + s + lineSeparator();
         }
-        outputMessage = outputMessage + "### Pass" + System.lineSeparator();
+        outputMessage = outputMessage + "### Pass" + lineSeparator();
         outputMessage = generateResultEntityMD(outputMessage, passedList, true);
-        outputMessage = outputMessage + "#### Contract Verification" + System.lineSeparator();
+        outputMessage = outputMessage + "#### Contract Verification" + lineSeparator();
         outputMessage = generateContractVerificationResultEntityMD(outputMessage, true);
-        outputMessage = outputMessage + "#### Path:" + System.lineSeparator();
+        outputMessage = outputMessage + "#### Path:" + lineSeparator();
         outputMessage = generateResultPathEntityMD(outputMessage, true);
-        outputMessage = outputMessage + "---" + System.lineSeparator();
-        outputMessage = outputMessage + "### Failure" + System.lineSeparator();
+        outputMessage = outputMessage + "---" + lineSeparator();
+        outputMessage = outputMessage + "### Failure" + lineSeparator();
         outputMessage = generateResultEntityMD(outputMessage, failedList, false);
-        outputMessage = outputMessage + "#### Contract Verification" + System.lineSeparator();
+        outputMessage = outputMessage + "#### Contract Verification" + lineSeparator();
         outputMessage = generateContractVerificationResultEntityMD(outputMessage, false);
-        outputMessage = outputMessage + "#### Path:" + System.lineSeparator();
+        outputMessage = outputMessage + "#### Path:" + lineSeparator();
         outputMessage = generateResultPathEntityMD(outputMessage, false);
 
 
@@ -148,12 +158,12 @@ public class CCTSResult {
         for (String s : pathVerificationResults.keySet()){
             if(isPassed){
                 if(pathVerificationResults.get(s) == CCTSStatusCode.ALLGREEN){
-                    msg = msg + "+ " + s + System.lineSeparator();
+                    msg = msg + "+ " + s + lineSeparator();
                 }
             }else{
                 if(pathVerificationResults.get(s) != CCTSStatusCode.ALLGREEN){
-                    msg = msg + "+ " + s  + System.lineSeparator();
-                    msg = msg + "   + Reason:  "+ pathVerificationResults.get(s) + System.lineSeparator();
+                    msg = msg + "+ " + s  + lineSeparator();
+                    msg = msg + "   + Reason:  "+ pathVerificationResults.get(s) + lineSeparator();
                 }
             }
         }
@@ -183,7 +193,6 @@ public class CCTSResult {
                 return flag;
             }
         }
-
         //  path check
         for (CCTSStatusCode code : pathVerificationResults.values()) {
             if(code != CCTSStatusCode.ALLGREEN){
@@ -211,11 +220,11 @@ public class CCTSResult {
         for (String service  : contractVerificationResults.keySet()) {
             if(isPassed){
                 if(contractVerificationResults.get(service).equals(CCTSStatusCode.ALLGREEN) ){
-                    resultMessage = resultMessage + "+ "+ service + System.lineSeparator();
+                    resultMessage = resultMessage + "+ "+ service + lineSeparator();
                 }
             }else {
                 if(!contractVerificationResults.get(service).equals(CCTSStatusCode.ALLGREEN) ){
-                    resultMessage = resultMessage + "+ "+ service + ": " + contractVerificationResults.get(service) + System.lineSeparator();
+                    resultMessage = resultMessage + "+ "+ service + ": " + contractVerificationResults.get(service) + lineSeparator();
                 }
             }
         }
@@ -245,16 +254,16 @@ public class CCTSResult {
     private String generateResultEntityMD(String msg, ArrayList<CCTSResultRecord> list, boolean isPassed) {
         HashMap<String, ArrayList<CCTSResultRecord>> documentedResultRecordMap = documentedResultsTogether(list);
         for (String documentName : documentedResultRecordMap.keySet()) {
-            msg = msg + "#### Document: " + documentName + System.lineSeparator();
+            msg = msg + "#### Document: " + documentName + lineSeparator();
             ArrayList<CCTSResultRecord> resultRecords = documentedResultRecordMap.get(documentName);
             for (CCTSResultRecord rr : resultRecords) {
-                msg = msg + "+ State Name: " + rr.getDelivery().getStateName() + System.lineSeparator();
-                msg = msg + "    + Provider: " + rr.getDelivery().getProvider() + System.lineSeparator();
-                msg = msg + "    + Consumer: " + rr.getDelivery().getConsumer() + System.lineSeparator();
-                msg = msg + "    + TestCaseId: " + rr.getDelivery().getTestCaseId() + System.lineSeparator();
+                msg = msg + "+ State Name: " + rr.getDelivery().getStateName() + lineSeparator();
+                msg = msg + "    + Provider: " + rr.getDelivery().getProvider() + lineSeparator();
+                msg = msg + "    + Consumer: " + rr.getDelivery().getConsumer() + lineSeparator();
+                msg = msg + "    + TestCaseId: " + rr.getDelivery().getTestCaseId() + lineSeparator();
                 if(!isPassed){
                     // if failed, show the error message
-                    msg = msg + "    + Failure message: " + rr.getErrorCode().getMessage() + System.lineSeparator();
+                    msg = msg + "    + Failure message: " + rr.getErrorCode().getMessage() + lineSeparator();
 
                 }
             }
@@ -291,8 +300,8 @@ public class CCTSResult {
     public String checkOutReportMessage() {
 
         String outputMessage = "";
-        outputMessage = outputMessage + "CCTS Test Result: " + (testResult ? "Passed!": "Not.") + System.lineSeparator();
-        outputMessage = outputMessage + "Passed: " + System.lineSeparator();
+        outputMessage = outputMessage + "CCTS Test Result: " + (testResult ? "Passed!": "Not.") + lineSeparator();
+        outputMessage = outputMessage + "Passed: " + lineSeparator();
 
         // passed
 
@@ -324,7 +333,7 @@ public class CCTSResult {
 
 
         // errors
-        outputMessage = outputMessage + "Errors:" + System.lineSeparator();
+        outputMessage = outputMessage + "Errors:" + lineSeparator();
         for (CCTSResultRecord result : resultBetweenDeliveryAndEventLogs) {
             if(result.getErrorCode() != CCTSStatusCode.ALLGREEN){
                 String msg = generateMessageEntity(
@@ -358,22 +367,22 @@ public class CCTSResult {
 
     private String generateMessageEntity(String document, String stateName, String provider, String consumer, String testCaseId){
         String msg =
-                      "  DocumentTitle: " + document  + System.lineSeparator()
-                    + "    stateName: " + stateName + System.lineSeparator()
-                    + "      provider: " + provider + System.lineSeparator()
-                    + "      consumer: " + consumer + System.lineSeparator()
-                    + "      testCaseId: " + testCaseId + System.lineSeparator();
+                      "  DocumentTitle: " + document  + lineSeparator()
+                    + "    stateName: " + stateName + lineSeparator()
+                    + "      provider: " + provider + lineSeparator()
+                    + "      consumer: " + consumer + lineSeparator()
+                    + "      testCaseId: " + testCaseId + lineSeparator();
         return msg;
     }
 
     private String generateMessageEntity(String document, String stateName, String provider, String consumer, String testCaseId, String errorMessage){
         String msg =
-                      "  DocumentTitle: " + document  + System.lineSeparator()
-                    + "    stateName: " + stateName + System.lineSeparator()
-                    + "      provider: " + provider + System.lineSeparator()
-                    + "      consumer: " + consumer + System.lineSeparator()
-                    + "      testCaseId: " + testCaseId + System.lineSeparator()
-                    + "      error message: " + errorMessage + System.lineSeparator();
+                      "  DocumentTitle: " + document  + lineSeparator()
+                    + "    stateName: " + stateName + lineSeparator()
+                    + "      provider: " + provider + lineSeparator()
+                    + "      consumer: " + consumer + lineSeparator()
+                    + "      testCaseId: " + testCaseId + lineSeparator()
+                    + "      error message: " + errorMessage + lineSeparator();
         return msg;
     }
 
