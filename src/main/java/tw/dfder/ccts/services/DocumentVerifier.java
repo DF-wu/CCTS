@@ -150,7 +150,6 @@ public class DocumentVerifier {
         //get all timeSequenceLabel
         ArrayList<Integer> timeSequenceLabels = new ArrayList<>();
         for ( NextState delivery : deliverys){
-            documentParser.findDeliveryList(cctsDocument);
             timeSequenceLabels.add(delivery.getTimeSequenceLabel());
         }
         // ninja code
@@ -195,18 +194,22 @@ public class DocumentVerifier {
 
     private CCTSStatusCode propertiesChecker(CCTSDocument cctsDocument) {
         // verify simpleState's properties are not null
-        boolean isValidSimpleState = false;
+        boolean isValidSimpleState = true;
         for (SimpleState simpleState : cctsDocument.getStates()) {
-            isValidSimpleState = verifySimpleStateLegality(simpleState);
+            if( !verifySimpleStateLegality(simpleState) ){
+                isValidSimpleState = false;
+            }
         }
 
         // verify NextStates properties is legal
-        boolean isValidNextState = false;
+        boolean isValidNextState = true;
         for (NextState state : documentParser.findDeliveryList(cctsDocument)) {
-            isValidNextState = verifyNextStateLegality(state);
+            if( !verifyNextStateLegality(state)){
+                isValidNextState = false;
+            }
         }
 
-        if(isValidSimpleState && isValidNextState) {
+        if( !(isValidSimpleState && isValidNextState)) {
             return CCTSStatusCode.CCTSDOCUMENT_REQUIRED_PROPERTIES_NULL_ERROR;
         }
 
