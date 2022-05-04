@@ -10,6 +10,7 @@ import tw.dfder.ccts.entity.cctsresultmodel.CCTSTest;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSTestCase;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSTestStage;
 import tw.dfder.ccts.repository.CCTSTestRepository;
+import tw.dfder.ccts.services.reportexporter.CCTSVerifyLevelForm;
 import tw.dfder.ccts.services.reportexporter.DocumentLevelForm;
 import tw.dfder.ccts.services.reportexporter.ReportExportEngine;
 
@@ -95,15 +96,14 @@ public class SystemStarter {
             }
 
 
-            //
+
             for ( CCTSResult result : cctsTest.getResults()) {
-                //TODO return format output
                 cctsVerifier.verifyCCTSDelivery(result);
             }
-
-
-
             cctsTest.checkOut();
+
+            ReportExportEngine reportExportEngine = new CCTSVerifyLevelForm();
+            msg = reportExportEngine.exportReport(cctsTest);
             testRepository.save(cctsTest);
             return msg;
 
