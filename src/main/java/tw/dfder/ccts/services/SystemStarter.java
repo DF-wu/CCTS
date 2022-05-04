@@ -7,7 +7,11 @@ import tw.dfder.ccts.configuration.ServiceConfigure;
 import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSResult;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSTest;
+import tw.dfder.ccts.entity.cctsresultmodel.CCTSTestCase;
+import tw.dfder.ccts.entity.cctsresultmodel.CCTSTestStage;
 import tw.dfder.ccts.repository.CCTSTestRepository;
+import tw.dfder.ccts.services.reportexporter.DocumentLevelForm;
+import tw.dfder.ccts.services.reportexporter.ReportExportEngine;
 
 @Component
 public class SystemStarter {
@@ -55,7 +59,7 @@ public class SystemStarter {
         String msg = "";
         if(isSystemReady){
             // document prepare stage
-            // A-1 A-2
+            // A-1
             CCTSStatusCode prepareDocumentResult = documentVerifier.prepareDocumentVerify();
             if(prepareDocumentResult == CCTSStatusCode.DOCUMENT_DUPLICATED_STATE_NAME_ERROR){
                 return CCTSStatusCode.DOCUMENT_DUPLICATED_STATE_NAME_ERROR.getMessage();
@@ -66,12 +70,29 @@ public class SystemStarter {
                 return exmsg;
             }
 
-
+            // document stage
+            // A-2
             CCTSTest cctsTest = documentVerifier.verifyDirector();
+            boolean isDocumentValid = true;
             for (CCTSResult result : cctsTest.getResults()) {
+
+                // last stage is done and pass
+                result.getTestProgress().add(new CCTSTestCase(CCTSTestStage.PREPARE_DOCUMENT_STAGE, true));
+
                 if(result.getDocumentStageError() != CCTSStatusCode.ALLGREEN){
-                    // TODO return format output documnt stage error
+                    // A-2 fail
+                    result.getTestProgress().add(new CCTSTestCase(CCTSTestStage.DOCUMENT_STAGE, false));
+                    isDocumentValid = false;
+                }else{
+                    // A-2 pass
+                    result.getTestProgress().add(new CCTSTestCase(CCTSTestStage.DOCUMENT_STAGE, true));
+
                 }
+            }
+            // if any error occur, return error message
+            if(isDocumentValid){
+                ReportExportEngine reportExportEngine = new DocumentLevelForm();
+                return reportExportEngine.exportReport(cctsTest);
             }
 
 
@@ -80,7 +101,10 @@ public class SystemStarter {
                 //TODO return format output
                 cctsVerifier.verifyCCTSDelivery(result);
             }
+
+            cctsTest.checkOut();
             testRepository.save(cctsTest);
+            return msg;
 
         }else{
             return "System is not ready";
