@@ -4,16 +4,16 @@ package tw.dfder.ccts.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tw.dfder.ccts.entity.CCTSStatusCode;
-import tw.dfder.ccts.entity.EventLog;
 import tw.dfder.ccts.entity.cctsdocumentmodel.CCTSDocument;
 import tw.dfder.ccts.entity.cctsdocumentmodel.NextState;
 import tw.dfder.ccts.entity.cctsdocumentmodel.SimpleState;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSResult;
+import tw.dfder.ccts.entity.cctsresultmodel.CCTSTest;
 import tw.dfder.ccts.repository.CCTSDocumentRepository;
 import tw.dfder.ccts.repository.EventLogRepository;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 
 import static tw.dfder.ccts.entity.CCTSStatusCode.CCTSDOCUMENT_REQUIRED_PROPERTIES_NULL_ERROR;
@@ -27,7 +27,7 @@ public class DocumentVerifier {
     private final EventLogRepository eventLogRepository;
 
     public CCTSStatusCode documentVerifiedResult;
-
+    public String prepareDocumentErrorMessage = "";
 
     @Autowired
     public DocumentVerifier(CCTSDocumentParser documentParser, CCTSDocumentRepository cctsDocumentRepository, EventLogRepository eventLogRepository) {
@@ -36,37 +36,47 @@ public class DocumentVerifier {
         this.eventLogRepository = eventLogRepository;
     }
 
-    public CCTSResult VerifyDirector() {
-        CCTSResult result = null;
+    public CCTSTest verifyDirector(){
+
+        ArrayList<CCTSDocument> documents = (ArrayList<CCTSDocument>) cctsDocumentRepository.findAll();
+        CCTSTest cctsTest = new CCTSTest(documents);
+        currentDocumentTitle = "";
         documentVerifiedResult = null;
+
+        for (CCTSResult result: cctsTest.getResults()) {
+            documentVerifiedResult = verifyDocumentLegality(result.getDocument());
+            if (documentVerifiedResult != CCTSStatusCode.ALLGREEN) {
+                result.setDocumentStageError(documentVerifiedResult);
+            }
+        }
+
+        currentDocumentTitle = "" ;
+        return cctsTest;
+    }
+
+    public CCTSStatusCode prepareDocumentVerify() {
+        prepareDocumentErrorMessage = "";
         try {
             ArrayList<CCTSDocument> documents = documentParser.parseAllCCTSProfilesAndSave2DB();
-            result = new CCTSResult(documents);
-
             //verify all documents have unique title
             documentVerifiedResult = documentTitleVerifier(documents);
-            if (documentVerifiedResult != CCTSStatusCode.ALLGREEN) return result;
-            //
-            for (CCTSDocument cctsDocument : documents) {
-                documentVerifiedResult = verifyDocumentLegality(cctsDocument);
-                if (documentVerifiedResult != CCTSStatusCode.ALLGREEN) {
-                    return result;
-                }
+            if (documentVerifiedResult != CCTSStatusCode.ALLGREEN) {
+                return CCTSStatusCode.CCTSDOCUMENT_DUPLICATED_TITLE_ERROR;
             }
-            // all pass
-            currentDocumentTitle = "" ;
-
-            return result;
+            return CCTSStatusCode.ALLGREEN;
 
         } catch (Exception e) {
-            // TODO: return error message to frontend
+            //  return error message to frontend
             System.out.println("CCTS Documenet parse error");
             e.printStackTrace();
+            prepareDocumentErrorMessage = e.getMessage();
             documentVerifiedResult = CCTSStatusCode.CCTSDOCUMENT_PARSE_ERROR;
-            return result;
+            return documentVerifiedResult;
         }
 
     }
+
+
 
     private CCTSStatusCode documentTitleVerifier(ArrayList<CCTSDocument> documents) {
         HashSet<String> documentTitles = new HashSet<>();
@@ -80,10 +90,9 @@ public class DocumentVerifier {
         return CCTSStatusCode.ALLGREEN;
     }
 
-    private CCTSStatusCode verifyDocumentLegality(CCTSDocument cctsDocument) {
+    private CCTSStatusCode  verifyDocumentLegality(CCTSDocument cctsDocument) {
         // specify current doc
         currentDocumentTitle = cctsDocument.getTitle();
-
 
         // verify document properties are not null
         if (cctsDocument.getTitle() == null
@@ -96,12 +105,76 @@ public class DocumentVerifier {
 
         // verify states
         // state name should be unique in documents
-        CCTSStatusCode documentDuplicatedStateNameError = stateUniqueChecker(cctsDocument);
-        if (documentDuplicatedStateNameError != CCTSStatusCode.ALLGREEN) return documentDuplicatedStateNameError;
+        CCTSStatusCode isStatesValid = stateUniqueChecker(cctsDocument);
+        if (isStatesValid != CCTSStatusCode.ALLGREEN) return isStatesValid;
 
         // properties check
-        CCTSStatusCode cctsdocumentRequiredPropertiesNullError = propertiesChecker(cctsDocument);
-        if (cctsdocumentRequiredPropertiesNullError != CCTSStatusCode.ALLGREEN) return cctsdocumentRequiredPropertiesNullError;
+        CCTSStatusCode isPropertiesValid = propertiesChecker(cctsDocument);
+        if (isPropertiesValid != CCTSStatusCode.ALLGREEN) return isPropertiesValid;
+
+
+        // path valid check
+        CCTSStatusCode isPathValid = pathChecker(cctsDocument);
+        if(isPathValid != CCTSStatusCode.ALLGREEN) return isPathValid;
+
+        // timeSequenceLabel Legality check
+        CCTSStatusCode isTimeSequenceLabelValid = timeSequenceLabelChecker(cctsDocument);
+        if(isTimeSequenceLabelValid != CCTSStatusCode.ALLGREEN) return isTimeSequenceLabelValid;
+
+        return CCTSStatusCode.ALLGREEN;
+
+
+    }
+
+    private CCTSStatusCode pathChecker(CCTSDocument cctsDocument) {
+
+        // find oud if any unreached state
+        CCTSStatusCode isStateReachabilityValid = stateReachabilityChecker(cctsDocument);
+        if(isStateReachabilityValid != CCTSStatusCode.ALLGREEN) return isStateReachabilityValid;
+
+        // get all paths
+        ArrayList<ArrayList<NextState>> paths = new ArrayList<>();
+        documentParser.pathFinder(cctsDocument, cctsDocument.findSimpleState(cctsDocument.getStartAt()), new ArrayList<>(), paths);
+
+
+        if(paths.size() == 0){
+            return CCTSStatusCode.NO_VALID_PATH_FOUND;
+        }
+        return CCTSStatusCode.ALLGREEN;
+
+    }
+
+    private CCTSStatusCode timeSequenceLabelChecker(CCTSDocument cctsDocument) {
+        //get all delivery
+        ArrayList<NextState> deliverys =  documentParser.findDeliveryList(cctsDocument);
+        //get all timeSequenceLabel
+        ArrayList<Integer> timeSequenceLabels = new ArrayList<>();
+        for ( NextState delivery : deliverys){
+            documentParser.findDeliveryList(cctsDocument);
+            timeSequenceLabels.add(delivery.getTimeSequenceLabel());
+        }
+        // ninja code
+//        documentParser.findDeliveryList(cctsDocument).stream().map( delivery ->  delivery.getTimeSequenceLabel()).collect(Collectors.toCollection(ArrayList::new));
+
+
+        //check timeSequenceLabel is unique
+        HashSet<Integer> timeSequenceLabelSet = new HashSet<>(timeSequenceLabels);
+        if(timeSequenceLabelSet.size() != timeSequenceLabels.size()){
+            System.out.println("CCTS document has duplicated timeSequenceLabel!");
+            return CCTSStatusCode.PATH_TIMESEQUENCE_LABEL_NOT_UNIQUE;
+        }
+
+        // check timeSequenceLabel is increased in path
+        ArrayList<ArrayList<NextState>> paths = new ArrayList<>();
+        documentParser.pathFinder(cctsDocument, cctsDocument.findSimpleState(cctsDocument.getStartAt()), new ArrayList<>(), paths);
+        for ( ArrayList<NextState> path :  paths){
+            for (int i = 1; i < path.size(); i++) {
+                if(path.get(i).getTimeSequenceLabel() > path.get(i-1).getTimeSequenceLabel()){
+                    System.out.println("CCTS document has timeSequenceLabel not increased in path!");
+                    return CCTSStatusCode.PATH_TIMESEQUENCELABEL_NOT_INCREASED;
+                }
+            }
+        }
 
         return CCTSStatusCode.ALLGREEN;
     }
@@ -136,29 +209,32 @@ public class DocumentVerifier {
             return CCTSStatusCode.CCTSDOCUMENT_REQUIRED_PROPERTIES_NULL_ERROR;
         }
 
+
         // verify nextState name should be found in all states set.
         for ( NextState nextState : documentParser.findDeliveryList(cctsDocument)) {
             if(cctsDocument.findSimpleState(nextState.getStateName()) == null){
                 System.out.println("CCTS document nextState name is not found in all states!");
-                return CCTSStatusCode.CCTSDOCUMENT_ERROR_STATENAME_NOT_FOUND;
+                return CCTSStatusCode.CCTSDOCUMENT_STATE_NAME_NOT_FOUND;
             }
         }
-
-        // find oud if any unreached state
-        CCTSStatusCode cctsdocumentErrorStateNotReachable = unRecheableStateChecker(cctsDocument);
-        if (cctsdocumentErrorStateNotReachable != CCTSStatusCode.ALLGREEN) return cctsdocumentErrorStateNotReachable;
-
 
         return CCTSStatusCode.ALLGREEN;
     }
 
-    private CCTSStatusCode unRecheableStateChecker(CCTSDocument cctsDocument) {
+    private CCTSStatusCode stateReachabilityChecker(CCTSDocument cctsDocument) {
         // find out if any rest of state is reachable
         // traversal all potential valid path.
         ArrayList<ArrayList<NextState>> traversalPaths = new ArrayList<>();
         // start from initial state
         documentParser.pathFinder(cctsDocument, cctsDocument.findSimpleState(cctsDocument.getStartAt()), new ArrayList<>(), traversalPaths);
 
+        // check if no valid state or not
+        if(traversalPaths.size() == 0) {
+            // no valid path found
+            return CCTSStatusCode.NO_VALID_PATH_FOUND;
+        }
+
+        //check if any state is not reachable
         HashSet<String> reachableStates = new HashSet<>();
         for (ArrayList<NextState> path : traversalPaths) {
             for (NextState nextState  : path) {
@@ -181,15 +257,13 @@ public class DocumentVerifier {
 
 
     private boolean verifyNextStateLegality(NextState state) {
-        if (state.getStateName() == null ||
-                state.getConsumer() == null ||
-                state.getProvider() == null ||
-                state.getTestCaseId() == null ||
-                state.getTimeSequenceLabel() == null ) {
-            // required properties null
-            return false;
-        }
-        return true;
+        // required properties null
+        if (state.getStateName() != null &&
+                state.getConsumer() != null &&
+                state.getProvider() != null &&
+                state.getTestCaseId() != null &&
+                state.getTimeSequenceLabel() != null) return true;
+        else return false;
     }
 
     private boolean verifySimpleStateLegality(SimpleState simpleState) {
@@ -214,7 +288,7 @@ public class DocumentVerifier {
             return true;
         } else {
             //WTF
-            System.out.println("CCTS document states have invalid state!");
+            System.out.println("CCTS document states contain invalid state!");
             return false;
         }
 

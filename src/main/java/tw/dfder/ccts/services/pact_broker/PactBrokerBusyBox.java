@@ -13,9 +13,9 @@ import java.util.ArrayList;
 
 @Service("PactBrokerBusyBox")
 public class PactBrokerBusyBox {
-    private Gson gson;
-    private ServiceConfigure serviceConfig;
-    private PactBrokerConnector pactBrokerConnector;
+    private final Gson gson;
+    private final ServiceConfigure serviceConfig;
+    private final PactBrokerConnector pactBrokerConnector;
 
 
 

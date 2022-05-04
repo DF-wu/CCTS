@@ -23,10 +23,10 @@ import java.io.IOException;
 @RestController
 public class Controller {
 
-    private CCTSDocumentParser CCTSDocumentParser;
-    private PactBrokerBusyBox pactBrokerBusyBox;
-    private ServiceConfigure serviceConfig;
-    private DBCleaner dbcleaner;
+    private final CCTSDocumentParser CCTSDocumentParser;
+    private final PactBrokerBusyBox pactBrokerBusyBox;
+    private final ServiceConfigure serviceConfig;
+    private final DBCleaner dbcleaner;
     private final SystemStarter starter;
 
 

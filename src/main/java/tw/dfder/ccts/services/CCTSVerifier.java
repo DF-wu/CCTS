@@ -8,11 +8,10 @@ import tw.dfder.ccts.entity.cctsdocumentmodel.NextState;
 import tw.dfder.ccts.entity.Contract;
 import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.EventLog;
-import tw.dfder.ccts.entity.cctsdocumentmodel.SimpleState;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSResult;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSResultRecord;
 import tw.dfder.ccts.repository.CCTSDocumentRepository;
-import tw.dfder.ccts.repository.CCTSResultRepository;
+import tw.dfder.ccts.repository.CCTSTestRepository;
 import tw.dfder.ccts.repository.EventLogRepository;
 import tw.dfder.ccts.services.pact_broker.PactBrokerBusyBox;
 
@@ -24,16 +23,16 @@ public class CCTSVerifier {
     private final CCTSDocumentParser documentParser;
     private final CCTSDocumentRepository cctsDocumentRepository;
     private final EventLogRepository eventLogRepository;
-    private final CCTSResultRepository cctsResultRepository;
+    private final CCTSTestRepository cctsTestRepository;
     private final PactBrokerBusyBox busyBox;
     private final ServiceConfigure serviceConfig;
 
     @Autowired
-    public CCTSVerifier(CCTSDocumentParser documentParser, CCTSDocumentRepository cctsDocumentRepository, EventLogRepository eventLogRepository, CCTSResultRepository cctsResultRepository, PactBrokerBusyBox busyBox, ServiceConfigure serviceConfig) {
+    public CCTSVerifier(CCTSDocumentParser documentParser, CCTSDocumentRepository cctsDocumentRepository, EventLogRepository eventLogRepository, CCTSTestRepository cctsTestRepository, PactBrokerBusyBox busyBox, ServiceConfigure serviceConfig) {
         this.documentParser = documentParser;
         this.cctsDocumentRepository = cctsDocumentRepository;
         this.eventLogRepository = eventLogRepository;
-        this.cctsResultRepository = cctsResultRepository;
+        this.cctsTestRepository = cctsTestRepository;
         this.busyBox = busyBox;
         this.serviceConfig = serviceConfig;
     }
@@ -41,109 +40,131 @@ public class CCTSVerifier {
 
 
     public CCTSResult verifyCCTSDelivery(CCTSResult cctsResult) {
+        CCTSDocument cctsDocument = cctsResult.getDocument();
         // retrieve needed data from db to memory for increasing speed
         ArrayList<CCTSDocument> documents = (ArrayList<CCTSDocument>) cctsDocumentRepository.findAll();
         ArrayList<EventLog> eventlogs = (ArrayList<EventLog>) eventLogRepository.findAll();
 
-        for (CCTSDocument document : documents) {
 
-//            HashSet<NextState> reachableStatesSet = flatenPaths(paths);
-
-            // get all possible paths
-            ArrayList<ArrayList<NextState>> paths = new ArrayList<ArrayList<NextState>>();
-            documentParser.pathFinder(
-                    document,
-                    document.findSimpleState(document.getStartAt()),
+        // get all possible paths
+        ArrayList<ArrayList<NextState>> paths = new ArrayList<ArrayList<NextState>>();
+        documentParser.pathFinder(
+                    cctsDocument,
+                    cctsDocument.findSimpleState(cctsDocument.getStartAt()),
                     new ArrayList<>(),
                     paths);
 
-            // verify timeSequenceLabel
-            for (ArrayList<NextState> path : paths) {
-                for (int i = 1; i < path.size(); i++) {
-                    // timeSequenceLabel always be increased
-                    if (path.get(i).getTimeSequenceLabel() > path.get(i - 1).getTimeSequenceLabel()) {
-
-
-                    }
-
-                }
-            }
-
-
-
-
-
-
-
-        }
-
-
-
-
-
-//        --------------------------old flow------------------------
-        for (CCTSDocument document : documents) {
-            // specify a delivery as baseline.
-            for (NextState delivery : documentParser.findDeliveryList(document)) {
-                //extract same provider and consumer eventlog
-                ArrayList<EventLog> sameRouteEventlogs = new ArrayList<>();
-                for (EventLog el : eventlogs) {
-                    // same provider consumer
-                    if (delivery.getConsumer().equals(el.getConsumerName()) && delivery.getProvider().equals(el.getProviderName())) {
-                        sameRouteEventlogs.add(el);
-                    }
-                }
-                // if same route eventlogs not exist -> no related event was produced between the producer and consumer
-                if (sameRouteEventlogs.size() == 0) {
-                    cctsResult.getResultBetweenDeliveryAndEventLogs().add(
-                            new CCTSResultRecord(document.getTitle(), delivery, CCTSStatusCode.ERROR_NO_EVENT_FOUND));
-                    // jump to next delivery
-                    continue;
-                }
-
-                // verify delivery and eventlogs and get error code if exist
-                // add errors to result
+        // eventlog stage
+        // check all correspond eventlogs are valid
+        // check testCaseId
+        HashSet<NextState> reachableStatesSet = flatenPaths(paths);
+        for (NextState delivery : reachableStatesSet) {
+            ArrayList<EventLog> sameRouteEventlogs = findSameRouteEventlogs(delivery.getProvider(), delivery.getConsumer(), eventlogs);
+            if(sameRouteEventlogs.size() == 0) {
+                // fail because no eventlogs found
                 cctsResult.getResultBetweenDeliveryAndEventLogs().add(
-                        verifyDeliveryAndEventlog(delivery, sameRouteEventlogs, document.getTitle()));
-
-                // match delivery and corresponded contract testCaseId witch is from pact broker
-                cctsResult.getResultBetweenDeliveryAndContract().add(
-                        new CCTSResultRecord(document.getTitle(), delivery, verifyDeliveryAndContract(delivery)));
-            }
-
-            // check contract verification status
-            cctsResult.getContractVerificationResults().putAll(validateServiceContractTestResult(document));
-
-
-            // traversal all potential valid path.
-            ArrayList<ArrayList<NextState>> traversalPaths = new ArrayList<>();
-            ArrayList<NextState> processingList = new ArrayList<>();
-            // find initial simple state
-            SimpleState initialState = null;
-            for (SimpleState state : document.getStates()){
-                if(state.getStateName().equals(document.getStartAt())) {
-                    initialState = state;
+                        new CCTSResultRecord(cctsResult.getDocument().getTitle(),
+                                delivery,
+                                CCTSStatusCode.ERROR_NO_EVENT_FOUND));
+            }else{
+                boolean isValid = false;
+                for (EventLog eventLog : sameRouteEventlogs) {
+                    if(eventLog.getTestCaseId().equals(delivery.getTestCaseId())) {
+                        isValid = true;
+                    }
+                }
+                if(isValid) {
+                    //evenlog found
+                    cctsResult.getResultBetweenDeliveryAndEventLogs().add(
+                            new CCTSResultRecord(
+                                    cctsResult.getDocument().getTitle(),
+                                    delivery,
+                                    CCTSStatusCode.ALLGREEN));
+                }else{
+                    // fail because no matched testcaseId eventlogs found
+                    cctsResult.getResultBetweenDeliveryAndEventLogs().add(
+                            new CCTSResultRecord(
+                                    cctsResult.getDocument().getTitle(),
+                                    delivery,
+                                    CCTSStatusCode.ERROR_NO_MATCH_TESTCASEID_IN_EVENTLOGS));
                 }
             }
-            // start from initial state
-            documentParser.pathFinder(document, initialState, processingList, traversalPaths);
-
-
-            // check if all paths are valid
-            for (ArrayList<NextState> path : traversalPaths) {
-                // check if path is valid
-                cctsResult.getPathVerificationResults().put(
-                        toPathString(path),
-                        verifyPathResult(path, eventlogs));
-            }
-
-
         }
+
+
+        // find a valid path through all eventlogs by path
+        for ( ArrayList<NextState> path : paths) {
+            cctsResult.getPathVerificationResults().put(path2String(path), findValidEventlogComposition(path, eventlogs, cctsResult));
+        }
+
+        // contract stage
+        for (NextState delivery : reachableStatesSet) {
+            cctsResult.getResultBetweenDeliveryAndContract().add(
+                    new CCTSResultRecord(cctsResult.getDocument().getTitle(), delivery, verifyDeliveryAndContract(delivery)));
+        }
+
+        // contract test stage
+        cctsResult.getContractVerificationResults().putAll(validateServiceContractTestResult(cctsDocument));
+
+
+
 
         // gererate final result
         cctsResult.checkOut();
-        cctsResultRepository.save(cctsResult);
         return cctsResult;
+    }
+
+    private CCTSStatusCode findValidEventlogComposition(ArrayList<NextState> path, ArrayList<EventLog> eventlogs, CCTSResult cctsResult) {
+        EventLog pilovtEventlog = new EventLog(0, "", "","",0);
+
+        for (NextState delivery : path) {
+            // extract same provider and consumer eventlog
+            ArrayList<EventLog> sameRouteEventlogs = findSameRouteEventlogs(delivery.getProvider() , delivery.getConsumer(), eventlogs);
+            // Sort eventlogs by timestamp by ascending order
+            sameRouteEventlogs.sort((o1, o2) -> {
+                if(o1.getTimeStamp()<o2.getTimeStamp()) {
+                    return -1;
+                }else{
+                    return 1;
+                }
+            });
+
+//    no need now because we have already done it in the previous step
+//            // check array if empty -> no eventlogs found
+//            if(sameRouteEventlogs.size() == 0) {
+//                cctsResult.getResultBetweenDeliveryAndEventLogs().add(
+//                        new CCTSResultRecord(cctsResult.getDocument().getTitle(), delivery, CCTSStatusCode.ERROR_NO_EVENT_FOUND));
+//                return CCTSStatusCode.ERROR_NO_EVENT_FOUND;
+//            }
+
+            // find eventlogs
+            boolean isDeliveryValid = false;
+            for (EventLog eventlog : sameRouteEventlogs) {
+                 if(eventlog.getTimeStamp() > pilovtEventlog.getTimeStamp()) {
+                     // found eventlog
+                     pilovtEventlog = eventlog;
+                     isDeliveryValid = true;
+                     break;
+                 }
+            }
+
+            if(!isDeliveryValid) {
+                return CCTSStatusCode.NOT_AT_LEAST_A_VALID_EVENTLOG_COMPOSITION_PATH_FOUND;
+            }
+
+
+        }
+        return CCTSStatusCode.ALLGREEN;
+    }
+
+    private ArrayList<EventLog> findSameRouteEventlogs(String provider, String consumer, ArrayList<EventLog> eventlogs) {
+        ArrayList<EventLog> sameRouteEventlogs = new ArrayList<>();
+        for (EventLog el : eventlogs) {
+            if (el.getConsumerName().equals(consumer) && el.getProviderName().equals(provider)) {
+                sameRouteEventlogs.add(el);
+            }
+        }
+        return sameRouteEventlogs;
     }
 
     private HashSet<NextState> flatenPaths(ArrayList<ArrayList<NextState>> paths){
@@ -157,7 +178,7 @@ public class CCTSVerifier {
     }
 
     // To store as key
-    private String toPathString(ArrayList<NextState> path) {
+    private String path2String(ArrayList<NextState> path) {
         String s = "";
         for (NextState nextState : path) {
             s += nextState.getStateName() + " -> ";
@@ -175,7 +196,7 @@ public class CCTSVerifier {
             // current state timeSequenceLabel shuold be lager than previous state timeSequenceLabel
             if (!(path.get(i).getTimeSequenceLabel() > path.get(i - 1).getTimeSequenceLabel())) {
                 // if not, return error code
-                return CCTSStatusCode.PATH_SEQUENCE_ERROR;
+                return CCTSStatusCode.PATH_TIMESEQUENCELABEL_NOT_INCREASED;
             }
             // verify time consumer provider logically correct.
             if (!(path.get(i).getProvider().equals(path.get(i - 1).getConsumer()))) {
@@ -246,7 +267,7 @@ public class CCTSVerifier {
                     // right sequence
                 } else {
                     // wrong sequence
-                    return CCTSStatusCode.PATH_SEQUENCE_ERROR;
+                    return CCTSStatusCode.NOT_AT_LEAST_A_VALID_EVENTLOG_COMPOSITION_PATH_FOUND;
                 }
             }
 
@@ -277,46 +298,6 @@ public class CCTSVerifier {
         }
 
 
-        private CCTSResultRecord verifyDeliveryAndEventlog (NextState
-        delivery, ArrayList < EventLog > sameRouteEventlogs, String documentName){
-            ArrayList<CCTSResultRecord> results = new ArrayList<>();
-            // match delivery and eventlog
-            CCTSStatusCode inspectResult = null;
-
-            for (EventLog el : sameRouteEventlogs) {
-                // add every status of delivery eventlog pair in to array.
-
-                inspectResult = inspectDeliveryAndEventLog(delivery, el);
-                results.add(new CCTSResultRecord(documentName, delivery, inspectResult));
-            }
-
-
-            // check result array
-            for (CCTSResultRecord record : results) {
-                if (record.getErrorCode() == CCTSStatusCode.ALLGREEN) {
-                    // there is a valid eventlog for this delivery
-                    return record;
-                }
-            }
-            // if no one valid eventlog found.
-            return new CCTSResultRecord(documentName, delivery, CCTSStatusCode.ERROR_NO_MATCH_TESTCASEID_IN_EVENTLOGS);
-
-
-            // if error ->  add into errors,
-            // if no error -> passed
-//
-//
-//        if(inspectResult == CCTSStatusCode.ALLGREEN){
-//            // found correspond evnetlog with this delivery
-//            isValidDelivery = true;
-//        }else {
-//            // not this eventlog
-//            isValidDelivery = false;
-//        }
-            // eventlog and delivery not match. add into errors map.
-
-            // for this delivery only. if error occur, add once and leave loop.
-        }
 
 
         //for inspect contract test result error
@@ -370,29 +351,7 @@ public class CCTSVerifier {
             return isValidDelivery ? CCTSStatusCode.ALLGREEN : CCTSStatusCode.DELIVERY_TESTCASEID_NOT_FOUND_IN_CONTRACT;
         }
 
-        private CCTSStatusCode inspectDeliveryAndEventLog (NextState delivery, EventLog el){
-            if (delivery.getProvider().equals(el.getProviderName())) {
-                // provider match
-                if (delivery.getConsumer().equals(el.getConsumerName())) {
-                    // consumer match
-                    if (delivery.getTestCaseId().equals(el.getTestCaseId())) {
-                        // testCaseId match
-                        // all condition match -> delivery passed
-                        return CCTSStatusCode.ALLGREEN;
-                    } else {
-                        // testsCaseId not Match
-                        return CCTSStatusCode.ERROR_TESTCASEID_IN_CONTRACT;
-                    }
-                } else {
-                    //consumer not match
-                    return CCTSStatusCode.ERROR_PARTICIPANT;
-                }
-            } else {
-                // provider not match
-                return CCTSStatusCode.ERROR_PARTICIPANT;
-            }
 
-        }
 
         private Map<String, CCTSStatusCode> validateServiceContractTestResult (CCTSDocument document){
             // get all participants
@@ -433,13 +392,9 @@ public class CCTSVerifier {
                 // retrieve result. 0 for yes, 1 for no
                 int exitCode = process.waitFor();
 
-                if (exitCode == 0) {
-                    // pass
-                    return true;
-                } else {
-                    // some contracts test not pass
-                    return false;
-                }
+                // pass
+                // some contracts test not pass
+                return exitCode == 0;
 
             } catch (Exception e) {
                 System.out.println("Fetch result of can-i-deploy fail!");

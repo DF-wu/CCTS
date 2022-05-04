@@ -19,8 +19,16 @@ public class CCTSResult {
 
     @Field
     private boolean testResult;
+
+
     @Field
-    private final ArrayList<CCTSDocument> relatedDocuments ;
+    private CCTSDocument document;
+
+    @Field
+    private CCTSStatusCode documentStageError;
+
+    @Field
+    private ArrayList<CCTSStatusCode> documentVerifiedResult;
 
     // match result of delivery and eventlog
     @Field
@@ -35,28 +43,34 @@ public class CCTSResult {
     @Field
     private Map<String, CCTSStatusCode> contractVerificationResults;
 
-    //stage -> result
     @Field
-    private TreeMap<Integer, Integer> progressResult;
+    private Map<String, CCTSStatusCode> deliveryVerificationResults;
 
-
-    @Field
-    private ArrayList<CCTSResultRecord> passedList ;
 
     @Field
-    private ArrayList<CCTSResultRecord> failedList ;
+    private ArrayList<CCTSTestCase> testProgress;
 
 
-    public CCTSResult(ArrayList<CCTSDocument> relatedDocuments) {
-        this.relatedDocuments = relatedDocuments;
+    @Field
+    private final ArrayList<CCTSResultRecord> passedList ;
+
+    @Field
+    private final ArrayList<CCTSResultRecord> failedList ;
+
+
+    public CCTSResult(CCTSDocument document) {
+        this.document = document;
         this.resultBetweenDeliveryAndEventLogs = new ArrayList<>();
         this.resultBetweenDeliveryAndContract = new ArrayList<>();
         this.contractVerificationResults = new Hashtable<>();
         this.passedList = new ArrayList<>();
         this.failedList = new ArrayList<>();
         this.pathVerificationResults = new Hashtable<>();
-        this.progressResult = new TreeMap<>();
+        this.testProgress = new ArrayList<>();
+
     }
+
+
 
 
     /*
@@ -406,12 +420,27 @@ public class CCTSResult {
         this.pathVerificationResults = pathVerificationResults;
     }
 
-
-    public TreeMap<Integer, Integer> getProgressResult() {
-        return progressResult;
+    public CCTSDocument getDocument() {
+        return document;
     }
 
-    public void setProgressResult(TreeMap<Integer, Integer> progressResult) {
-        this.progressResult = progressResult;
+    public void setDocument(CCTSDocument document) {
+        this.document = document;
+    }
+
+    public ArrayList<CCTSTestCase> getTestProgress() {
+        return testProgress;
+    }
+
+    public void setTestProgress(ArrayList<CCTSTestCase> testProgress) {
+        this.testProgress = testProgress;
+    }
+
+    public CCTSStatusCode getDocumentStageError() {
+        return documentStageError;
+    }
+
+    public void setDocumentStageError(CCTSStatusCode documentStageError) {
+        this.documentStageError = documentStageError;
     }
 }

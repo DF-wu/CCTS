@@ -22,8 +22,8 @@ import java.util.Set;
 
 @Service
 public class CCTSDocumentParser {
-    private ServiceConfigure serviceConfigure;
-    private CCTSDocumentRepository repo;
+    private final ServiceConfigure serviceConfigure;
+    private final CCTSDocumentRepository repo;
 
     @Autowired
     public CCTSDocumentParser(ServiceConfigure serviceConfigure, CCTSDocumentRepository repo) {
@@ -81,6 +81,7 @@ public class CCTSDocumentParser {
             finalLists.add(path);
         } else {
             //WTF
+            System.out.println("Error when parsing document path");
             System.out.println("CCTS document states have invalid state!");
         }
 

@@ -5,29 +5,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tw.dfder.ccts.configuration.ServiceConfigure;
 import tw.dfder.ccts.entity.CCTSStatusCode;
-import tw.dfder.ccts.entity.cctsdocumentmodel.CCTSDocument;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSResult;
-
-import javax.swing.text.html.parser.DocumentParser;
-import java.util.ArrayList;
+import tw.dfder.ccts.entity.cctsresultmodel.CCTSTest;
+import tw.dfder.ccts.repository.CCTSTestRepository;
 
 @Component
 public class SystemStarter {
     public static boolean isSystemReady = false;
     private final ServiceConfigure serviceConfig;
     private final CCTSDocumentParser parser;
-    private final CCTSVerifier verifier;
+    private final CCTSVerifier cctsVerifier;
     private final DBCleaner cleaner;
     private final DocumentVerifier documentVerifier;
+    private final CCTSTestRepository testRepository;
 
 
     @Autowired
-    public SystemStarter(ServiceConfigure serviceConfig, CCTSDocumentParser parser, CCTSVerifier verifier, DBCleaner cleaner, DocumentVerifier documentVerifier) {
+    public SystemStarter(ServiceConfigure serviceConfig, CCTSDocumentParser parser, CCTSVerifier cctsVerifier, DBCleaner cleaner, DocumentVerifier documentVerifier, CCTSTestRepository testRepository) {
         this.serviceConfig = serviceConfig;
         this.parser = parser;
-        this.verifier = verifier;
+        this.cctsVerifier = cctsVerifier;
         this.cleaner = cleaner;
         this.documentVerifier = documentVerifier;
+        this.testRepository = testRepository;
     }
 
 
@@ -52,15 +52,36 @@ public class SystemStarter {
         // clean ccts db
         cleaner.cleanCCTSDocumentDB();
 
-
+        String msg = "";
         if(isSystemReady){
-            CCTSResult documentVerifiedResult = documentVerifier.VerifyDirector();
-            if( documentVerifier.documentVerifiedResult.equals(CCTSStatusCode.ALLGREEN)) {
-                return verifier.verifyCCTSDelivery(documentVerifiedResult).checkOutReportMessageMD();
-            }else{
-                // document error
-                return "Document: " + documentVerifier.currentDocumentTitle + "\n" +  documentVerifier.documentVerifiedResult.getMessage();
+            // document prepare stage
+            // A-1 A-2
+            CCTSStatusCode prepareDocumentResult = documentVerifier.prepareDocumentVerify();
+            if(prepareDocumentResult == CCTSStatusCode.DOCUMENT_DUPLICATED_STATE_NAME_ERROR){
+                return CCTSStatusCode.DOCUMENT_DUPLICATED_STATE_NAME_ERROR.getMessage();
+            }else if(prepareDocumentResult == CCTSStatusCode.CCTSDOCUMENT_PARSE_ERROR){
+                // maybe snake yaml exception
+                String exmsg = documentVerifier.prepareDocumentErrorMessage;
+                exmsg = "CCTSDocument parse exception: \n" + exmsg;
+                return exmsg;
             }
+
+
+            CCTSTest cctsTest = documentVerifier.verifyDirector();
+            for (CCTSResult result : cctsTest.getResults()) {
+                if(result.getDocumentStageError() != CCTSStatusCode.ALLGREEN){
+                    // TODO return format output documnt stage error
+                }
+            }
+
+
+
+            for ( CCTSResult result : cctsTest.getResults()) {
+                //TODO return format output
+                cctsVerifier.verifyCCTSDelivery(result);
+            }
+            testRepository.save(cctsTest);
+
         }else{
             return "System is not ready";
         }
