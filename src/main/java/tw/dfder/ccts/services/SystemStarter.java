@@ -76,16 +76,15 @@ public class SystemStarter {
             boolean isDocumentValid = true;
             for (CCTSResult result : cctsTest.getResults()) {
 
-                // last stage is done and pass
-                result.getTestProgress().add(new CCTSTestCase(CCTSTestStage.PREPARE_DOCUMENT_STAGE, true));
+
 
                 if(result.getDocumentStageError() != CCTSStatusCode.ALLGREEN){
                     // A-2 fail
-                    result.getTestProgress().add(new CCTSTestCase(CCTSTestStage.DOCUMENT_STAGE, false));
+
                     isDocumentValid = false;
                 }else{
                     // A-2 pass
-                    result.getTestProgress().add(new CCTSTestCase(CCTSTestStage.DOCUMENT_STAGE, true));
+
 
                 }
             }
@@ -96,11 +95,13 @@ public class SystemStarter {
             }
 
 
-
+            //
             for ( CCTSResult result : cctsTest.getResults()) {
                 //TODO return format output
                 cctsVerifier.verifyCCTSDelivery(result);
             }
+
+
 
             cctsTest.checkOut();
             testRepository.save(cctsTest);

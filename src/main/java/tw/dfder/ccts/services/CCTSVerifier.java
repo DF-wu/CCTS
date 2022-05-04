@@ -10,6 +10,8 @@ import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.EventLog;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSResult;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSResultRecord;
+import tw.dfder.ccts.entity.cctsresultmodel.CCTSTestCase;
+import tw.dfder.ccts.entity.cctsresultmodel.CCTSTestStage;
 import tw.dfder.ccts.repository.CCTSDocumentRepository;
 import tw.dfder.ccts.repository.CCTSTestRepository;
 import tw.dfder.ccts.repository.EventLogRepository;
@@ -90,6 +92,10 @@ public class CCTSVerifier {
                 }
             }
         }
+
+
+
+
 
         // path verify stage
         // find at least a valid path through all eventlogs by path
