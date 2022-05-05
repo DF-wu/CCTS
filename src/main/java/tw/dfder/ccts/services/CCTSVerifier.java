@@ -50,7 +50,7 @@ public class CCTSVerifier {
 
         // get all possible paths
         ArrayList<ArrayList<NextState>> paths = new ArrayList<ArrayList<NextState>>();
-        documentParser.pathFinder(
+        CCTSDocumentParser.pathFinder(
                     cctsDocument,
                     cctsDocument.findSimpleState(cctsDocument.getStartAt()),
                     new ArrayList<>(),
