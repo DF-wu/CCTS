@@ -1,5 +1,5 @@
 CCTSversion: "0.11"
-title: PDVPS saga fail case - not connected
+title: PDVPS saga fail case - not connected (service name error)
 startAt: Create top-up event
 states:
   - stateName: Create top-up event
