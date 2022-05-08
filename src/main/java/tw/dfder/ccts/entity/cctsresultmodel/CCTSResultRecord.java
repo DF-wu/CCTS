@@ -6,12 +6,12 @@ import tw.dfder.ccts.entity.cctsdocumentmodel.NextState;
 public class CCTSResultRecord {
     private final String documentTitle;
     private final NextState delivery;
-    private final CCTSStatusCode errorCode;
+    private final CCTSStatusCode resultCode;
 
     public CCTSResultRecord(String documentTitle, NextState delivery, CCTSStatusCode errorCode) {
         this.documentTitle = documentTitle;
         this.delivery = delivery;
-        this.errorCode = errorCode;
+        this.resultCode = errorCode;
     }
 
 //    below for accessor
@@ -25,7 +25,7 @@ public class CCTSResultRecord {
         return delivery;
     }
 
-    public CCTSStatusCode getErrorCode() {
-        return errorCode;
+    public CCTSStatusCode getResultCode() {
+        return resultCode;
     }
 }

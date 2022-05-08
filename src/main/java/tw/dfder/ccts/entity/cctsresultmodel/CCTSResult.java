@@ -6,7 +6,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.cctsdocumentmodel.CCTSDocument;
 
-import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -175,7 +174,7 @@ public class CCTSResult {
         for(CCTSResultRecord n : Stream.concat(resultBetweenDeliveryAndEventLogs.stream(), resultBetweenDeliveryAndContract.stream())
                 .collect(Collectors.toList())
         ){
-            if(n.getErrorCode().equals(CCTSStatusCode.ALLGREEN)){
+            if(n.getResultCode().equals(CCTSStatusCode.ALLGREEN)){
                 passedList.add(n);
             }else {
                 failedList.add(n);
@@ -263,7 +262,7 @@ public class CCTSResult {
                 msg = msg + "    + TestCaseId: " + rr.getDelivery().getTestCaseId() + lineSeparator();
                 if(!isPassed){
                     // if failed, show the error message
-                    msg = msg + "    + Failure message: " + rr.getErrorCode().getMessage() + lineSeparator();
+                    msg = msg + "    + Failure message: " + rr.getResultCode().getMessage() + lineSeparator();
 
                 }
             }
@@ -306,7 +305,7 @@ public class CCTSResult {
         // passed
 
         for (CCTSResultRecord result: resultBetweenDeliveryAndEventLogs) {
-            if(result.getErrorCode() == CCTSStatusCode.ALLGREEN){
+            if(result.getResultCode() == CCTSStatusCode.ALLGREEN){
                 String msg = generateMessageEntity(
                         result.getDocumentTitle(),
                         result.getDelivery().getStateName(),
@@ -319,7 +318,7 @@ public class CCTSResult {
         }
 
         for (CCTSResultRecord result : resultBetweenDeliveryAndContract) {
-            if(result.getErrorCode() == CCTSStatusCode.ALLGREEN){
+            if(result.getResultCode() == CCTSStatusCode.ALLGREEN){
                 String msg = generateMessageEntity(
                         result.getDocumentTitle(),
                         result.getDelivery().getStateName(),
@@ -335,28 +334,28 @@ public class CCTSResult {
         // errors
         outputMessage = outputMessage + "Errors:" + lineSeparator();
         for (CCTSResultRecord result : resultBetweenDeliveryAndEventLogs) {
-            if(result.getErrorCode() != CCTSStatusCode.ALLGREEN){
+            if(result.getResultCode() != CCTSStatusCode.ALLGREEN){
                 String msg = generateMessageEntity(
                         result.getDocumentTitle(),
                         result.getDelivery().getStateName(),
                         result.getDelivery().getProvider(),
                         result.getDelivery().getConsumer(),
                         result.getDelivery().getTestCaseId(),
-                        result.getErrorCode().getMessage()
+                        result.getResultCode().getMessage()
                 );
                 outputMessage = outputMessage + msg;
             }
         }
 
         for (CCTSResultRecord result : resultBetweenDeliveryAndContract) {
-            if(result.getErrorCode() != CCTSStatusCode.ALLGREEN){
+            if(result.getResultCode() != CCTSStatusCode.ALLGREEN){
                 String msg = generateMessageEntity(
                         result.getDocumentTitle(),
                         result.getDelivery().getStateName(),
                         result.getDelivery().getProvider(),
                         result.getDelivery().getConsumer(),
                         result.getDelivery().getTestCaseId(),
-                        result.getErrorCode().getMessage()
+                        result.getResultCode().getMessage()
                 );
                 outputMessage = outputMessage + msg;
             }
