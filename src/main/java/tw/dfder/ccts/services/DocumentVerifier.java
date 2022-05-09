@@ -12,7 +12,6 @@ import tw.dfder.ccts.entity.cctsresultmodel.CCTSTest;
 import tw.dfder.ccts.repository.CCTSDocumentRepository;
 import tw.dfder.ccts.repository.EventLogRepository;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -46,7 +45,11 @@ public class DocumentVerifier {
         for (CCTSResult result: cctsTest.getResults()) {
             documentVerifiedResult = verifyDocumentLegality(result.getDocument());
             if (documentVerifiedResult != CCTSStatusCode.ALLGREEN) {
-                result.setDocumentStageError(documentVerifiedResult);
+                //error occur
+                result.setDocumentStageVerificationError(documentVerifiedResult);
+            }else{
+                //no error
+                result.setDocumentStageVerificationError(CCTSStatusCode.ALLGREEN);
             }
         }
 
@@ -113,9 +116,13 @@ public class DocumentVerifier {
         if (isPropertiesValid != CCTSStatusCode.ALLGREEN) return isPropertiesValid;
 
 
-        // path valid check
+        // path validity check
         CCTSStatusCode isPathValid = pathChecker(cctsDocument);
         if(isPathValid != CCTSStatusCode.ALLGREEN) return isPathValid;
+
+        // each state in the path should be connected by each other (provider consumer check)
+        CCTSStatusCode isConnectedStateValid = connectedStateChecker(cctsDocument);
+        if(isConnectedStateValid != CCTSStatusCode.ALLGREEN) return isConnectedStateValid;
 
         // timeSequenceLabel Legality check
         CCTSStatusCode isTimeSequenceLabelValid = timeSequenceLabelChecker(cctsDocument);
@@ -123,6 +130,28 @@ public class DocumentVerifier {
 
         return CCTSStatusCode.ALLGREEN;
 
+
+    }
+
+    private CCTSStatusCode connectedStateChecker(CCTSDocument cctsDocument) {
+        //get all path
+        ArrayList<ArrayList<NextState>> paths =new ArrayList<>();
+        CCTSDocumentParser.pathFinder(
+                cctsDocument,
+                cctsDocument.findSimpleState(cctsDocument.getStartAt()),
+                new ArrayList<>(),
+                paths);
+        for (ArrayList<NextState> path: paths){
+            for (int i = 1; i < path.size(); i++) {
+                // previous nextState's consumer should be next one's provider
+                NextState currentState = path.get(i);
+                NextState previousState = path.get(i - 1);
+                if( !currentState.getProvider().equals(previousState.getConsumer())){
+                    return CCTSStatusCode.PATH_NOT_CONNECTED;
+                }
+            }
+        }
+        return CCTSStatusCode.ALLGREEN;
 
     }
 
@@ -201,7 +230,7 @@ public class DocumentVerifier {
             }
         }
 
-        // verify NextStates properties is legal
+        // verify NextStates properties is legal (not null)
         boolean isValidNextState = true;
         for (NextState state : documentParser.findDeliveryList(cctsDocument)) {
             if( !verifyNextStateLegality(state)){
