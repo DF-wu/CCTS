@@ -97,19 +97,19 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
             msg += "+ Potential Path number: " + paths.size() + System.lineSeparator();
             // add potential path
             for (String pathName : cctsResult.getPathVerificationResults().keySet() ) {
-                msg += "  + " + pathName + System.lineSeparator();
+                msg += "    + " + pathName + System.lineSeparator();
             }
             msg += "+ Participant Service: " + System.lineSeparator();
             for (String service : CCTSDocumentParser.findAllParticipants(cctsResult.getDocument())) {
-                msg += "  + " + service + System.lineSeparator();
+                msg += "    + " + service + System.lineSeparator();
             }
             msg += "### Test Stage: " + System.lineSeparator();
             for (int i = 0; i < cctsResult.getTestProgress().size(); i++) {
                 msg += (i + 1) + ". " + cctsResult.getTestProgress().get(i).getTestStages().getStageName() + System.lineSeparator();
-                msg += "  + result : " + cctsResult.getTestProgress().get(i).isTestResult() + System.lineSeparator();
-                msg += "  + stage id: " + cctsResult.getTestProgress().get(i).getTestStages().getStageId() + System.lineSeparator();
-                msg += "  + test instruction: " + System.lineSeparator();
-                msg += "  " + cctsResult.getTestProgress().get(i).getTestStages().getInstruction()+ System.lineSeparator();
+                msg += "    + result : " + cctsResult.getTestProgress().get(i).isTestResult() + System.lineSeparator();
+                msg += "    + stage id: " + cctsResult.getTestProgress().get(i).getTestStages().getStageId() + System.lineSeparator();
+                msg += "    + test instruction: " + System.lineSeparator();
+                msg += "    " + cctsResult.getTestProgress().get(i).getTestStages().getInstruction()+ System.lineSeparator();
             }
             msg += "### Result Detail: " + System.lineSeparator();
             msg += "#### Potential Path" + System.lineSeparator();
@@ -165,7 +165,7 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
             for (String service: cctsResult.getContractVerificationResults().keySet()) {
                 if (cctsResult.getContractVerificationResults().get(service) != CCTSStatusCode.ALLGREEN) {
                     msg += "+ " + service + System.lineSeparator();
-                    msg += "  + fail reason: " + cctsResult.getContractVerificationResults().get(service).getMessage() + System.lineSeparator();
+                    msg += "    + fail reason: " + cctsResult.getContractVerificationResults().get(service).getMessage() + System.lineSeparator();
                 }
             }
         }
@@ -188,9 +188,9 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
             for (CCTSResultRecord resultRecord : cctsResult.getResultBetweenDeliveryAndContract()) {
                 if (resultRecord.getResultCode() == CCTSStatusCode.ALLGREEN) {
                     msg += "+ " + resultRecord.getDelivery().getTestCaseId() + System.lineSeparator();
-                    msg += "  + Provider: " + resultRecord.getDelivery().getProvider() + System.lineSeparator();
-                    msg += "  + Consumer: " + resultRecord.getDelivery().getConsumer() + System.lineSeparator();
-                    msg += "  + TimeSequenceLabel: " + resultRecord.getDelivery().getTimeSequenceLabel() + System.lineSeparator();
+                    msg += "    + Provider: " + resultRecord.getDelivery().getProvider() + System.lineSeparator();
+                    msg += "    + Consumer: " + resultRecord.getDelivery().getConsumer() + System.lineSeparator();
+                    msg += "    + TimeSequenceLabel: " + resultRecord.getDelivery().getTimeSequenceLabel() + System.lineSeparator();
 
                 }
             }
@@ -211,10 +211,10 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
             for (CCTSResultRecord resultRecord : cctsResult.getResultBetweenDeliveryAndContract()) {
                 if (resultRecord.getResultCode() != CCTSStatusCode.ALLGREEN) {
                     msg += "+ " + resultRecord.getDelivery().getTestCaseId() + System.lineSeparator();
-                    msg += "  + Provider: " + resultRecord.getDelivery().getProvider() + System.lineSeparator();
-                    msg += "  + Consumer: " + resultRecord.getDelivery().getConsumer() + System.lineSeparator();
-                    msg += "  + TimeSequenceLabel: " + resultRecord.getDelivery().getTimeSequenceLabel() + System.lineSeparator();
-                    msg += "  + fail reason: " + resultRecord.getResultCode().getMessage() + System.lineSeparator();
+                    msg += "    + Provider: " + resultRecord.getDelivery().getProvider() + System.lineSeparator();
+                    msg += "    + Consumer: " + resultRecord.getDelivery().getConsumer() + System.lineSeparator();
+                    msg += "    + TimeSequenceLabel: " + resultRecord.getDelivery().getTimeSequenceLabel() + System.lineSeparator();
+                    msg += "    + fail reason: " + resultRecord.getResultCode().getMessage() + System.lineSeparator();
 
                 }
             }
@@ -236,9 +236,9 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
             for (CCTSResultRecord resultRecord : cctsResult.getResultBetweenDeliveryAndEventLogs()) {
                 if (resultRecord.getResultCode() == CCTSStatusCode.ALLGREEN) {
                     msg += "+ " + resultRecord.getDelivery().getTestCaseId() + System.lineSeparator();
-                    msg += "  + Provider: " + resultRecord.getDelivery().getProvider() + System.lineSeparator();
-                    msg += "  + Consumer: " + resultRecord.getDelivery().getConsumer() + System.lineSeparator();
-                    msg += "  + TimeSequenceLabel: " + resultRecord.getDelivery().getTimeSequenceLabel() + System.lineSeparator();
+                    msg += "    + Provider: " + resultRecord.getDelivery().getProvider() + System.lineSeparator();
+                    msg += "    + Consumer: " + resultRecord.getDelivery().getConsumer() + System.lineSeparator();
+                    msg += "    + TimeSequenceLabel: " + resultRecord.getDelivery().getTimeSequenceLabel() + System.lineSeparator();
                 }
             }
         }
@@ -257,10 +257,10 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
             for (CCTSResultRecord resultRecord : cctsResult.getResultBetweenDeliveryAndEventLogs()) {
                 if (resultRecord.getResultCode() != CCTSStatusCode.ALLGREEN) {
                     msg += "+ " + resultRecord.getDelivery().getTestCaseId() + System.lineSeparator();
-                    msg += "  + Provider: " + resultRecord.getDelivery().getProvider() + System.lineSeparator();
-                    msg += "  + Consumer: " + resultRecord.getDelivery().getConsumer() + System.lineSeparator();
-                    msg += "  + TimeSequenceLabel: " + resultRecord.getDelivery().getTimeSequenceLabel() + System.lineSeparator();
-                    msg += "  + fail reason: " + resultRecord.getResultCode().getMessage() + System.lineSeparator();
+                    msg += "    + Provider: " + resultRecord.getDelivery().getProvider() + System.lineSeparator();
+                    msg += "    + Consumer: " + resultRecord.getDelivery().getConsumer() + System.lineSeparator();
+                    msg += "    + TimeSequenceLabel: " + resultRecord.getDelivery().getTimeSequenceLabel() + System.lineSeparator();
+                    msg += "    + fail reason: " + resultRecord.getResultCode().getMessage() + System.lineSeparator();
 
                 }
             }
@@ -301,7 +301,7 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
             for (String pathName : cctsResult.getPathVerificationResults().keySet() ) {
                 if (cctsResult.getPathVerificationResults().get(pathName) != CCTSStatusCode.ALLGREEN) {
                     msg += "+ " + pathName + System.lineSeparator();
-                    msg += "  + fail reason: " + cctsResult.getPathVerificationResults().get(pathName).getMessage() + System.lineSeparator();
+                    msg += "    + fail reason: " + cctsResult.getPathVerificationResults().get(pathName).getMessage() + System.lineSeparator();
                 }
             }
         }
