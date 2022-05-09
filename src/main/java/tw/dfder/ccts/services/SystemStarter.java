@@ -7,8 +7,6 @@ import tw.dfder.ccts.configuration.ServiceConfigure;
 import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSResult;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSTest;
-import tw.dfder.ccts.entity.cctsresultmodel.CCTSTestCase;
-import tw.dfder.ccts.entity.cctsresultmodel.CCTSTestStage;
 import tw.dfder.ccts.repository.CCTSTestRepository;
 import tw.dfder.ccts.services.reportexporter.CCTSVerifyLevelForm;
 import tw.dfder.ccts.services.reportexporter.DocumentLevelForm;
@@ -77,9 +75,7 @@ public class SystemStarter {
             boolean isDocumentValid = true;
             for (CCTSResult result : cctsTest.getResults()) {
 
-
-
-                if(result.getDocumentStageError() != CCTSStatusCode.ALLGREEN){
+                if(result.getDocumentStageVerificationError() != CCTSStatusCode.ALLGREEN){
                     // A-2 fail
 
                     isDocumentValid = false;
@@ -90,7 +86,7 @@ public class SystemStarter {
                 }
             }
             // if any error occur, return error message
-            if(isDocumentValid){
+            if(!isDocumentValid){
                 ReportExportEngine reportExportEngine = new DocumentLevelForm();
                 return reportExportEngine.exportReport(cctsTest);
             }
