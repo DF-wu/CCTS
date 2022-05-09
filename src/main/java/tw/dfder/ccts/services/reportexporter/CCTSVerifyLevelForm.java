@@ -103,13 +103,12 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
             for (String service : CCTSDocumentParser.findAllParticipants(cctsResult.getDocument())) {
                 msg += "    + " + service + System.lineSeparator();
             }
-            msg += "### Test Stage: " + System.lineSeparator();
+            msg += "### Test Stage Instruction: " + System.lineSeparator();
             for (int i = 0; i < cctsResult.getTestProgress().size(); i++) {
                 msg += (i + 1) + ". " + cctsResult.getTestProgress().get(i).getTestStages().getStageName() + System.lineSeparator();
-                msg += "    + result : " + cctsResult.getTestProgress().get(i).isTestResult() + System.lineSeparator();
                 msg += "    + stage id: " + cctsResult.getTestProgress().get(i).getTestStages().getStageId() + System.lineSeparator();
                 msg += "    + test instruction: " + System.lineSeparator();
-                msg += "    " + cctsResult.getTestProgress().get(i).getTestStages().getInstruction()+ System.lineSeparator();
+                msg += cctsResult.getTestProgress().get(i).getTestStages().getInstruction()+ System.lineSeparator();
             }
             msg += "### Result Detail: " + System.lineSeparator();
             msg += "#### Potential Path" + System.lineSeparator();
