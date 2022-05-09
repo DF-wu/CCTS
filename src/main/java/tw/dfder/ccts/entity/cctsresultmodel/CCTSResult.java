@@ -27,7 +27,7 @@ public class CCTSResult {
     private CCTSDocument document;
 
     @Field
-    private CCTSStatusCode documentStageError;
+    private CCTSStatusCode documentStageVerificationError;
 
     private ArrayList<CCTSStatusCode> documentVerifiedResult;
 
@@ -444,11 +444,11 @@ public class CCTSResult {
         this.testProgress = testProgress;
     }
 
-    public CCTSStatusCode getDocumentStageError() {
-        return documentStageError;
+    public CCTSStatusCode getDocumentStageVerificationError() {
+        return documentStageVerificationError;
     }
 
-    public void setDocumentStageError(CCTSStatusCode documentStageError) {
-        this.documentStageError = documentStageError;
+    public void setDocumentStageVerificationError(CCTSStatusCode documentStageVerificationError) {
+        this.documentStageVerificationError = documentStageVerificationError;
     }
 }

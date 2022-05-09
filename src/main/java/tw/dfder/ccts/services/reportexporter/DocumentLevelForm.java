@@ -20,11 +20,11 @@ public class DocumentLevelForm implements ReportExportEngine{
         msg += "## Error List: " + System.lineSeparator();
         for (CCTSResult result : cctsTest.getResults()) {
             // output error message
-            if(result.getDocumentStageError() != CCTSStatusCode.ALLGREEN) {
+            if(result.getDocumentStageVerificationError() != CCTSStatusCode.ALLGREEN) {
                 // document name
                 msg += "### " + result.getDocument().getTitle()+ System.lineSeparator();
                 // document error
-                msg += "+ Error Reason: " + result.getDocumentStageError().getMessage() + System.lineSeparator();
+                msg += "+ Error Reason: " + result.getDocumentStageVerificationError().getMessage() + System.lineSeparator();
 
             }
 
