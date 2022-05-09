@@ -70,8 +70,9 @@ public class CCTSDocumentParser {
             // options is not null, but nextState is null
             // should not be end state
             // valid options branch
-            ArrayList<NextState> newPath = new ArrayList<>(path);
+
             for (NextState ns : state.getOptions()) {
+                ArrayList<NextState> newPath = new ArrayList<>(path);
                 newPath.add(ns);
                 SimpleState nxt = document.findSimpleState(ns.getStateName());
                 pathFinder(document, document.findSimpleState(ns.getStateName()), newPath, finalLists);
