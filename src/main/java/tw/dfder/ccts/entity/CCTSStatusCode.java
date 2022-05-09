@@ -12,7 +12,7 @@ public enum CCTSStatusCode {
     CCTSDOCUMENT_DUPLICATED_TITLE_ERROR("Some documents title is duplicated",   103),
     DOCUMENT_DUPLICATED_STATE_NAME_ERROR("There are duplicated state name in CCTS document", 104),
     CCTSDOCUMENT_ERROR_STATE_NOT_REACHABLE("some state is not reachable", 105),
-    PATH_NOT_CONNECTED("Delivery are not connect. check TimeSequenceLabel ,provider and consumer",301),
+    PATH_NOT_CONNECTED("Delivery are not connected. check connection of provider and consumer",301),
     PATH_TIMESEQUENCELABEL_NOT_INCREASED("some path's sequence label is not increased",   302),
     PATH_TIMESEQUENCE_LABEL_NOT_UNIQUE("some path's sequence label is not unique",   303),
 
