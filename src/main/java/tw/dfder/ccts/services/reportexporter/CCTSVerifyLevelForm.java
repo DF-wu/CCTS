@@ -140,7 +140,7 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
                 noPassResult = false;
             }
         }
-        if (!noPassResult) {
+        if (noPassResult) {
             msg += "None" + System.lineSeparator();
         }else {
             for (String service: cctsResult.getContractVerificationResults().keySet()) {
