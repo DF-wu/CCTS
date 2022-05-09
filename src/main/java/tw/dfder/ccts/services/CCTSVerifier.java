@@ -186,49 +186,7 @@ public class CCTSVerifier {
 
 
 
-    private CCTSStatusCode verifyPathResult(ArrayList<NextState> path, ArrayList<EventLog> eventlogs) {
-        for (int i = 1; i < path.size(); i++) {
-            // verify time sequence label
-            // current state timeSequenceLabel shuold be lager than previous state timeSequenceLabel
-            if (!(path.get(i).getTimeSequenceLabel() > path.get(i - 1).getTimeSequenceLabel())) {
-                // if not, return error code
-                return CCTSStatusCode.PATH_TIMESEQUENCELABEL_NOT_INCREASED;
-            }
-            // verify time consumer provider logically correct.
-            if (!(path.get(i).getProvider().equals(path.get(i - 1).getConsumer()))) {
-                // if not, return error code
-                return CCTSStatusCode.PATH_NOT_CONNECTED;
-            }
 
-//            TODO: decide the verify process is path base or document with eventlog base
-//            // verify eventlog time sequence and consumer provider follow the path
-//            for (NextState ns : path) {
-//                // find eventlog with same time sequence and consumer provider
-//                boolean flag=false;
-//                for (EventLog eventlog : eventlogs) {
-//                    if (eventlog.getTimeSequenceLabel().equals(ns.getTimeSequenceLabel())
-//                            && eventlog.getConsumerName().equals(ns.getConsumer())
-//                            && eventlog.getProviderName().equals(ns.getProvider())) {
-//                        // if found, go next round
-//                        // any one found == valid path
-//                        flag=true;
-//                        break;
-//                    }
-//                }
-//                if(!flag){
-//                    // no eventlog found for this path, return error code
-//                    return CCTSStatusCode.PATH_NOT_EVENTLOG_FOUND;
-//                }
-//            }
-
-
-
-
-
-        }
-        // all pass
-        return CCTSStatusCode.ALLGREEN;
-    }
 
         private CCTSStatusCode verifyEventlogSequence (ArrayList < EventLog > eventlogs, CCTSDocument
         document, ArrayList < Integer > caseSequence){
