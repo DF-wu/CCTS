@@ -1,5 +1,5 @@
 CCTSversion: "0.11"
-title: PDVPS saga fail case - not connected (service name error)
+title: PDVPS saga fail CASE - test case id duplicate
 startAt: Create top-up event
 states:
   - stateName: Create top-up event
@@ -8,7 +8,7 @@ states:
     nextState:
       stateName: Payment process
       timeSequenceLabel: 1
-      testCaseId: t-orc-payment-01
+      testCaseId: t-payment-orc-01
       provider: orchestrator
       consumer: paymentService
   - stateName: Payment process
@@ -32,8 +32,7 @@ states:
       stateName: Payment reversed
       timeSequenceLabel: 8
       testCaseId: t-orc-payment-02
-#      error
-      provider: Orchestrator
+      provider: orchestrator
       consumer: paymentService
   - stateName: Payment reversed
     comment: reverse Payment
