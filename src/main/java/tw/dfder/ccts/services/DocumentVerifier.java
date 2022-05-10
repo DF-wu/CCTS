@@ -232,7 +232,7 @@ public class DocumentVerifier {
 
         // verify NextStates properties is legal (not null)
         boolean isValidNextState = true;
-        for (NextState state : documentParser.findDeliveryList(cctsDocument)) {
+        for (NextState state : CCTSDocumentParser.findDeliveryList(cctsDocument)) {
             if( !verifyNextStateLegality(state)){
                 isValidNextState = false;
             }
@@ -243,13 +243,17 @@ public class DocumentVerifier {
         }
 
 
+
         // verify nextState name should be found in all states set.
-        for ( NextState nextState : documentParser.findDeliveryList(cctsDocument)) {
+        for ( NextState nextState : CCTSDocumentParser.findDeliveryList(cctsDocument)) {
             if(cctsDocument.findSimpleState(nextState.getStateName()) == null){
                 System.out.println("CCTS document nextState name is not found in all states!");
                 return CCTSStatusCode.CCTSDOCUMENT_STATE_NAME_NOT_FOUND;
             }
         }
+
+
+
 
         return CCTSStatusCode.ALLGREEN;
     }
