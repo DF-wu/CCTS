@@ -6,7 +6,7 @@ public enum CCTSStatusCode {
     UNDONE("Not yet done.", 2),
 
     // 100~199
-    CCTSDOCUMENT_REQUIRED_PROPERTIES_NULL_ERROR("Some properties cause error while parsing CCTS document", 100),
+    CCTSDOCUMENT_REQUIRED_PROPERTIES_NULL_ERROR("Some properties cause error while parsing CCTS document. Please check the CCTS Document.", 100),
     CCTSDOCUMENT_STATE_NAME_NOT_FOUND("some state name may not correspond to CCTS document", 101),
     CCTSDOCUMENT_PARSE_ERROR("unknown error occur while parsing CCTS document", 102),
     CCTSDOCUMENT_DUPLICATED_TITLE_ERROR("Some documents title is duplicated",   103),
@@ -38,7 +38,7 @@ public enum CCTSStatusCode {
 
 
     // 600~699
-    CONTREACT_TEST_RESULT_NOT_PASS("The service's contract test hasn't done fully", 600);
+    CONTREACT_TEST_RESULT_NOT_PASS("The service's contract test hasn't done fully", 600),
 
 
 
