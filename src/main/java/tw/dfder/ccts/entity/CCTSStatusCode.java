@@ -38,7 +38,7 @@ public enum CCTSStatusCode {
 
 
     // 600~699
-    CONTREACT_TEST_RESULT_NOT_PASS("The service's contract test hasn't done fully", 600),
+    CONTREACT_TEST_RESULT_NOT_PASS("The service's contract test hasn't done fully", 600);
 
 
 
