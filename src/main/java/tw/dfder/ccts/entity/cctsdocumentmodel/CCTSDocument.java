@@ -4,12 +4,10 @@ package tw.dfder.ccts.entity.cctsdocumentmodel;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 @Document(collection = "CCTSDocuments")
 public class CCTSDocument {
-    private String CCTSversion;
+    private String CCTSVersion;
     private String title;
     private String startAt;
 
@@ -29,12 +27,12 @@ public class CCTSDocument {
     below for getter && setter
      */
 
-    public String getCCTSversion() {
-        return CCTSversion;
+    public String getCCTSVersion() {
+        return CCTSVersion;
     }
 
-    public void setCCTSversion(String CCTSversion) {
-        this.CCTSversion = CCTSversion;
+    public void setCCTSVersion(String CCTSVersion) {
+        this.CCTSVersion = CCTSVersion;
     }
 
     public String getTitle() {
