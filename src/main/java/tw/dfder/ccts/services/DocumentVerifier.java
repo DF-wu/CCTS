@@ -99,7 +99,7 @@ public class DocumentVerifier {
 
         // verify document properties are not null
         if (cctsDocument.getTitle() == null
-                || cctsDocument.getCCTSversion() == null
+                || cctsDocument.getCCTSVersion() == null
                 || cctsDocument.getStartAt() == null
                 || cctsDocument.getStates() == null) {
             System.out.println("CCTS document properties are not complete!");
