@@ -23,7 +23,7 @@ import java.io.IOException;
 @RestController
 public class Controller {
 
-    private final CCTSDocumentParser CCTSDocumentParser;
+    private final CCTSDocumentParser DocumentParser;
     private final PactBrokerBusyBox pactBrokerBusyBox;
     private final ServiceConfigure serviceConfig;
     private final DBCleaner dbcleaner;
@@ -34,7 +34,7 @@ public class Controller {
     private final CCTSDocumentRepository repo;
     @Autowired
     public Controller(CCTSDocumentParser CCTSDocumentParser, PactBrokerBusyBox pactBrokerBusyBox, ServiceConfigure serviceConfig, DBCleaner dbcleaner, SystemStarter starter, CCTSDocumentRepository repo) {
-        this.CCTSDocumentParser = CCTSDocumentParser;
+        this.DocumentParser = CCTSDocumentParser;
         this.pactBrokerBusyBox = pactBrokerBusyBox;
         this.serviceConfig = serviceConfig;
         this.dbcleaner = dbcleaner;
