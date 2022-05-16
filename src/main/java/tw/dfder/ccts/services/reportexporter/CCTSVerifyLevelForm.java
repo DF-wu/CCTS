@@ -88,20 +88,20 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
                 .now()
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
                 + System.lineSeparator();
-        msg += "## Documents test Results" + System.lineSeparator();
+        msg += "## Integration Test Results:" + System.lineSeparator();
         for (CCTSResult cctsResult : cctsTest.getResults()) {
-            msg += "### document Name : " + cctsResult.getDocument().getTitle() + System.lineSeparator();
-            msg += "+ Delivery Number: " + CCTSDocumentParser.findDeliveryList(cctsResult.getDocument()).size() + System.lineSeparator();
-            ArrayList<ArrayList<NextState>> paths = new ArrayList<>();
-            CCTSDocumentParser.pathFinder(cctsResult.getDocument(), cctsResult.getDocument().findSimpleState(cctsResult.getDocument().getStartAt()), new ArrayList<>(), paths);
-            msg += "+ Potential Path number: " + paths.size() + System.lineSeparator();
-            // add potential path
-            for (String pathName : cctsResult.getPathVerificationResults().keySet() ) {
-                msg += "    + " + pathName + System.lineSeparator();
-            }
+            msg += "### Integration Test Case Name:" + cctsResult.getDocument().getTitle() + System.lineSeparator();
             msg += "+ Participant Service: " + System.lineSeparator();
             for (String service : CCTSDocumentParser.findAllParticipants(cctsResult.getDocument())) {
                 msg += "    + " + service + System.lineSeparator();
+            }
+            msg += "+ Number of Message Deliveries: " + CCTSDocumentParser.findDeliveryList(cctsResult.getDocument()).size() + System.lineSeparator();
+            ArrayList<ArrayList<NextState>> paths = new ArrayList<>();
+            CCTSDocumentParser.pathFinder(cctsResult.getDocument(), cctsResult.getDocument().findSimpleState(cctsResult.getDocument().getStartAt()), new ArrayList<>(), paths);
+            msg += "+ Number of Potential Paths: " + paths.size() + System.lineSeparator();
+            // add potential path
+            for (String pathName : cctsResult.getPathVerificationResults().keySet() ) {
+                msg += "    + " + pathName + System.lineSeparator();
             }
             msg += "### Test Stage Instruction: " + System.lineSeparator();
             for (int i = 0; i < cctsResult.getTestProgress().size(); i++) {
