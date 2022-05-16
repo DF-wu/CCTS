@@ -83,7 +83,7 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
         String msg = "";
         msg += "# CCTS TEST REPORT" + System.lineSeparator();
         msg += "## Information:" + System.lineSeparator();
-        msg += "+ Test result: " + cctsTest.isCctsTestResult() + System.lineSeparator();
+        msg += "+ Test result: " + (cctsTest.isCctsTestResult() ? "Passed." : "Failed") + System.lineSeparator();
         msg += "+ Test time: " + LocalDateTime
                 .now()
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
