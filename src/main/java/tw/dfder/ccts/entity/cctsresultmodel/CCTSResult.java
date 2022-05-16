@@ -69,12 +69,13 @@ public class CCTSResult {
         this.pathVerificationResults = new Hashtable<>();
         this.testProgress = new ArrayList<>();
         List<CCTSTestCase> list = Arrays.asList(
-                new CCTSTestCase(CCTSTestStage.PREPARE_DOCUMENT_STAGE, false),
                 new CCTSTestCase(CCTSTestStage.DOCUMENT_STAGE, false),
-                new CCTSTestCase(CCTSTestStage.EVENTLOG_STAGE, false),
                 new CCTSTestCase(CCTSTestStage.PATH_STAGE, false),
                 new CCTSTestCase(CCTSTestStage.CONTRACT_STAGE, false),
-                new CCTSTestCase(CCTSTestStage.CONTRACT_TEST_STAGE, false));
+                new CCTSTestCase(CCTSTestStage.CONTRACT_TEST_STAGE, false),
+                new CCTSTestCase(CCTSTestStage.EVENTLOG_STAGE, false),
+                new CCTSTestCase(CCTSTestStage.PATH_VERIFY_STAGE, false)
+        );
         this.testProgress.addAll(list);
 
     }
