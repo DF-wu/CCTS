@@ -1,4 +1,4 @@
-CCTSversion: "0.11"
+CCTSVersion: "0.12"
 title: PDVPS saga fail case - time timeSequenceLabel duplicate
 startAt: Create top-up event
 states:
