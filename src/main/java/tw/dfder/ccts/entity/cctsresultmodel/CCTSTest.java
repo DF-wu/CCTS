@@ -14,17 +14,39 @@ public class CCTSTest {
     private boolean cctsTestResult = false;
     private ArrayList<CCTSResult> results;
 
-    public CCTSTest(ArrayList<CCTSDocument> cctsDocuments) {
-        this.results = new ArrayList<>();
-        for ( CCTSDocument cctsDocument : cctsDocuments ) {
-            results.add(new CCTSResult(cctsDocument));
+    private ArrayList<CCTSDocumentError> documentErrors;
+
+    private boolean isDuplicatedTitle = false;
+
+    public CCTSTest() {
+        results = new ArrayList<>();
+        documentErrors = new ArrayList<>();
+    }
+
+    public void addDocuments(ArrayList<CCTSDocument> documents) {
+        for ( CCTSDocument document : documents ) {
+            this.results.add(new CCTSResult(document));
         }
     }
 
+//    public CCTSTest(ArrayList<CCTSDocument> cctsDocuments) {
+//        this.results = new ArrayList<>();
+//        this.documentErrors = new ArrayList<>();
+//        for ( CCTSDocument cctsDocument : cctsDocuments ) {
+//            results.add(new CCTSResult(cctsDocument));
+//        }
+//
+//    }
+
+
+    public void addDocumentError(CCTSDocumentError documentError) {
+        documentErrors.add(documentError);
+    }
     public boolean checkOut() {
         boolean isAllPassed = true;
         for ( CCTSResult result : results ) {
-            if ( result.isTestResult() ) {
+
+            if ( result.checkOut() ) {
                 // pass
             }else {
                 // any fail
@@ -49,4 +71,19 @@ public class CCTSTest {
         return cctsTestResult;
     }
 
+    public ArrayList<CCTSDocumentError> getDocumentErrors() {
+        return documentErrors;
+    }
+
+    public void setDocumentErrors(ArrayList<CCTSDocumentError> documentErrors) {
+        this.documentErrors = documentErrors;
+    }
+
+    public boolean isDuplicatedTitle() {
+        return isDuplicatedTitle;
+    }
+
+    public void setDuplicatedTitle(boolean duplicatedTitle) {
+        isDuplicatedTitle = duplicatedTitle;
+    }
 }

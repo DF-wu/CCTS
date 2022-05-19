@@ -7,6 +7,7 @@ import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.cctsdocumentmodel.CCTSDocument;
 import tw.dfder.ccts.entity.cctsdocumentmodel.NextState;
 import tw.dfder.ccts.entity.cctsdocumentmodel.SimpleState;
+import tw.dfder.ccts.entity.cctsresultmodel.CCTSDocumentError;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSResult;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSTest;
 import tw.dfder.ccts.repository.CCTSDocumentRepository;
@@ -25,8 +26,8 @@ public class DocumentVerifier {
     private final CCTSDocumentRepository cctsDocumentRepository;
     private final EventLogRepository eventLogRepository;
 
-    public CCTSStatusCode documentVerifiedResult;
-    public String prepareDocumentErrorMessage = "";
+
+
 
     @Autowired
     public DocumentVerifier(CCTSDocumentParser documentParser, CCTSDocumentRepository cctsDocumentRepository, EventLogRepository eventLogRepository) {
@@ -35,67 +36,84 @@ public class DocumentVerifier {
         this.eventLogRepository = eventLogRepository;
     }
 
-    public CCTSTest verifyDirector(){
-
-        ArrayList<CCTSDocument> documents = (ArrayList<CCTSDocument>) cctsDocumentRepository.findAll();
-        CCTSTest cctsTest = new CCTSTest(documents);
-        currentDocumentTitle = "";
-        documentVerifiedResult = null;
-
-        for (CCTSResult result: cctsTest.getResults()) {
-            documentVerifiedResult = verifyDocumentLegality(result.getDocument());
-            if (documentVerifiedResult != CCTSStatusCode.ALLGREEN) {
-                //error occur
-                result.setDocumentStageVerificationError(documentVerifiedResult);
-            }else{
-                //no error
-                result.setDocumentStageVerificationError(CCTSStatusCode.ALLGREEN);
-            }
+    public CCTSStatusCode prepareDocumentVerify(CCTSTest cctsTest) {
+        CCTSStatusCode parseDocumentCode =  documentParser.parseAllCCTSProfilesAndSave2DB(cctsTest);
+        if (parseDocumentCode != CCTSStatusCode.ALLGREEN) {
+            return parseDocumentCode;
         }
 
-        currentDocumentTitle = "" ;
+        // if parse all documents successfully, retrieve all documents from DB
+        cctsTest.addDocuments((ArrayList<CCTSDocument>) cctsDocumentRepository.findAll());
+
+        //verify all documents have unique title
+        CCTSStatusCode documentVerifiedResult = documentTitleVerifier(cctsTest);
+        if (documentVerifiedResult != CCTSStatusCode.ALLGREEN) {
+            cctsTest.setDuplicatedTitle(true);
+            return CCTSStatusCode.CCTSDOCUMENT_DUPLICATED_TITLE_ERROR;
+        }
+
+        return CCTSStatusCode.ALLGREEN;
+
+    }
+
+
+
+
+    public CCTSTest verifyDirector(CCTSTest cctsTest){
+
+
+        // Document verification stage
+        for (CCTSResult result: cctsTest.getResults()) {
+            CCTSStatusCode documentVerifiedResult = verifyDocumentLegality(result);
+            if (documentVerifiedResult != CCTSStatusCode.ALLGREEN) {
+                //error occur
+                result.getTestProgress().get(0).setTestResult(false);
+                continue;
+            }else{
+                // pass
+                // set stage result
+                result.getTestProgress().get(0).setTestResult(true);
+            }
+
+
+            // Path Construction and Verification Stage
+            CCTSStatusCode pathResultCode =  pathVerification(result);
+            if (pathResultCode != CCTSStatusCode.ALLGREEN) {
+                //error occur
+                result.getTestProgress().get(1).setTestResult(false);
+                continue;
+            }else {
+                // pass
+                result.getTestProgress().get(1).setTestResult(true);
+            }
+
+        }
+
         return cctsTest;
     }
 
-    public CCTSStatusCode prepareDocumentVerify() {
-        prepareDocumentErrorMessage = "";
-        try {
-            ArrayList<CCTSDocument> documents = documentParser.parseAllCCTSProfilesAndSave2DB();
-            //verify all documents have unique title
-            documentVerifiedResult = documentTitleVerifier(documents);
-            if (documentVerifiedResult != CCTSStatusCode.ALLGREEN) {
-                return CCTSStatusCode.CCTSDOCUMENT_DUPLICATED_TITLE_ERROR;
-            }
-            return CCTSStatusCode.ALLGREEN;
-
-        } catch (Exception e) {
-            //  return error message to frontend
-            System.out.println("CCTS Documenet parse error");
-            e.printStackTrace();
-            prepareDocumentErrorMessage = e.getMessage();
-            documentVerifiedResult = CCTSStatusCode.CCTSDOCUMENT_PARSE_ERROR;
-            return documentVerifiedResult;
-        }
-
-    }
 
 
 
-    private CCTSStatusCode documentTitleVerifier(ArrayList<CCTSDocument> documents) {
+    private CCTSStatusCode documentTitleVerifier(CCTSTest cctstest) {
         HashSet<String> documentTitles = new HashSet<>();
-        for (CCTSDocument document : documents){
-            documentTitles.add(document.getTitle());
+        ArrayList<CCTSResult> results = cctstest.getResults();
+        for (CCTSResult result: results) {
+            documentTitles.add(result.getDocument().getTitle());
         }
-        if(documents.size() != documentTitles.size()){
+
+        // not same size = duplicated title occurred
+        if(results.size() != documentTitles.size()){
+
             System.out.println("CCTS documents have duplicated title!");
             return CCTSStatusCode.CCTSDOCUMENT_DUPLICATED_TITLE_ERROR;
         }
         return CCTSStatusCode.ALLGREEN;
     }
 
-    private CCTSStatusCode  verifyDocumentLegality(CCTSDocument cctsDocument) {
+    private CCTSStatusCode  verifyDocumentLegality(CCTSResult result) {
         // specify current doc
-        currentDocumentTitle = cctsDocument.getTitle();
+        CCTSDocument cctsDocument = result.getDocument();
 
         // verify document properties are not null
         if (cctsDocument.getTitle() == null
@@ -103,34 +121,57 @@ public class DocumentVerifier {
                 || cctsDocument.getStartAt() == null
                 || cctsDocument.getStates() == null) {
             System.out.println("CCTS document properties are not complete!");
+            result.addDocumentVerificationStageError(CCTSDOCUMENT_REQUIRED_PROPERTIES_NULL_ERROR);
             return CCTSDOCUMENT_REQUIRED_PROPERTIES_NULL_ERROR;
         }
 
         // verify states
         // state name should be unique in documents
         CCTSStatusCode isStatesValid = stateUniqueChecker(cctsDocument);
-        if (isStatesValid != CCTSStatusCode.ALLGREEN) return isStatesValid;
+        if (isStatesValid != CCTSStatusCode.ALLGREEN) {
+            result.addDocumentVerificationStageError(isStatesValid);
+            return isStatesValid;
+        }
 
         // properties check
         CCTSStatusCode isPropertiesValid = propertiesChecker(cctsDocument);
-        if (isPropertiesValid != CCTSStatusCode.ALLGREEN) return isPropertiesValid;
+        if (isPropertiesValid != CCTSStatusCode.ALLGREEN) {
+            result.addDocumentVerificationStageError(isPropertiesValid);
+            return isPropertiesValid;
+        }
 
-
-        // path validity check
-        CCTSStatusCode isPathValid = pathChecker(cctsDocument);
-        if(isPathValid != CCTSStatusCode.ALLGREEN) return isPathValid;
-
-        // each state in the path should be connected by each other (provider consumer check)
-        CCTSStatusCode isConnectedStateValid = connectedStateChecker(cctsDocument);
-        if(isConnectedStateValid != CCTSStatusCode.ALLGREEN) return isConnectedStateValid;
-
-        // timeSequenceLabel Legality check
-        CCTSStatusCode isTimeSequenceLabelValid = timeSequenceLabelChecker(cctsDocument);
-        if(isTimeSequenceLabelValid != CCTSStatusCode.ALLGREEN) return isTimeSequenceLabelValid;
 
         return CCTSStatusCode.ALLGREEN;
 
 
+    }
+
+
+    private CCTSStatusCode pathVerification(CCTSResult result) {
+
+        CCTSDocument cctsDocument = result.getDocument();
+        // path validity check
+        CCTSStatusCode isPathValid = pathChecker(cctsDocument);
+        if(isPathValid != CCTSStatusCode.ALLGREEN) {
+            result.addPathConstructionAndVerificationError(isPathValid);
+            return isPathValid;
+        }
+
+        // each state in the path should be connected by each other (provider consumer check)
+        CCTSStatusCode isConnectedStateValid = connectedStateChecker(cctsDocument);
+        if(isConnectedStateValid != CCTSStatusCode.ALLGREEN) {
+            result.addPathConstructionAndVerificationError(isConnectedStateValid);
+            return isConnectedStateValid;
+        }
+
+        // timeSequenceLabel Legality check
+        CCTSStatusCode isTimeSequenceLabelValid = timeSequenceLabelChecker(cctsDocument);
+        if(isTimeSequenceLabelValid != CCTSStatusCode.ALLGREEN) {
+            result.addPathConstructionAndVerificationError(isTimeSequenceLabelValid);
+            return isTimeSequenceLabelValid;
+        }
+
+        return CCTSStatusCode.ALLGREEN;
     }
 
     private CCTSStatusCode connectedStateChecker(CCTSDocument cctsDocument) {
@@ -194,7 +235,7 @@ public class DocumentVerifier {
 
         // check timeSequenceLabel is increased in path
         ArrayList<ArrayList<NextState>> paths = new ArrayList<>();
-        documentParser.pathFinder(cctsDocument, cctsDocument.findSimpleState(cctsDocument.getStartAt()), new ArrayList<>(), paths);
+        CCTSDocumentParser.pathFinder(cctsDocument, cctsDocument.findSimpleState(cctsDocument.getStartAt()), new ArrayList<>(), paths);
         for ( ArrayList<NextState> path :  paths){
             for (int i = 1; i < path.size(); i++) {
                 // should be increased
@@ -239,7 +280,7 @@ public class DocumentVerifier {
         }
 
         if( !(isValidSimpleState && isValidNextState)) {
-            return CCTSStatusCode.CCTSDOCUMENT_REQUIRED_PROPERTIES_NULL_ERROR;
+            return CCTSDOCUMENT_REQUIRED_PROPERTIES_NULL_ERROR;
         }
 
 

@@ -11,13 +11,14 @@ import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.cctsdocumentmodel.CCTSDocument;
 import tw.dfder.ccts.entity.cctsdocumentmodel.NextState;
 import tw.dfder.ccts.entity.cctsdocumentmodel.SimpleState;
+import tw.dfder.ccts.entity.cctsresultmodel.CCTSDocumentError;
+import tw.dfder.ccts.entity.cctsresultmodel.CCTSTest;
 import tw.dfder.ccts.repository.CCTSDocumentRepository;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 
 @Service
@@ -32,13 +33,32 @@ public class CCTSDocumentParser {
     }
 
 
-    public ArrayList<CCTSDocument> parseAllCCTSProfilesAndSave2DB() throws IOException {
+    public CCTSStatusCode parseAllCCTSProfilesAndSave2DB(CCTSTest cctsTest) {
+        boolean isValid = true;
         ArrayList<CCTSDocument> cctsDocuments = new ArrayList<>();
+
         for (Resource r : serviceConfigure.cctsFiles) {
-            cctsDocuments.add(parse2CCTSProfile(r));
+            // may have exception
+            try {
+                cctsDocuments.add(parse2CCTSProfile(r));
+            }catch (Exception e) {
+                isValid = false;
+                cctsTest.addDocumentError(new CCTSDocumentError(
+                        r.getFilename(),
+                        CCTSStatusCode.CCTSDOCUMENT_PARSE_ERROR,
+                        e.getStackTrace().toString())
+                );
+                System.out.println("Document exception: " + r.getFilename());
+                e.printStackTrace();
+            }
         }
-        repo.saveAll(cctsDocuments);
-        return cctsDocuments;
+
+        if (isValid) {
+            repo.saveAll(cctsDocuments);
+            return CCTSStatusCode.ALLGREEN;
+        } else {
+            return CCTSStatusCode.CCTSDOCUMENT_PARSE_ERROR;
+        }
     }
 
 

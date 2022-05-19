@@ -26,10 +26,12 @@ public class CCTSResult {
     @Field
     private CCTSDocument document;
 
-    @Field
-    private CCTSStatusCode documentStageVerificationError;
 
-    private ArrayList<CCTSStatusCode> documentVerifiedResult;
+    @Field
+    private ArrayList<CCTSStatusCode> documentStageVerificationErrors;
+
+    @Field
+    private ArrayList<CCTSStatusCode> pathConstructionAndVerificationErrors;
 
     // match result of delivery and eventlog
     @Field
@@ -42,10 +44,15 @@ public class CCTSResult {
     private Map<String, CCTSStatusCode> pathVerificationResults;
 
     @Field
+    private Map<String, CCTSStatusCode> pathVerificationResultsForContract;
+
+
+    @Field
     private Map<String, CCTSStatusCode> contractVerificationResults;
 
     @Field
     private Map<String, CCTSStatusCode> deliveryVerificationResults;
+
 
 
     @Field
@@ -61,6 +68,8 @@ public class CCTSResult {
 
     public CCTSResult(CCTSDocument document) {
         this.document = document;
+        this.documentStageVerificationErrors = new ArrayList<>();
+        this.pathConstructionAndVerificationErrors = new ArrayList<>();
         this.resultBetweenDeliveryAndEventLogs = new ArrayList<>();
         this.resultBetweenDeliveryAndContract = new ArrayList<>();
         this.contractVerificationResults = new Hashtable<>();
@@ -71,7 +80,7 @@ public class CCTSResult {
         List<CCTSTestCase> list = Arrays.asList(
                 new CCTSTestCase(CCTSTestStage.DOCUMENT_STAGE, false),
                 new CCTSTestCase(CCTSTestStage.PATH_STAGE, false),
-                new CCTSTestCase(CCTSTestStage.CONTRACT_STAGE, false),
+                new CCTSTestCase(CCTSTestStage.CONTRACT_RETRIEVAL_STAGE, false),
                 new CCTSTestCase(CCTSTestStage.CONTRACT_TEST_STAGE, false),
                 new CCTSTestCase(CCTSTestStage.EVENTLOG_STAGE, false),
                 new CCTSTestCase(CCTSTestStage.PATH_VERIFY_STAGE, false)
@@ -81,6 +90,13 @@ public class CCTSResult {
     }
 
 
+    public void addDocumentVerificationStageError(CCTSStatusCode error) {
+        this.documentStageVerificationErrors.add(error);
+    }
+
+    public void addPathConstructionAndVerificationError(CCTSStatusCode error) {
+        this.pathConstructionAndVerificationErrors.add(error);
+    }
 
 
     /*
@@ -185,28 +201,43 @@ public class CCTSResult {
 
     public Boolean checkOut(){
         gernerateFinalPassedAndFailList();
-        boolean flag = false;
+        boolean isThisCCTSResultAllPass = true;
+
+        if(documentStageVerificationErrors.isEmpty()){
+            isThisCCTSResultAllPass = false;
+            this.testResult = false;
+            return false;
+        }
+
+        if(pathConstructionAndVerificationErrors.isEmpty()){
+            isThisCCTSResultAllPass = false;
+            this.testResult = false;
+            return false;
+        }
+
+
+
         for (CCTSStatusCode code: contractVerificationResults.values()) {
             if(code != CCTSStatusCode.ALLGREEN){
-                flag = false;
-                this.testResult = flag;
-                return flag;
+                isThisCCTSResultAllPass = false;
+                this.testResult = isThisCCTSResultAllPass;
+                return isThisCCTSResultAllPass;
             }
         }
         //  path check
         for (CCTSStatusCode code : pathVerificationResults.values()) {
             if(code != CCTSStatusCode.ALLGREEN){
-                flag = false;
+                isThisCCTSResultAllPass = false;
+                return false;
             }
         }
 
         if (failedList.size() == 0 ) {
-            flag = true;
-            this.testResult = flag;
-            return flag;
+            isThisCCTSResultAllPass = true;
+            this.testResult = isThisCCTSResultAllPass;
+            return isThisCCTSResultAllPass;
 
         }else {
-            flag = false;
             this.testResult = false;
             return false;
         }
@@ -279,7 +310,7 @@ public class CCTSResult {
         Passed:
           Document title:
               stateName:
-              consumer:
+              consumer1:
               producer:
               testCaseId:
               --------
@@ -445,11 +476,19 @@ public class CCTSResult {
         this.testProgress = testProgress;
     }
 
-    public CCTSStatusCode getDocumentStageVerificationError() {
-        return documentStageVerificationError;
+    public ArrayList<CCTSStatusCode> getDocumentStageVerificationErrors() {
+        return documentStageVerificationErrors;
     }
 
-    public void setDocumentStageVerificationError(CCTSStatusCode documentStageVerificationError) {
-        this.documentStageVerificationError = documentStageVerificationError;
+    public void setDocumentStageVerificationErrors(ArrayList<CCTSStatusCode> documentStageVerificationErrors) {
+        this.documentStageVerificationErrors = documentStageVerificationErrors;
+    }
+
+    public ArrayList<CCTSStatusCode> getPathConstructionAndVerificationErrors() {
+        return pathConstructionAndVerificationErrors;
+    }
+
+    public void setPathConstructionAndVerificationErrors(ArrayList<CCTSStatusCode> pathConstructionAndVerificationErrors) {
+        this.pathConstructionAndVerificationErrors = pathConstructionAndVerificationErrors;
     }
 }

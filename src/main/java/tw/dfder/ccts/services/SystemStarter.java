@@ -10,6 +10,7 @@ import tw.dfder.ccts.entity.cctsresultmodel.CCTSTest;
 import tw.dfder.ccts.repository.CCTSTestRepository;
 import tw.dfder.ccts.services.reportexporter.CCTSVerifyLevelForm;
 import tw.dfder.ccts.services.reportexporter.DocumentLevelForm;
+import tw.dfder.ccts.services.reportexporter.PreDocumentLevelForm;
 import tw.dfder.ccts.services.reportexporter.ReportExportEngine;
 
 @Component
@@ -57,44 +58,25 @@ public class SystemStarter {
 
         String msg = "";
         if(isSystemReady){
+            CCTSTest cctsTest = new CCTSTest();
             // document prepare stage
-            // A-1
-            CCTSStatusCode prepareDocumentResult = documentVerifier.prepareDocumentVerify();
-            if(prepareDocumentResult == CCTSStatusCode.DOCUMENT_DUPLICATED_STATE_NAME_ERROR){
-                return CCTSStatusCode.DOCUMENT_DUPLICATED_STATE_NAME_ERROR.getMessage();
-            }else if(prepareDocumentResult == CCTSStatusCode.CCTSDOCUMENT_PARSE_ERROR){
-                // maybe snake yaml exception
-                String exmsg = documentVerifier.prepareDocumentErrorMessage;
-                exmsg = "CCTSDocument parse exception: \n" + exmsg;
-                return exmsg;
-            }
-
-            // document stage
-            // A-2
-            CCTSTest cctsTest = documentVerifier.verifyDirector();
-            boolean isDocumentValid = true;
-            for (CCTSResult result : cctsTest.getResults()) {
-
-                if(result.getDocumentStageVerificationError() != CCTSStatusCode.ALLGREEN){
-                    // A-2 fail
-
-                    isDocumentValid = false;
-                }else{
-                    // A-2 pass
-
-
-                }
-            }
-            // if any error occur, return error message
-            if(!isDocumentValid){
-                ReportExportEngine reportExportEngine = new DocumentLevelForm();
+            CCTSStatusCode prepareDocumentResult = documentVerifier.prepareDocumentVerify(cctsTest);
+            if(prepareDocumentResult != CCTSStatusCode.ALLGREEN){
+                // title duplicated or snake yaml exception
+                ReportExportEngine reportExportEngine = new PreDocumentLevelForm();
                 return reportExportEngine.exportReport(cctsTest);
             }
 
-
+            // CCTS Document Verification Stage and Path Construction and Verification stage
+            documentVerifier.verifyDirector(cctsTest);
 
             for ( CCTSResult result : cctsTest.getResults()) {
-                cctsVerifier.verifyCCTSDelivery(result);
+                // if previous test is not pass, skip this test
+                if(result.getTestProgress().get(0).isTestResult() && result.getTestProgress().get(1).isTestResult()){
+                    cctsVerifier.verifyCCTSDelivery(result);
+                }else{
+                    continue;
+                }
             }
             cctsTest.checkOut();
 
@@ -104,7 +86,7 @@ public class SystemStarter {
             return msg;
 
         }else{
-            return "System is not ready";
+            return "System is not ready. Try again later.";
         }
 
     }

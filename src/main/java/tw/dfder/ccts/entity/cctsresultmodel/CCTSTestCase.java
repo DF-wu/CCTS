@@ -1,5 +1,9 @@
 package tw.dfder.ccts.entity.cctsresultmodel;
 
+import tw.dfder.ccts.entity.CCTSStatusCode;
+
+import java.util.ArrayList;
+
 public class CCTSTestCase {
 
     private CCTSTestStage testSubject;
@@ -10,6 +14,8 @@ public class CCTSTestCase {
         this.testSubject = testSubject;
         this.testResult = testResult;
     }
+
+
 
 
     public CCTSTestStage getTestStages() {
@@ -29,4 +35,6 @@ public class CCTSTestCase {
     public boolean isTestResult() {
         return testResult;
     }
+
+
 }

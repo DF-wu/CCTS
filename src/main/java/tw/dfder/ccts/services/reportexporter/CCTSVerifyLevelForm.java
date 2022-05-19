@@ -5,6 +5,7 @@ import tw.dfder.ccts.entity.cctsdocumentmodel.NextState;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSResult;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSResultRecord;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSTest;
+import tw.dfder.ccts.entity.cctsresultmodel.CCTSTestStage;
 import tw.dfder.ccts.services.CCTSDocumentParser;
 
 import java.time.LocalDateTime;
@@ -82,47 +83,134 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
 
         String msg = "";
         msg += "# CCTS TEST REPORT" + System.lineSeparator();
-        msg += "## Information:" + System.lineSeparator();
+        msg += "# Information:" + System.lineSeparator();
         msg += "+ Test result: " + (cctsTest.isCctsTestResult() ? "Passed." : "Failed") + System.lineSeparator();
         msg += "+ Test time: " + LocalDateTime
                 .now()
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
                 + System.lineSeparator();
-        msg += "## Integration Test Results:" + System.lineSeparator();
+
+        msg += "# Test Stage Instructions: " + System.lineSeparator();
+        msg += "1. " + CCTSTestStage.DOCUMENT_STAGE.getStageName() + System.lineSeparator();
+        msg +=  CCTSTestStage.DOCUMENT_STAGE.getInstruction() + System.lineSeparator();
+        msg += "2. " + CCTSTestStage.PATH_STAGE.getStageName() + System.lineSeparator();
+        msg +=  CCTSTestStage.PATH_STAGE.getInstruction() + System.lineSeparator();
+        msg += "3. " + CCTSTestStage.CONTRACT_RETRIEVAL_STAGE.getStageName() + System.lineSeparator();
+        msg +=  CCTSTestStage.CONTRACT_RETRIEVAL_STAGE.getInstruction() + System.lineSeparator();
+        msg += "4. " + CCTSTestStage.CONTRACT_TEST_STAGE.getStageName() + System.lineSeparator();
+        msg +=  CCTSTestStage.CONTRACT_TEST_STAGE.getInstruction() + System.lineSeparator();
+        msg += "5. " + CCTSTestStage.EVENTLOG_STAGE.getStageName() + System.lineSeparator();
+        msg +=  CCTSTestStage.EVENTLOG_STAGE.getInstruction() + System.lineSeparator();
+        msg += "6. " + CCTSTestStage.PATH_VERIFY_STAGE.getStageName() + System.lineSeparator();
+        msg +=  CCTSTestStage.PATH_VERIFY_STAGE.getInstruction() + System.lineSeparator();
+
+
+        msg += "# Integration Test Results:" + System.lineSeparator();
         for (CCTSResult cctsResult : cctsTest.getResults()) {
-            msg += "### Integration Test Case Name:" + cctsResult.getDocument().getTitle() + System.lineSeparator();
-            msg += "+ Participant Service: " + System.lineSeparator();
-            for (String service : CCTSDocumentParser.findAllParticipants(cctsResult.getDocument())) {
-                msg += "    + " + service + System.lineSeparator();
-            }
-            msg += "+ Number of Message Deliveries: " + CCTSDocumentParser.findDeliveryList(cctsResult.getDocument()).size() + System.lineSeparator();
+
             ArrayList<ArrayList<NextState>> paths = new ArrayList<>();
-            CCTSDocumentParser.pathFinder(cctsResult.getDocument(), cctsResult.getDocument().findSimpleState(cctsResult.getDocument().getStartAt()), new ArrayList<>(), paths);
-            msg += "+ Number of Potential Paths: " + paths.size() + System.lineSeparator();
-            // add potential path
-            for (String pathName : cctsResult.getPathVerificationResults().keySet() ) {
-                msg += "    + " + pathName + System.lineSeparator();
+            // possible branch : 00 10 11
+            if(cctsResult.getTestProgress().get(0).isTestResult() && cctsResult.getTestProgress().get(1).isTestResult()){
+                // 11
+                // document legality pass and pass path test
+                msg += "## Integration Test Case Name:" + cctsResult.getDocument().getTitle() + System.lineSeparator();
+                msg += "+ Participant Service: " + System.lineSeparator();
+                for (String service : CCTSDocumentParser.findAllParticipants(cctsResult.getDocument())) {
+                    msg += "    + " + service + System.lineSeparator();
+                }
+                msg += "+ Number of Message Deliveries: " + CCTSDocumentParser.findDeliveryList(cctsResult.getDocument()).size() + System.lineSeparator();
+                CCTSDocumentParser.pathFinder(cctsResult.getDocument(), cctsResult.getDocument().findSimpleState(cctsResult.getDocument().getStartAt()), new ArrayList<>(), paths);
+                msg += "+ Number of Potential Paths: " + paths.size() + System.lineSeparator();
+                // add potential path
+                for (String pathName : cctsResult.getPathVerificationResults().keySet() ) {
+                    msg += "    + " + pathName + System.lineSeparator();
+                }
+
+                msg += "### Test Result Details: " + System.lineSeparator();
+
+                //must pass
+                msg += "#### " + CCTSTestStage.DOCUMENT_STAGE.getStageName() + System.lineSeparator();
+                msg += "+ Test Result: Passed." + System.lineSeparator();
+
+                msg += "#### "+ CCTSTestStage.PATH_STAGE.getStageName() + System.lineSeparator();
+                msg += "+ Test Result: Passed." + System.lineSeparator();
+
+
+
+                msg += "#### " + CCTSTestStage.CONTRACT_RETRIEVAL_STAGE + System.lineSeparator();
+                msg = generateContractVerificationEntityMD(msg, cctsResult);
+
+                msg += "#### " + CCTSTestStage.CONTRACT_TEST_STAGE + System.lineSeparator();
+                msg = gernerateContractTestResultEntutyMD(msg, cctsResult);
+
+                msg += "#### " + CCTSTestStage.EVENTLOG_STAGE + System.lineSeparator();
+                msg = generateEventLogsVerificationEntityMD(msg, cctsResult);
+
+                msg += "#### " + CCTSTestStage.PATH_VERIFY_STAGE.getStageName() + System.lineSeparator();
+                msg = generatePotentialPathVerificationEntityMD(msg, cctsResult);
+
+
+
+            }else if(cctsResult.getTestProgress().get(0).isTestResult() && !cctsResult.getTestProgress().get(1).isTestResult()){
+                // 10
+                // document legality pass but not pass path test
+                msg += "## Integration Test Case Name:" + cctsResult.getDocument().getTitle() + System.lineSeparator();
+                msg += "+ Participant Service: " + System.lineSeparator();
+                for (String service : CCTSDocumentParser.findAllParticipants(cctsResult.getDocument())) {
+                    msg += "    + " + service + System.lineSeparator();
+                }
+                msg += "+ Number of Message Deliveries: " + CCTSDocumentParser.findDeliveryList(cctsResult.getDocument()).size() + System.lineSeparator();
+                CCTSDocumentParser.pathFinder(cctsResult.getDocument(), cctsResult.getDocument().findSimpleState(cctsResult.getDocument().getStartAt()), new ArrayList<>(), paths);
+
+                msg += "### Test Result Details: " + System.lineSeparator();
+
+                //must pass
+                msg += "#### " + CCTSTestStage.DOCUMENT_STAGE.getStageName() + System.lineSeparator();
+                msg += "+ Test Result: Passed." + System.lineSeparator();
+
+                msg += "#### "+ CCTSTestStage.PATH_STAGE.getStageName() + System.lineSeparator();
+                msg += "+ Test Result: Failed" + System.lineSeparator();
+
+
+                // output error message
+                if(cctsResult.getPathConstructionAndVerificationErrors().size() != 0) {
+                    // document error
+                    msg += "+ Error Reason: " + System.lineSeparator();
+                    for ( CCTSStatusCode code : cctsResult.getPathConstructionAndVerificationErrors() ) {
+                        msg += "    + " + code.getMessage() + System.lineSeparator();
+
+                    }
+                }
+
+
+
+            }else {
+                // 00
+                msg += "## Integration Test Case Name:" + cctsResult.getDocument().getTitle() + System.lineSeparator();
+                msg += "### Test Result Details: " + System.lineSeparator();
+                msg += "#### " + CCTSTestStage.DOCUMENT_STAGE.getStageName() + System.lineSeparator();
+                msg += "+ Test Result: Failed." + System.lineSeparator();
+                // output error message
+                if(cctsResult.getDocumentStageVerificationErrors().size() != 0) {
+                    // document legality error
+                    msg += "+ Error Reason: " + System.lineSeparator();
+                    for ( CCTSStatusCode code : cctsResult.getDocumentStageVerificationErrors() ) {
+                        msg += "    + " + code.getMessage() + System.lineSeparator();
+                    }
+                }
+
+
+
+
             }
-            msg += "### Test Stage Instruction: " + System.lineSeparator();
-            for (int i = 0; i < cctsResult.getTestProgress().size(); i++) {
-                msg += (i + 1) + ". " + cctsResult.getTestProgress().get(i).getTestStages().getStageName() + System.lineSeparator();
-                msg += "    + test instruction: " + System.lineSeparator();
-                msg += cctsResult.getTestProgress().get(i).getTestStages().getInstruction()+ System.lineSeparator();
-            }
-            msg += "### Result Detail: " + System.lineSeparator();
-            msg += "#### Potential Path" + System.lineSeparator();
-            msg = generatePotentialPathVerificationEntityMD(msg, cctsResult);
 
 
-            msg += "#### Eventlogs" + System.lineSeparator();
-            msg = generateEventLogsVerificationEntityMD(msg, cctsResult);
-            boolean noInvalid;
-            msg += "#### Contract Stage" + System.lineSeparator();
-            msg = generateContractVerificationEntityMD(msg, cctsResult);
-
-            msg += "#### Contract Test Verification" + System.lineSeparator();
-            msg = gernerateContractTestResultEntutyMD(msg, cctsResult);
-
+//            msg += "### Test Stage Instruction: " + System.lineSeparator();
+//            for (int i = 0; i < cctsResult.getTestProgress().size(); i++) {
+//                msg += (i + 1) + ". " + cctsResult.getTestProgress().get(i).getTestStages().getStageName() + System.lineSeparator();
+//                msg += "    + test instruction: " + System.lineSeparator();
+//                msg += cctsResult.getTestProgress().get(i).getTestStages().getInstruction()+ System.lineSeparator();
+//            }
 
         }
 
@@ -131,6 +219,22 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
     }
 
     private String gernerateContractTestResultEntutyMD(String msg, CCTSResult cctsResult) {
+        boolean testResult = true;
+        for (CCTSStatusCode code: cctsResult.getContractVerificationResults().values()) {
+            if(code != CCTSStatusCode.ALLGREEN){
+                testResult = false;
+            }
+        }
+
+        if (testResult){
+            msg += "+ Test Result: Passed." + System.lineSeparator();
+        }else {
+            msg += "+ Test Result: Failed." + System.lineSeparator();
+        }
+
+
+
+
 
         msg += "##### Pass" + System.lineSeparator();
         boolean noPassResult = true;
@@ -171,6 +275,22 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
     }
 
     private String generateContractVerificationEntityMD(String msg, CCTSResult cctsResult) {
+        boolean testResult = true;
+        for (CCTSResultRecord rr: cctsResult.getResultBetweenDeliveryAndContract()) {
+            if(rr.getResultCode() != CCTSStatusCode.ALLGREEN){
+                testResult = false;
+            }
+        }
+
+        if (testResult){
+            msg += "+ Test Result: Passed." + System.lineSeparator();
+        }else {
+            msg += "+ Test Result: Failed." + System.lineSeparator();
+        }
+
+
+
+
 
         msg += "##### Pass" + System.lineSeparator();
         boolean noPassResult = true;
@@ -221,6 +341,22 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
     }
 
     private String generateEventLogsVerificationEntityMD(String msg, CCTSResult cctsResult) {
+        boolean testResult = true;
+        for (CCTSResultRecord rr: cctsResult.getResultBetweenDeliveryAndEventLogs()) {
+            if(rr.getResultCode() != CCTSStatusCode.ALLGREEN){
+                testResult = false;
+            }
+        }
+
+        if (testResult){
+            msg += "+ Test Result: Passed." + System.lineSeparator();
+        }else {
+            msg += "+ Test Result: Failed." + System.lineSeparator();
+        }
+
+
+
+
         msg += "##### Pass" + System.lineSeparator();
         boolean isPassEmpty = false;
         for (CCTSResultRecord rr: cctsResult.getResultBetweenDeliveryAndEventLogs()) {
@@ -267,6 +403,20 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
     }
 
     private String generatePotentialPathVerificationEntityMD(String msg, CCTSResult cctsResult) {
+        boolean testResult = true;
+        for (CCTSStatusCode code: cctsResult.getPathVerificationResults().values()) {
+            if(code != CCTSStatusCode.ALLGREEN){
+                testResult = false;
+            }
+        }
+
+        if (testResult){
+            msg += "+ Test Result: Passed." + System.lineSeparator();
+        }else {
+            msg += "+ Test Result: Failed." + System.lineSeparator();
+        }
+
+
         msg += "##### Pass" + System.lineSeparator();
         boolean passIsNotEmpty = false;
         for (CCTSStatusCode code : cctsResult.getPathVerificationResults().values()) {
@@ -274,6 +424,7 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
                 passIsNotEmpty = true;
             }
         }
+
         if (passIsNotEmpty) {
             for (String pathName : cctsResult.getPathVerificationResults().keySet() ) {
                 if (cctsResult.getPathVerificationResults().get(pathName) == CCTSStatusCode.ALLGREEN) {
