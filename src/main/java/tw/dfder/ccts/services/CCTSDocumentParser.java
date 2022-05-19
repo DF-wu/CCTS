@@ -84,8 +84,15 @@ public class CCTSDocumentParser {
             // should not be end state
             // valid nextState branch
             ArrayList<NextState> newPath = new ArrayList<>(path);
-            newPath.add(state.getNextState());
-            pathFinder(document, document.findSimpleState(state.getNextState().getStateName()), newPath, finalLists);
+            if(newPath.contains(state.getNextState())){
+                // already in path
+                // avoid loop
+                return;
+            }else{
+                newPath.add(state.getNextState());
+                pathFinder(document, document.findSimpleState(state.getNextState().getStateName()), newPath, finalLists);
+            }
+
         } else if (state.getNextState() == null && state.getOptions() != null && !state.isEnd()) {
             // options is not null, but nextState is null
             // should not be end state
@@ -93,9 +100,15 @@ public class CCTSDocumentParser {
 
             for (NextState ns : state.getOptions()) {
                 ArrayList<NextState> newPath = new ArrayList<>(path);
-                newPath.add(ns);
-                SimpleState nxt = document.findSimpleState(ns.getStateName());
-                pathFinder(document, document.findSimpleState(ns.getStateName()), newPath, finalLists);
+                if(newPath.contains(ns)){
+                    // already in path
+                    // avoid loop
+                    continue;
+                }else{
+                    newPath.add(ns);
+                    SimpleState nxt = document.findSimpleState(ns.getStateName());
+                    pathFinder(document, document.findSimpleState(ns.getStateName()), newPath, finalLists);
+                }
             }
 
         } else if (state.getNextState() == null && state.getOptions() == null && state.isEnd()) {
