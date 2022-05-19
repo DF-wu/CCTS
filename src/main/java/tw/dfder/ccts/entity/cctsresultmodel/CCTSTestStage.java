@@ -9,7 +9,7 @@ public enum CCTSTestStage {
                     "    + state name should be unique in whole document states\n" +
                     "    + required properties should not be null\n" +
                     "    + nextState name  should be found in Document states set.\n" +
-                    "    + timeSequenceLabel should be uniqe in whole document's delivery\n" ),
+                    "    + timeSequenceLabel should be unique in whole document's delivery\n" ),
 
 
     PATH_STAGE("Path Construction and Verification Stage","B-2", ""+

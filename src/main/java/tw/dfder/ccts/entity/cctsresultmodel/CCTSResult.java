@@ -203,13 +203,15 @@ public class CCTSResult {
         gernerateFinalPassedAndFailList();
         boolean isThisCCTSResultAllPass = true;
 
-        if(documentStageVerificationErrors.isEmpty()){
+        if( !documentStageVerificationErrors.isEmpty()){
+            // contain errors are pass.
             isThisCCTSResultAllPass = false;
             this.testResult = false;
             return false;
         }
 
-        if(pathConstructionAndVerificationErrors.isEmpty()){
+        if( !pathConstructionAndVerificationErrors.isEmpty()){
+            // contain errors are pass.
             isThisCCTSResultAllPass = false;
             this.testResult = false;
             return false;

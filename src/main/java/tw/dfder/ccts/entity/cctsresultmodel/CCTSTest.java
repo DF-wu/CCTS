@@ -53,7 +53,7 @@ public class CCTSTest {
                 isAllPassed = false;
             }
         }
-        cctsTestResult = isAllPassed;
+        this.cctsTestResult = isAllPassed;
         return cctsTestResult;
     }
 
