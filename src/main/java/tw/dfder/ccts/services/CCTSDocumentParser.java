@@ -77,7 +77,7 @@ public class CCTSDocumentParser {
         TODO:
         find path(case sequence) from start state to end state.
      */
-    public static void pathFinder(CCTSDocument document, SimpleState state, ArrayList<NextState> path, ArrayList<ArrayList<NextState>> finalLists) {
+    public static CCTSStatusCode pathFinder(CCTSDocument document, SimpleState state, ArrayList<NextState> path, ArrayList<ArrayList<NextState>> finalLists) {
         // nextState and options should be mutually exclusive
         if (state.getNextState() != null && state.getOptions() == null && !state.isEnd()) {
             // nextState is not null, but options is null.
@@ -87,10 +87,10 @@ public class CCTSDocumentParser {
             if(newPath.contains(state.getNextState())){
                 // already in path
                 // avoid loop
-                return;
+                return CCTSStatusCode.CIRCULATED_PATH_FOUND;
             }else{
                 newPath.add(state.getNextState());
-                pathFinder(document, document.findSimpleState(state.getNextState().getStateName()), newPath, finalLists);
+                return pathFinder(document, document.findSimpleState(state.getNextState().getStateName()), newPath, finalLists);
             }
 
         } else if (state.getNextState() == null && state.getOptions() != null && !state.isEnd()) {
@@ -103,11 +103,11 @@ public class CCTSDocumentParser {
                 if(newPath.contains(ns)){
                     // already in path
                     // avoid loop
-                    continue;
+                    return CCTSStatusCode.CIRCULATED_PATH_FOUND;
                 }else{
                     newPath.add(ns);
                     SimpleState nxt = document.findSimpleState(ns.getStateName());
-                    pathFinder(document, document.findSimpleState(ns.getStateName()), newPath, finalLists);
+                    return pathFinder(document, document.findSimpleState(ns.getStateName()), newPath, finalLists);
                 }
             }
 
@@ -118,7 +118,11 @@ public class CCTSDocumentParser {
             //WTF
             System.out.println("Error when parsing document path");
             System.out.println("CCTS document states have invalid state!");
+            return CCTSStatusCode.NO_VALID_PATH_FOUND;
         }
+
+        return CCTSStatusCode.ALLGREEN;
+
 
     }
 

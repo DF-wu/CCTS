@@ -19,6 +19,7 @@ public enum CCTSStatusCode {
     // 200~299,
     NO_VALID_PATH_FOUND("There is no valid path", 201),
     DELIVERY_NOT_INCLUDED_BY_ANY_PATH("There is delivery not included by any path", 202),
+    CIRCULATED_PATH_FOUND("There is a circulated path. Please Check CCTS Document.", 203),
 
 
     // 300~399,

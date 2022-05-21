@@ -177,11 +177,17 @@ public class DocumentVerifier {
     private CCTSStatusCode connectedStateChecker(CCTSDocument cctsDocument) {
         //get all path
         ArrayList<ArrayList<NextState>> paths =new ArrayList<>();
-        CCTSDocumentParser.pathFinder(
+        CCTSStatusCode code =  CCTSDocumentParser.pathFinder(
                 cctsDocument,
                 cctsDocument.findSimpleState(cctsDocument.getStartAt()),
                 new ArrayList<>(),
                 paths);
+
+        if(code != CCTSStatusCode.ALLGREEN) {
+            // if circular path is found, return error
+            return code;
+        }
+
         for (ArrayList<NextState> path: paths){
             for (int i = 1; i < path.size(); i++) {
                 // previous nextState's consumer should be next one's provider
@@ -204,7 +210,8 @@ public class DocumentVerifier {
 
         // get all paths
         ArrayList<ArrayList<NextState>> paths = new ArrayList<>();
-        CCTSDocumentParser.pathFinder(cctsDocument, cctsDocument.findSimpleState(cctsDocument.getStartAt()), new ArrayList<>(), paths);
+        CCTSStatusCode isPathValid = CCTSDocumentParser.pathFinder(cctsDocument, cctsDocument.findSimpleState(cctsDocument.getStartAt()), new ArrayList<>(), paths);
+        if(isPathValid != CCTSStatusCode.ALLGREEN) return isPathValid;
 
 
         if(paths.size() == 0){
