@@ -311,7 +311,7 @@ public class DocumentVerifier {
         // traversal all potential valid path.
         ArrayList<ArrayList<NextState>> traversalPaths = new ArrayList<>();
         // start from initial state
-        documentParser.pathFinder(cctsDocument, cctsDocument.findSimpleState(cctsDocument.getStartAt()), new ArrayList<>(), traversalPaths);
+        CCTSStatusCode code =  CCTSDocumentParser.pathFinder(cctsDocument, cctsDocument.findSimpleState(cctsDocument.getStartAt()), new ArrayList<>(), traversalPaths);
 
         // check if no valid state or not
         if(traversalPaths.size() == 0) {

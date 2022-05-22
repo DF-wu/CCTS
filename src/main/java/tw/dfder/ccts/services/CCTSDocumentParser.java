@@ -90,7 +90,7 @@ public class CCTSDocumentParser {
                 return CCTSStatusCode.CIRCULATED_PATH_FOUND;
             }else{
                 newPath.add(state.getNextState());
-                return pathFinder(document, document.findSimpleState(state.getNextState().getStateName()), newPath, finalLists);
+                pathFinder(document, document.findSimpleState(state.getNextState().getStateName()), newPath, finalLists);
             }
 
         } else if (state.getNextState() == null && state.getOptions() != null && !state.isEnd()) {
@@ -107,7 +107,7 @@ public class CCTSDocumentParser {
                 }else{
                     newPath.add(ns);
                     SimpleState nxt = document.findSimpleState(ns.getStateName());
-                    return pathFinder(document, document.findSimpleState(ns.getStateName()), newPath, finalLists);
+                    pathFinder(document, document.findSimpleState(ns.getStateName()), newPath, finalLists);
                 }
             }
 
