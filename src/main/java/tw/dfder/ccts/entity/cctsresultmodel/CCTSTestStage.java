@@ -9,16 +9,16 @@ public enum CCTSTestStage {
                     "    + state name should be unique in whole document states\n" +
                     "    + required properties should not be null\n" +
                     "    + nextState name  should be found in Document states set.\n" +
-                    "    + timeSequenceLabel should be unique in whole document's message deliveries\n" ),
+                    "    + TimeSequenceLabel should be unique in whole document's message deliveries\n" ),
 
 
     PATH_STAGE("Path Construction and Verification Stage","B-2", ""+
                     "    + document是否存在未被包含於可能潛在的path的message delivery\n" +
                     "    + no valid path found error\n" +
                     "    + message delivery連結的service是否合理(last consumer should be next provider)\n" +
-                    "    + time sequenceLabel should be increased for each path that  found in CCTS document\n"),
+                    "    + TimeSequenceLabel should be increased for each path that  found in CCTS document\n"),
     CONTRACT_RETRIEVAL_STAGE("Contract Retrieval Stage","B-3", "" +
-            "    + message delivery testCaseId not found in Conctract\n" ),
+            "    + message delivery testCaseId not found in Contract\n" ),
 
     CONTRACT_TEST_STAGE("Service Verification Stage","B-5", "" +
             "    + service hasn't not passed contract test\n" ),
@@ -27,7 +27,7 @@ public enum CCTSTestStage {
             "    + no eventlog found between provider and consumer for the message delivery. \n" ),
 
     PATH_VERIFY_STAGE("Path Verification Stage","B-6",""+
-            "    + eventlog produce time should follow the sequence, at least a valid eventlog path found.\n");
+            "    + Eventlog produce time should follow the sequence, at least a valid eventlog path found.\n");
 
 
 
