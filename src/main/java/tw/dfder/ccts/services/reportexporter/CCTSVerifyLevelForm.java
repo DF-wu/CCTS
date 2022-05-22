@@ -137,13 +137,13 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
 
 
 
-                msg += "#### " + CCTSTestStage.CONTRACT_RETRIEVAL_STAGE + System.lineSeparator();
+                msg += "#### " + CCTSTestStage.CONTRACT_RETRIEVAL_STAGE.getStageName() + System.lineSeparator();
                 msg = generateContractVerificationEntityMD(msg, cctsResult);
 
-                msg += "#### " + CCTSTestStage.CONTRACT_TEST_STAGE + System.lineSeparator();
+                msg += "#### " + CCTSTestStage.CONTRACT_TEST_STAGE.getStageName() + System.lineSeparator();
                 msg = gernerateContractTestResultEntutyMD(msg, cctsResult);
 
-                msg += "#### " + CCTSTestStage.EVENTLOG_STAGE + System.lineSeparator();
+                msg += "#### " + CCTSTestStage.EVENTLOG_STAGE.getStageName() + System.lineSeparator();
                 msg = generateEventLogsVerificationEntityMD(msg, cctsResult);
 
                 msg += "#### " + CCTSTestStage.PATH_VERIFY_STAGE.getStageName() + System.lineSeparator();
