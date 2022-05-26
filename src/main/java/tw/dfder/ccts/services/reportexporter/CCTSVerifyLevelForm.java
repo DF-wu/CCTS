@@ -308,7 +308,7 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
                     msg += "+ " + resultRecord.getDelivery().getTestCaseId() + System.lineSeparator();
                     msg += "    + Provider: " + resultRecord.getDelivery().getProvider() + System.lineSeparator();
                     msg += "    + Consumer: " + resultRecord.getDelivery().getConsumer() + System.lineSeparator();
-                    msg += "    + TimeSequenceLabel: " + resultRecord.getDelivery().getTimeSequenceLabel() + System.lineSeparator();
+                    //msg += "    + TimeSequenceLabel: " + resultRecord.getDelivery().getTimeSequenceLabel() + System.lineSeparator();
 
                 }
             }

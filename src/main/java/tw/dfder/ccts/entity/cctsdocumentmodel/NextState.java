@@ -5,7 +5,7 @@ public class NextState {
     private String provider;
     private String consumer;
     private String testCaseId;
-    private Integer timeSequenceLabel;
+
 
 
 
@@ -54,11 +54,5 @@ public class NextState {
         this.testCaseId = testCaseId;
     }
 
-    public Integer getTimeSequenceLabel() {
-        return timeSequenceLabel;
-    }
 
-    public void setTimeSequenceLabel(Integer timeSequenceLabel) {
-        this.timeSequenceLabel = timeSequenceLabel;
-    }
 }

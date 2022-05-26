@@ -38,7 +38,6 @@ public class EventLog {
         this.providerName = providerName;
         this.consumerName = consumerName;
         this.testCaseId = testCaseId;
-        this.timeSequenceLabel = timeSequenceLabel;
     }
 
 

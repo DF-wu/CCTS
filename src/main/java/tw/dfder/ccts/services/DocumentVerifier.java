@@ -165,11 +165,7 @@ public class DocumentVerifier {
         }
 
         // timeSequenceLabel Legality check
-        CCTSStatusCode isTimeSequenceLabelValid = timeSequenceLabelChecker(cctsDocument);
-        if(isTimeSequenceLabelValid != CCTSStatusCode.ALLGREEN) {
-            result.addPathConstructionAndVerificationError(isTimeSequenceLabelValid);
-            return isTimeSequenceLabelValid;
-        }
+        // DEP
 
         return CCTSStatusCode.ALLGREEN;
     }
@@ -219,41 +215,6 @@ public class DocumentVerifier {
         }
         return CCTSStatusCode.ALLGREEN;
 
-    }
-
-    private CCTSStatusCode timeSequenceLabelChecker(CCTSDocument cctsDocument) {
-        //get all delivery
-        ArrayList<NextState> deliverys =  CCTSDocumentParser.findDeliveryList(cctsDocument);
-        //get all timeSequenceLabel
-        ArrayList<Integer> timeSequenceLabels = new ArrayList<>();
-        for ( NextState delivery : deliverys){
-            timeSequenceLabels.add(delivery.getTimeSequenceLabel());
-        }
-        // ninja code
-//        documentParser.findDeliveryList(cctsDocument).stream().map( delivery ->  delivery.getTimeSequenceLabel()).collect(Collectors.toCollection(ArrayList::new));
-
-
-        //check timeSequenceLabel is unique
-        HashSet<Integer> timeSequenceLabelSet = new HashSet<>(timeSequenceLabels);
-        if(timeSequenceLabelSet.size() != timeSequenceLabels.size()){
-            System.out.println("CCTS document has duplicated timeSequenceLabel!");
-            return CCTSStatusCode.PATH_TIMESEQUENCE_LABEL_NOT_UNIQUE;
-        }
-
-        // check timeSequenceLabel is increased in path
-        ArrayList<ArrayList<NextState>> paths = new ArrayList<>();
-        CCTSDocumentParser.pathFinder(cctsDocument, cctsDocument.findSimpleState(cctsDocument.getStartAt()), new ArrayList<>(), paths);
-        for ( ArrayList<NextState> path :  paths){
-            for (int i = 1; i < path.size(); i++) {
-                // should be increased
-                if(path.get(i).getTimeSequenceLabel() <= path.get(i-1).getTimeSequenceLabel()){
-                    System.out.println("CCTS document has timeSequenceLabel not increased in path!");
-                    return CCTSStatusCode.PATH_TIMESEQUENCELABEL_NOT_INCREASED;
-                }
-            }
-        }
-
-        return CCTSStatusCode.ALLGREEN;
     }
 
     private CCTSStatusCode stateUniqueChecker(CCTSDocument cctsDocument) {
@@ -346,8 +307,7 @@ public class DocumentVerifier {
         if (state.getStateName() != null &&
                 state.getConsumer() != null &&
                 state.getProvider() != null &&
-                state.getTestCaseId() != null &&
-                state.getTimeSequenceLabel() != null) return true;
+                state.getTestCaseId() != null ) return true;
         else return false;
     }
 
