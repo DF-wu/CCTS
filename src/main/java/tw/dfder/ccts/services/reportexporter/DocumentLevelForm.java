@@ -56,7 +56,7 @@ public class DocumentLevelForm implements ReportExportEngine{
                     msg += "+ Test Result: Failed" + System.lineSeparator();
                     // document legality error
                     for ( CCTSStatusCode code : result.getDocumentStageVerificationErrors() ) {
-                        msg += "+ Error Reason: " + code.getMessage() + System.lineSeparator();
+                        msg += "+ Failure description: " + code.getMessage() + System.lineSeparator();
                     }
                 }
             }
@@ -86,7 +86,7 @@ public class DocumentLevelForm implements ReportExportEngine{
                     msg += "+ Test Result: Failed" + System.lineSeparator();
                     // document error
                     for ( CCTSStatusCode code : result.getPathConstructionAndVerificationErrors() ) {
-                        msg += "+ Error Reason: " + code.getMessage() + System.lineSeparator();
+                        msg += "+ Failure description: " + code.getMessage() + System.lineSeparator();
                     }
                 }
             }
