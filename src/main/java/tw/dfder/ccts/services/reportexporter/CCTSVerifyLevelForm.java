@@ -175,7 +175,7 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
                 // output error message
                 if(cctsResult.getPathConstructionAndVerificationErrors().size() != 0) {
                     // document error
-                    msg += "+ Error Reason: " + System.lineSeparator();
+                    msg += "+ Failure description: " + System.lineSeparator();
                     for ( CCTSStatusCode code : cctsResult.getPathConstructionAndVerificationErrors() ) {
                         msg += "    + " + code.getMessage() + System.lineSeparator();
 
@@ -193,7 +193,7 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
                 // output error message
                 if(cctsResult.getDocumentStageVerificationErrors().size() != 0) {
                     // document legality error
-                    msg += "+ Error Reason: " + System.lineSeparator();
+                    msg += "+ Failure description: " + System.lineSeparator();
                     for ( CCTSStatusCode code : cctsResult.getDocumentStageVerificationErrors() ) {
                         msg += "    + " + code.getMessage() + System.lineSeparator();
                     }
@@ -267,7 +267,7 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
             for (String service: cctsResult.getContractVerificationResults().keySet()) {
                 if (cctsResult.getContractVerificationResults().get(service) != CCTSStatusCode.ALLGREEN) {
                     msg += "+ " + service + System.lineSeparator();
-                    msg += "    + fail reason: " + cctsResult.getContractVerificationResults().get(service).getMessage() + System.lineSeparator();
+                    msg += "    + Failure description: " + cctsResult.getContractVerificationResults().get(service).getMessage() + System.lineSeparator();
                 }
             }
         }
@@ -331,8 +331,8 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
                     msg += "+ " + resultRecord.getDelivery().getTestCaseId() + System.lineSeparator();
                     msg += "    + Provider: " + resultRecord.getDelivery().getProvider() + System.lineSeparator();
                     msg += "    + Consumer: " + resultRecord.getDelivery().getConsumer() + System.lineSeparator();
-                    msg += "    + TimeSequenceLabel: " + resultRecord.getDelivery().getTimeSequenceLabel() + System.lineSeparator();
-                    msg += "    + fail reason: " + resultRecord.getResultCode().getMessage() + System.lineSeparator();
+                    //msg += "    + TimeSequenceLabel: " + resultRecord.getDelivery().getTimeSequenceLabel() + System.lineSeparator();
+                    msg += "    + Failure description: " + resultRecord.getResultCode().getMessage() + System.lineSeparator();
 
                 }
             }
@@ -372,7 +372,7 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
                     msg += "+ " + resultRecord.getDelivery().getTestCaseId() + System.lineSeparator();
                     msg += "    + Provider: " + resultRecord.getDelivery().getProvider() + System.lineSeparator();
                     msg += "    + Consumer: " + resultRecord.getDelivery().getConsumer() + System.lineSeparator();
-                    msg += "    + TimeSequenceLabel: " + resultRecord.getDelivery().getTimeSequenceLabel() + System.lineSeparator();
+                    //msg += "    + TimeSequenceLabel: " + resultRecord.getDelivery().getTimeSequenceLabel() + System.lineSeparator();
                 }
             }
         }
@@ -393,8 +393,8 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
                     msg += "+ " + resultRecord.getDelivery().getTestCaseId() + System.lineSeparator();
                     msg += "    + Provider: " + resultRecord.getDelivery().getProvider() + System.lineSeparator();
                     msg += "    + Consumer: " + resultRecord.getDelivery().getConsumer() + System.lineSeparator();
-                    msg += "    + TimeSequenceLabel: " + resultRecord.getDelivery().getTimeSequenceLabel() + System.lineSeparator();
-                    msg += "    + fail reason: " + resultRecord.getResultCode().getMessage() + System.lineSeparator();
+                    //msg += "    + TimeSequenceLabel: " + resultRecord.getDelivery().getTimeSequenceLabel() + System.lineSeparator();
+                    msg += "    + Failure description: " + resultRecord.getResultCode().getMessage() + System.lineSeparator();
 
                 }
             }
@@ -450,7 +450,7 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
             for (String pathName : cctsResult.getPathVerificationResults().keySet() ) {
                 if (cctsResult.getPathVerificationResults().get(pathName) != CCTSStatusCode.ALLGREEN) {
                     msg += "+ " + pathName + System.lineSeparator();
-                    msg += "    + fail reason: " + cctsResult.getPathVerificationResults().get(pathName).getMessage() + System.lineSeparator();
+                    msg += "    + Failure description: " + cctsResult.getPathVerificationResults().get(pathName).getMessage() + System.lineSeparator();
                 }
             }
         }
