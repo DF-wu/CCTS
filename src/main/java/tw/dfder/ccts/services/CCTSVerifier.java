@@ -10,8 +10,6 @@ import tw.dfder.ccts.entity.CCTSStatusCode;
 import tw.dfder.ccts.entity.EventLog;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSResult;
 import tw.dfder.ccts.entity.cctsresultmodel.CCTSResultRecord;
-import tw.dfder.ccts.entity.cctsresultmodel.CCTSTestCase;
-import tw.dfder.ccts.entity.cctsresultmodel.CCTSTestStage;
 import tw.dfder.ccts.repository.CCTSDocumentRepository;
 import tw.dfder.ccts.repository.CCTSTestRepository;
 import tw.dfder.ccts.repository.EventLogRepository;
@@ -61,7 +59,7 @@ public class CCTSVerifier {
         // check testCaseId
         HashSet<NextState> reachableStatesSet = flatenPaths(paths);
         for (NextState delivery : reachableStatesSet) {
-            ArrayList<EventLog> sameRouteEventlogs = findSameRouteEventlogs(delivery.getProvider(), delivery.getConsumer(), eventlogs);
+            ArrayList<EventLog> sameRouteEventlogs = findCorrespondedEventlogs(delivery, eventlogs);
             if(sameRouteEventlogs.size() == 0) {
                 // fail because no eventlogs found
                 cctsResult.getResultBetweenDeliveryAndEventLogs().add(
@@ -125,9 +123,9 @@ public class CCTSVerifier {
 
         for (NextState delivery : path) {
             // extract same provider and consumer eventlog
-            ArrayList<EventLog> sameRouteEventlogs = findSameRouteEventlogs(delivery.getProvider() , delivery.getConsumer(), eventlogs);
+            ArrayList<EventLog> correspondedEventlogs = findCorrespondedEventlogs(delivery, eventlogs);
             // Sort eventlogs by timestamp by ascending order
-            sameRouteEventlogs.sort((o1, o2) -> {
+            correspondedEventlogs.sort((o1, o2) -> {
                 if(o1.getTimeStamp()<o2.getTimeStamp()) {
                     return -1;
                 }else{
@@ -145,7 +143,7 @@ public class CCTSVerifier {
 
             // find eventlogs
             boolean isDeliveryValid = false;
-            for (EventLog eventlog : sameRouteEventlogs) {
+            for (EventLog eventlog : correspondedEventlogs) {
                  if(eventlog.getTimeStamp() > pilovtEventlog.getTimeStamp()) {
                      // found eventlog
                      pilovtEventlog = eventlog;
@@ -163,10 +161,10 @@ public class CCTSVerifier {
         return CCTSStatusCode.ALLGREEN;
     }
 
-    private ArrayList<EventLog> findSameRouteEventlogs(String provider, String consumer, ArrayList<EventLog> eventlogs) {
+    private ArrayList<EventLog> findCorrespondedEventlogs(NextState ns, ArrayList<EventLog> eventlogs) {
         ArrayList<EventLog> sameRouteEventlogs = new ArrayList<>();
         for (EventLog el : eventlogs) {
-            if (el.getConsumerName().equals(consumer) && el.getProviderName().equals(provider)) {
+            if (el.getConsumerName().equals(ns.getConsumer()) && el.getProviderName().equals(ns.getProvider()) && el.getTestCaseId().equals(ns.getTestCaseId())) {
                 sameRouteEventlogs.add(el);
             }
         }
