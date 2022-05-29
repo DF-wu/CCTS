@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document(collection = "EventLogs_timeFailure")
+@Document(collection = "EventLogs")
 public class EventLog {
     @Id
     private String Id;
