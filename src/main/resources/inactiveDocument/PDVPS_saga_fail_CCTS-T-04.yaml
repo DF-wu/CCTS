@@ -1,5 +1,5 @@
 CCTSVersion: "0.12"
-title: PDVPS saga pass CASE
+title: PDVPS saga fail CASE - contract test not pass - CCTS-T-04
 startAt: Top-up Event initialized
 states:
   - stateName: Top-up Event initialized
@@ -7,7 +7,6 @@ states:
     end: False
     nextState:
       stateName: payment
-      timeSequenceLabel: 1
       testCaseId: t-orc-payment-01
       provider: orchestrator
       consumer: paymentService
@@ -16,12 +15,10 @@ states:
     end: False
     options:
       - stateName: Payment processed
-        timeSequenceLabel: 2
         testCaseId: t-payment-orc-01
         provider: paymentService
         consumer: orchestrator
       - stateName: Payment failed
-        timeSequenceLabel: 7
         testCaseId: t-payment-orc-02
         provider: paymentService
         consumer: orchestrator
@@ -30,7 +27,6 @@ states:
     end: False
     nextState:
       stateName: Payment reversed
-      timeSequenceLabel: 8
       testCaseId: t-orc-payment-02
       provider: orchestrator
       consumer: paymentService
@@ -39,7 +35,6 @@ states:
     end: False
     nextState:
       stateName: Top-up canceled
-      timeSequenceLabel: 13
       testCaseId: t-payment-orc-03
       provider: paymentService
       consumer: orchestrator
@@ -48,7 +43,6 @@ states:
     end: False
     nextState:
       stateName: point-update
-      timeSequenceLabel: 3
       testCaseId: t-orc-point-01
       provider: orchestrator
       consumer: pointService
@@ -57,12 +51,10 @@ states:
     end: False
     options:
       - stateName: Point updated
-        timeSequenceLabel: 4
         testCaseId: t-point-orc-01
         provider: pointService
         consumer: orchestrator
       - stateName: Point-update failed
-        timeSequenceLabel: 9
         testCaseId: t-point-orc-02
         provider: pointService
         consumer: orchestrator
@@ -71,7 +63,6 @@ states:
     end: False
     nextState:
       stateName: Point-update reverted
-      timeSequenceLabel: 10
       testCaseId: t-orc-point-02
       provider: orchestrator
       consumer: pointService
@@ -80,7 +71,6 @@ states:
     end: False
     nextState:
       stateName: Point-update done
-      timeSequenceLabel: 11
       testCaseId: t-point-orc-03
       provider: pointService
       consumer: orchestrator
@@ -89,7 +79,6 @@ states:
     end: False
     nextState:
       stateName: Payment reversed
-      timeSequenceLabel: 12
       testCaseId: t-orc-payment-03
       provider: orchestrator
       consumer: paymentService
@@ -98,7 +87,6 @@ states:
     end: False
     nextState:
       stateName: Logged
-      timeSequenceLabel: 5
       testCaseId: t-orc-logging-01
       provider: orchestrator
       consumer: loggingService
@@ -107,7 +95,6 @@ states:
     end: False
     nextState:
       stateName: Approved top-up
-      timeSequenceLabel: 6
       testCaseId: t-logging-orc-01
       provider: loggingService
       consumer: orchestrator

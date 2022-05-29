@@ -1,120 +1,106 @@
 CCTSVersion: "0.12"
-title: PDVPS saga fail case - not connected (service name error)
-startAt: Create top-up event
+title: PDVPS saga pass CASE - CCTS-T-07
+startAt: Top-up Event initialized
 states:
-  - stateName: Create top-up event
+  - stateName: Top-up Event initialized
     comment: initial state
     end: False
     nextState:
-      stateName: Payment process
-      timeSequenceLabel: 1
+      stateName: payment
       testCaseId: t-orc-payment-01
       provider: orchestrator
       consumer: paymentService
-  - stateName: Payment process
+  - stateName: payment
     comment: make payment
     end: False
     options:
-      - stateName: Prepare update point
-        timeSequenceLabel: 2
+      - stateName: Payment processed
         testCaseId: t-payment-orc-01
         provider: paymentService
         consumer: orchestrator
-      - stateName: Payment Fail
-        timeSequenceLabel: 7
+      - stateName: Payment failed
         testCaseId: t-payment-orc-02
         provider: paymentService
         consumer: orchestrator
-  - stateName: Payment Fail
+  - stateName: Payment failed
     comment: do payment fail compensation
     end: False
     nextState:
       stateName: Payment reversed
-      timeSequenceLabel: 8
       testCaseId: t-orc-payment-02
-#      error
-      provider: Orchestrator
+      provider: orchestrator
       consumer: paymentService
   - stateName: Payment reversed
     comment: reverse Payment
     end: False
     nextState:
-      stateName: Top-up cancel
-      timeSequenceLabel: 13
+      stateName: Top-up canceled
       testCaseId: t-payment-orc-03
       provider: paymentService
       consumer: orchestrator
-  - stateName: Prepare update point
+  - stateName: Payment processed
     comment: orchestrator received response from payment and ready to send update point request to Point service
     end: False
     nextState:
-      stateName: Update point
-      timeSequenceLabel: 3
+      stateName: point-update
       testCaseId: t-orc-point-01
       provider: orchestrator
       consumer: pointService
-  - stateName: Update point
+  - stateName: point-update
     comment: do update point
     end: False
     options:
-      - stateName: Prepare log
-        timeSequenceLabel: 4
+      - stateName: Point updated
         testCaseId: t-point-orc-01
         provider: pointService
         consumer: orchestrator
-      - stateName: Update point Fail
-        timeSequenceLabel: 9
+      - stateName: Point-update failed
         testCaseId: t-point-orc-02
         provider: pointService
         consumer: orchestrator
-  - stateName: Update point Fail
+  - stateName: Point-update failed
     comment: to revert points
     end: False
     nextState:
-      stateName: Revert point
-      timeSequenceLabel: 10
+      stateName: Point-update reverted
       testCaseId: t-orc-point-02
       provider: orchestrator
       consumer: pointService
-  - stateName: Revert point
+  - stateName: Point-update reverted
     comment: revert points
     end: False
     nextState:
-      stateName: Prepare reverse payment
-      timeSequenceLabel: 11
+      stateName: Point-update done
       testCaseId: t-point-orc-03
       provider: pointService
       consumer: orchestrator
-  - stateName: Prepare reverse payment
+  - stateName: Point-update done
     comment: orchestrator received response that point finished compensation , ready to do payment compensation
     end: False
     nextState:
       stateName: Payment reversed
-      timeSequenceLabel: 12
       testCaseId: t-orc-payment-03
       provider: orchestrator
       consumer: paymentService
-  - stateName: Prepare log
+  - stateName: Point updated
     comment: orchestrator ready to send Log request
     end: False
     nextState:
-      stateName: Log
-      timeSequenceLabel: 5
+      stateName: Logged
       testCaseId: t-orc-logging-01
       provider: orchestrator
       consumer: loggingService
-  - stateName: Log
+  - stateName: Logged
     comment: logging
     end: False
     nextState:
       stateName: Approved top-up
-      timeSequenceLabel: 6
       testCaseId: t-logging-orc-01
       provider: loggingService
       consumer: orchestrator
   - stateName: Approved top-up
     comment: finish saga process
     end: True
-  - stateName: Top-up cancel
+  - stateName: Top-up canceled
     comment: finish compensation process and finish saga
     end: True

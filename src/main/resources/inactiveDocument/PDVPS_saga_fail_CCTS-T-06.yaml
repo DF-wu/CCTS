@@ -1,0 +1,106 @@
+CCTSVersion: "0.12"
+title: PDVPS saga fail CASE - Eventlog composition not found  - CCTS-T-06
+startAt: Top-up Event initialized
+states:
+  - stateName: Top-up Event initialized
+    comment: initial state
+    end: False
+    nextState:
+      stateName: payment
+      testCaseId: t-orc-payment-01
+      provider: orchestrator
+      consumer: paymentService
+  - stateName: payment
+    comment: make payment
+    end: False
+    options:
+      - stateName: Payment processed
+        testCaseId: t-payment-orc-01
+        provider: paymentService
+        consumer: orchestrator
+      - stateName: Payment failed
+        testCaseId: t-payment-orc-02
+        provider: paymentService
+        consumer: orchestrator
+  - stateName: Payment failed
+    comment: do payment fail compensation
+    end: False
+    nextState:
+      stateName: Payment reversed
+      testCaseId: t-orc-payment-02
+      provider: orchestrator
+      consumer: paymentService
+  - stateName: Payment reversed
+    comment: reverse Payment
+    end: False
+    nextState:
+      stateName: Top-up canceled
+      testCaseId: t-payment-orc-03
+      provider: paymentService
+      consumer: orchestrator
+  - stateName: Payment processed
+    comment: orchestrator received response from payment and ready to send update point request to Point service
+    end: False
+    nextState:
+      stateName: point-update
+      testCaseId: t-orc-point-01
+      provider: orchestrator
+      consumer: pointService
+  - stateName: point-update
+    comment: do update point
+    end: False
+    options:
+      - stateName: Point updated
+        testCaseId: t-point-orc-01
+        provider: pointService
+        consumer: orchestrator
+      - stateName: Point-update failed
+        testCaseId: t-point-orc-02
+        provider: pointService
+        consumer: orchestrator
+  - stateName: Point-update failed
+    comment: to revert points
+    end: False
+    nextState:
+      stateName: Point-update reverted
+      testCaseId: t-orc-point-02
+      provider: orchestrator
+      consumer: pointService
+  - stateName: Point-update reverted
+    comment: revert points
+    end: False
+    nextState:
+      stateName: Point-update done
+      testCaseId: t-point-orc-03
+      provider: pointService
+      consumer: orchestrator
+  - stateName: Point-update done
+    comment: orchestrator received response that point finished compensation , ready to do payment compensation
+    end: False
+    nextState:
+      stateName: Payment reversed
+      testCaseId: t-orc-payment-03
+      provider: orchestrator
+      consumer: paymentService
+  - stateName: Point updated
+    comment: orchestrator ready to send Log request
+    end: False
+    nextState:
+      stateName: Logged
+      testCaseId: t-orc-logging-01
+      provider: orchestrator
+      consumer: loggingService
+  - stateName: Logged
+    comment: logging
+    end: False
+    nextState:
+      stateName: Approved top-up
+      testCaseId: t-logging-orc-01
+      provider: loggingService
+      consumer: orchestrator
+  - stateName: Approved top-up
+    comment: finish saga process
+    end: True
+  - stateName: Top-up canceled
+    comment: finish compensation process and finish saga
+    end: True
