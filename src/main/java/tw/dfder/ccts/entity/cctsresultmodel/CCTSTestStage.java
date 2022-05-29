@@ -35,9 +35,9 @@ public enum CCTSTestStage {
     private final String stageId;
     private final String instruction;
 
-    CCTSTestStage(String s, String s1, String instruction) {
-        stageName = s;
-        stageId = s1;
+    CCTSTestStage(String satageName, String stageId, String instruction) {
+        stageName = satageName;
+        this.stageId = stageId;
         this.instruction = instruction;
     }
 
