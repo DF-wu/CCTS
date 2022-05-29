@@ -25,6 +25,8 @@ public enum CCTSStatusCode {
     // 300~399,
 //    ERROR_PARTICIPANT("provider or consumer not match CCTS document", 304),
 
+    CONTRACT_RETRIEVE_FAILED("Fail to retrieve contract from pact broker, please check the testCaseId or related setting.",301),
+
 
 
     // 400~499,
@@ -40,6 +42,7 @@ public enum CCTSStatusCode {
 
     // 600~699
     CONTREACT_TEST_RESULT_NOT_PASS("The service's contract test hasn't done fully", 600);
+
 
 
 

@@ -5,6 +5,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import tw.dfder.ccts.configuration.ServiceConfigure;
 import tw.dfder.ccts.entity.Contract;
@@ -56,8 +58,17 @@ public class PactBrokerBusyBox {
 
 
     public Contract getContractFromBroker(String providerName, String consumerName){
+        ResponseEntity<?> pactRes = pactBrokerConnector.retrieveLatestPactDetail(providerName, consumerName);
+        String pactBody = "";
+        if (pactRes.getStatusCode() != HttpStatus.OK){
+            // retrieve fail
+            return null;
+        }else{
+            pactBody = pactRes.getBody().toString();
+        }
+
         JsonObject pactJson = gson.fromJson(
-                pactBrokerConnector.retrieveLatestPactDetail(providerName, consumerName).getBody().toString(),
+                pactBody,
                 JsonObject.class
         );
 

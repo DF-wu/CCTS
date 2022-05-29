@@ -222,10 +222,16 @@ public class CCTSVerifier {
 
         private CCTSStatusCode verifyDeliveryAndContract (NextState delivery){
             // pull contract with delivery's provider & consumer
+
             Contract contract = busyBox.getContractFromBroker(
                     delivery.getProvider(),
                     delivery.getConsumer()
             );
+
+            if(contract == null) {
+                return CCTSStatusCode.CONTRACT_RETRIEVE_FAILED;
+            }
+
             boolean isValidDelivery = false;
             for (String id : contract.getTestCaseIds()) {
                 if (delivery.getTestCaseId().equals(id)) {
