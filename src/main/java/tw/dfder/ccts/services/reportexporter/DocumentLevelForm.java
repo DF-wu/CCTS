@@ -9,35 +9,35 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class DocumentLevelForm implements ReportExportEngine{
-
+    private static final String lineSeparator = "\n";
     @Override
     public String exportReport(CCTSTest cctsTest) {
         String msg = "# CCTS Document Parse Stage Report\n";
-        msg += "## Information" + System.lineSeparator();
+        msg += "## Information" + lineSeparator;
         // for this exporter enging , muse be fail.
-        msg += "+ Test result: Failed." + System.lineSeparator();
+        msg += "+ Test result: Failed." + lineSeparator;
         msg += "+ Test Time: " + LocalDateTime
                 .now()
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                + System.lineSeparator();
+                + lineSeparator;
 
         // show test stage instruction
-        msg += "## Test Stage Instruction: " + System.lineSeparator();
-        msg += "    1. " + CCTSTestStage.DOCUMENT_STAGE.getStageName() + System.lineSeparator();
+        msg += "## Test Stage Instruction: " + lineSeparator;
+        msg += "    1. " + CCTSTestStage.DOCUMENT_STAGE.getStageName() + lineSeparator;
         msg +=  CCTSTestStage.DOCUMENT_STAGE.getInstruction() ;
-        msg += "    2. " + CCTSTestStage.PATH_STAGE.getStageName() + System.lineSeparator();
+        msg += "    2. " + CCTSTestStage.PATH_STAGE.getStageName() + lineSeparator;
         msg +=  CCTSTestStage.PATH_STAGE.getInstruction();
-        msg += "    3. " + CCTSTestStage.CONTRACT_RETRIEVAL_STAGE.getStageName() + System.lineSeparator();
+        msg += "    3. " + CCTSTestStage.CONTRACT_RETRIEVAL_STAGE.getStageName() + lineSeparator;
         msg +=  CCTSTestStage.CONTRACT_RETRIEVAL_STAGE.getInstruction() ;
-        msg += "    4. " + CCTSTestStage.CONTRACT_TEST_STAGE.getStageName() + System.lineSeparator();
+        msg += "    4. " + CCTSTestStage.CONTRACT_TEST_STAGE.getStageName() + lineSeparator;
         msg +=  CCTSTestStage.CONTRACT_TEST_STAGE.getInstruction() ;
-        msg += "    5. " + CCTSTestStage.EVENTLOG_STAGE.getStageName() + System.lineSeparator();
+        msg += "    5. " + CCTSTestStage.EVENTLOG_STAGE.getStageName() + lineSeparator;
         msg +=  CCTSTestStage.EVENTLOG_STAGE.getInstruction() ;
-        msg += "    6. " + CCTSTestStage.PATH_VERIFY_STAGE.getStageName() + System.lineSeparator();
+        msg += "    6. " + CCTSTestStage.PATH_VERIFY_STAGE.getStageName() + lineSeparator;
         msg +=  CCTSTestStage.PATH_VERIFY_STAGE.getInstruction() ;
 
         // document level error
-        msg += "## Integration test Results: " + System.lineSeparator();
+        msg += "## Integration test Results: " + lineSeparator;
 
         boolean isDocPass = true;
         for (CCTSResult result  : cctsTest.getResults()) {
@@ -47,21 +47,21 @@ public class DocumentLevelForm implements ReportExportEngine{
         }
 
         if(!isDocPass){
-            msg += "### " + CCTSTestStage.DOCUMENT_STAGE.getStageName() + System.lineSeparator();
+            msg += "### " + CCTSTestStage.DOCUMENT_STAGE.getStageName() + lineSeparator;
             for (CCTSResult result : cctsTest.getResults()) {
                 // output error message
                 if(result.getDocumentStageVerificationErrors().size() != 0) {
                     // document name
-                    msg += "#### CCTS Document Name: " + result.getDocument().getTitle()+ System.lineSeparator();
-                    msg += "+ Test Result: Failed" + System.lineSeparator();
+                    msg += "#### CCTS Document Name: " + result.getDocument().getTitle()+ lineSeparator;
+                    msg += "+ Test Result: Failed" + lineSeparator;
                     // document legality error
                     for ( CCTSStatusCode code : result.getDocumentStageVerificationErrors() ) {
-                        msg += "+ Failure description: " + code.getMessage() + System.lineSeparator();
+                        msg += "+ Failure description: " + code.getMessage() + lineSeparator;
                     }
                 }
             }
         }else {
-            msg += "+ Test Result: Passed" + System.lineSeparator();
+            msg += "+ Test Result: Passed" + lineSeparator;
         }
 
 
@@ -76,22 +76,22 @@ public class DocumentLevelForm implements ReportExportEngine{
              }
         }
 
-        msg += "### " + CCTSTestStage.PATH_STAGE.getStageName() + System.lineSeparator();
+        msg += "### " + CCTSTestStage.PATH_STAGE.getStageName() + lineSeparator;
         if(!isPathPass){
             for (CCTSResult result : cctsTest.getResults()) {
                 // output error message
                 if(result.getPathConstructionAndVerificationErrors().size() != 0) {
                     // document name
-                    msg += "#### CCTS Document Name: " + result.getDocument().getTitle()+ System.lineSeparator();
-                    msg += "+ Test Result: Failed" + System.lineSeparator();
+                    msg += "#### CCTS Document Name: " + result.getDocument().getTitle()+ lineSeparator;
+                    msg += "+ Test Result: Failed" + lineSeparator;
                     // document error
                     for ( CCTSStatusCode code : result.getPathConstructionAndVerificationErrors() ) {
-                        msg += "+ Failure description: " + code.getMessage() + System.lineSeparator();
+                        msg += "+ Failure description: " + code.getMessage() + lineSeparator;
                     }
                 }
             }
         }else {
-            msg += "+ Test Result: Passed" + System.lineSeparator();
+            msg += "+ Test Result: Passed" + lineSeparator;
         }
 
 
