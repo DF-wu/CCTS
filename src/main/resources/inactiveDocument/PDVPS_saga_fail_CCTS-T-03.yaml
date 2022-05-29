@@ -7,7 +7,8 @@ states:
     end: False
     nextState:
       stateName: payment
-      testCaseId: t-orc-payment-01
+#      error
+      testCaseId: not exist
       provider: orchestrator
       consumer: paymentService
   - stateName: payment

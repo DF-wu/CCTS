@@ -8,7 +8,8 @@ states:
     nextState:
       stateName: payment
       testCaseId: t-orc-payment-01
-      provider: orchestrator
+#      error
+      provider: orphanService
       consumer: paymentService
   - stateName: payment
     comment: make payment
