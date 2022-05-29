@@ -42,7 +42,7 @@ public class PreDocumentLevelForm implements ReportExportEngine{
         msg += "# Integration test Results: " + lineSeparator;
 
         msg += "## " + CCTSTestStage.DOCUMENT_STAGE.getStageName() + lineSeparator;
-        msg += "+ Test Result: Failed" + lineSeparator;
+        msg += "+ Test result: Failed" + lineSeparator;
         // show if title is duplicated.
         if(cctsTest.isDuplicatedTitle()) {
             msg += "+ Duplicated title occurred. Please correct CCTS Document." + lineSeparator;

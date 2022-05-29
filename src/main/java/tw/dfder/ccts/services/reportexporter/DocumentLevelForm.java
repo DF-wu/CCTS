@@ -53,7 +53,7 @@ public class DocumentLevelForm implements ReportExportEngine{
                 if(result.getDocumentStageVerificationErrors().size() != 0) {
                     // document name
                     msg += "#### CCTS Document Name: " + result.getDocument().getTitle()+ lineSeparator;
-                    msg += "+ Test Result: Failed" + lineSeparator;
+                    msg += "+ Test result: Failed" + lineSeparator;
                     // document legality error
                     for ( CCTSStatusCode code : result.getDocumentStageVerificationErrors() ) {
                         msg += "+ Failure description: " + code.getMessage() + lineSeparator;
@@ -61,7 +61,7 @@ public class DocumentLevelForm implements ReportExportEngine{
                 }
             }
         }else {
-            msg += "+ Test Result: Passed" + lineSeparator;
+            msg += "+ Test result: Passed" + lineSeparator;
         }
 
 
@@ -83,7 +83,7 @@ public class DocumentLevelForm implements ReportExportEngine{
                 if(result.getPathConstructionAndVerificationErrors().size() != 0) {
                     // document name
                     msg += "#### CCTS Document Name: " + result.getDocument().getTitle()+ lineSeparator;
-                    msg += "+ Test Result: Failed" + lineSeparator;
+                    msg += "+ Test result: Failed" + lineSeparator;
                     // document error
                     for ( CCTSStatusCode code : result.getPathConstructionAndVerificationErrors() ) {
                         msg += "+ Failure description: " + code.getMessage() + lineSeparator;
@@ -91,7 +91,7 @@ public class DocumentLevelForm implements ReportExportEngine{
                 }
             }
         }else {
-            msg += "+ Test Result: Passed" + lineSeparator;
+            msg += "+ Test result: Passed" + lineSeparator;
         }
 
 

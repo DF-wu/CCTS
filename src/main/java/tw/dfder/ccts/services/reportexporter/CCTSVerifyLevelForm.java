@@ -106,7 +106,7 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
         msg +=  CCTSTestStage.PATH_VERIFY_STAGE.getInstruction() + lineSeparator;
 
 
-        msg += "# Integration Test Results:" + lineSeparator;
+        msg += "# Integration Test results:" + lineSeparator;
         for (CCTSResult cctsResult : cctsTest.getResults()) {
 
             ArrayList<ArrayList<NextState>> paths = new ArrayList<>();
@@ -127,14 +127,14 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
                     msg += "    + " + pathName + lineSeparator;
                 }
 
-                msg += "### Test Result Details: " + lineSeparator;
+                msg += "### Test result Details: " + lineSeparator;
 
                 //must pass
                 msg += "#### " + CCTSTestStage.DOCUMENT_STAGE.getStageName() + lineSeparator;
-                msg += "+ Test Result: Passed." + lineSeparator;
+                msg += "+ Test result: Passed." + lineSeparator;
 
                 msg += "#### "+ CCTSTestStage.PATH_STAGE.getStageName() + lineSeparator;
-                msg += "+ Test Result: Passed." + lineSeparator;
+                msg += "+ Test result: Passed." + lineSeparator;
 
 
 
@@ -163,14 +163,14 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
                 msg += "+ Number of Message Deliveries: " + CCTSDocumentParser.findDeliveryList(cctsResult.getDocument()).size() + lineSeparator;
                 CCTSDocumentParser.pathFinder(cctsResult.getDocument(), cctsResult.getDocument().findSimpleState(cctsResult.getDocument().getStartAt()), new ArrayList<>(), paths);
 
-                msg += "### Test Result Details: " + lineSeparator;
+                msg += "### Test result Details: " + lineSeparator;
 
                 //must pass
                 msg += "#### " + CCTSTestStage.DOCUMENT_STAGE.getStageName() + lineSeparator;
-                msg += "+ Test Result: Passed." + lineSeparator;
+                msg += "+ Test result: Passed." + lineSeparator;
 
                 msg += "#### "+ CCTSTestStage.PATH_STAGE.getStageName() + lineSeparator;
-                msg += "+ Test Result: Failed" + lineSeparator;
+                msg += "+ Test result: Failed" + lineSeparator;
 
 
                 // output error message
@@ -188,9 +188,9 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
             }else {
                 // 00
                 msg += "## Integration Test Case Name:" + cctsResult.getDocument().getTitle() + lineSeparator;
-                msg += "### Test Result Details: " + lineSeparator;
+                msg += "### Test result Details: " + lineSeparator;
                 msg += "#### " + CCTSTestStage.DOCUMENT_STAGE.getStageName() + lineSeparator;
-                msg += "+ Test Result: Failed." + lineSeparator;
+                msg += "+ Test result: Failed." + lineSeparator;
                 // output error message
                 if(cctsResult.getDocumentStageVerificationErrors().size() != 0) {
                     // document legality error
@@ -228,9 +228,9 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
         }
 
         if (testResult){
-            msg += "+ Test Result: Passed." + lineSeparator;
+            msg += "+ Test result: Passed." + lineSeparator;
         }else {
-            msg += "+ Test Result: Failed." + lineSeparator;
+            msg += "+ Test result: Failed." + lineSeparator;
         }
 
 
@@ -284,9 +284,9 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
         }
 
         if (testResult){
-            msg += "+ Test Result: Passed." + lineSeparator;
+            msg += "+ Test result: Passed." + lineSeparator;
         }else {
-            msg += "+ Test Result: Failed." + lineSeparator;
+            msg += "+ Test result: Failed." + lineSeparator;
         }
 
 
@@ -350,9 +350,9 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
         }
 
         if (testResult){
-            msg += "+ Test Result: Passed." + lineSeparator;
+            msg += "+ Test result: Passed." + lineSeparator;
         }else {
-            msg += "+ Test Result: Failed." + lineSeparator;
+            msg += "+ Test result: Failed." + lineSeparator;
         }
 
 
@@ -412,9 +412,9 @@ public class CCTSVerifyLevelForm implements ReportExportEngine {
         }
 
         if (testResult){
-            msg += "+ Test Result: Passed." + lineSeparator;
+            msg += "+ Test result: Passed." + lineSeparator;
         }else {
-            msg += "+ Test Result: Failed." + lineSeparator;
+            msg += "+ Test result: Failed." + lineSeparator;
         }
 
 
