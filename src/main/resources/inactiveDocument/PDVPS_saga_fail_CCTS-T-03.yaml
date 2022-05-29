@@ -1,5 +1,5 @@
 CCTSVersion: "0.12"
-title: PDVPS saga fail CASE - Service Contract test not pass - CCTS-T-04
+title: PDVPS saga fail CASE - Contract test case not exist - CCTS-T-03
 startAt: Top-up Event initialized
 states:
   - stateName: Top-up Event initialized
