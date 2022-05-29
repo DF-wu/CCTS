@@ -141,14 +141,16 @@ public class CCTSVerifier {
 //                return CCTSStatusCode.ERROR_NO_EVENT_FOUND;
 //            }
 
-            // find eventlogs
+            // find earliest eventlog that after pivotEventlog
             boolean isDeliveryValid = false;
             for (EventLog eventlog : correspondedEventlogs) {
                  if(eventlog.getTimeStamp() > pilovtEventlog.getTimeStamp()) {
-                     // found eventlog
+                     // found eventlog, go to next delivery
                      pilovtEventlog = eventlog;
                      isDeliveryValid = true;
                      break;
+                 }else{
+                     // this eventlog not math this delivery , go for next
                  }
             }
 
