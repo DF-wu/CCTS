@@ -43,10 +43,11 @@ public class Controller {
     }
 
 
-    @PostMapping("/start")
+    @PostMapping("/conductCCTSTest")
     public ResponseEntity<?> startCCTSVerification(){
         return new ResponseEntity<>( starter.startCCTSTest() ,HttpStatus.OK);
     }
+
 
     @PostMapping("/cleanDB")
     public ResponseEntity<?> cleanAllDB(){

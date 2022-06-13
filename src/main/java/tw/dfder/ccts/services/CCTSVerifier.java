@@ -145,7 +145,7 @@ public class CCTSVerifier {
             boolean isDeliveryValid = false;
             for (EventLog eventlog : correspondedEventlogs) {
                  if(eventlog.getTimeStamp() > pilovtEventlog.getTimeStamp()) {
-                     // found eventlog, go to next delivery
+                     // found this eventlog, go to next delivery
                      pilovtEventlog = eventlog;
                      isDeliveryValid = true;
                      break;
