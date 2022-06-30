@@ -15,10 +15,10 @@ states:
     comment: fake
     end: False
     nextState:
-      stateName: payment
+      stateName: IDK
       testCaseId: t-orc-payment-01
-      provider: orchestrator
-      consumer: paymentService
+      provider: fakep
+      consumer: fakec
   - stateName: payment
     comment: make payment
     end: False
