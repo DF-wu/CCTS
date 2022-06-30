@@ -87,7 +87,7 @@ public class CCTSDocumentParser {
             if(newPath.contains(state.getNextState())){
                 // already in path
                 // avoid loop
-                return CCTSStatusCode.CIRCULATED_PATH_FOUND;
+                return CCTSStatusCode.CYCLIC_PATH_FOUND;
             }else{
                 newPath.add(state.getNextState());
                 pathFinder(document, document.findSimpleState(state.getNextState().getStateName()), newPath, finalLists);
@@ -103,7 +103,7 @@ public class CCTSDocumentParser {
                 if(newPath.contains(ns)){
                     // already in path
                     // avoid loop
-                    return CCTSStatusCode.CIRCULATED_PATH_FOUND;
+                    return CCTSStatusCode.CYCLIC_PATH_FOUND;
                 }else{
                     newPath.add(ns);
                     SimpleState nxt = document.findSimpleState(ns.getStateName());
