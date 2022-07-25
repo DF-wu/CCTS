@@ -7,8 +7,8 @@ spring:
   rabbitmq:
     username: 'soselab'
     password: 'soselab401'
-    host: 140.121.196.23
-    port: 10109
+    host: ccts
+    port: 5672
     virtual-host: /
     listener:
       simple:
@@ -16,4 +16,4 @@ spring:
         acknowledge-mode: manual
 
 CCTS:
-  pact_broker: http://23.dfder.tw:10141
+  pact_broker: http://pact_broker:9092

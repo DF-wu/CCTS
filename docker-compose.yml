@@ -60,8 +60,5 @@ services:
 #    for api endpoint
     - '10109:5672'
 
-
-
-
 volumes:
   postgres-volume:
