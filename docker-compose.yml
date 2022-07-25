@@ -54,7 +54,11 @@ services:
 # volumes:
 #   rabbitmq_data:
 #     driver: local
-
+  ccts:
+    image: ccts
+    ports:
+#    for api endpoint
+    - '10109:5672'
 
 
 
