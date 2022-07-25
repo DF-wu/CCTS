@@ -1,5 +1,4 @@
-# CCTS pact broker in PDVPS server deployment environment setting example
-
+# CCTS whole project container configuration
 version: "3"
 services:
   postgres:
@@ -49,7 +48,7 @@ services:
       - RABBITMQ_DISK_FREE_RELATIVE_LIMIT=1.0
     volumes:
       # - 'rabbitmq_data:/bitnami'
-      - ./data:/bitnami
+      - ./rabbitmq_data:/bitnami
 
 #  if use docker volume
 # volumes:

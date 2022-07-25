@@ -3,7 +3,7 @@
 # 不要在container裡面用maven build ， 不然會很慢
 # 不要在container裡面用maven build ， 不然會很慢
 # by stanley2058@yahoo.com.tw
-# 所以這是先在外面build ，再把build好的檔案 copy到外面的working dir
+# 所以這是先在外面build ，再把build好的檔案 copy到working dir 再build
 
 mvn -T 1C clean install -Dmaven.test.skip=true
 echo "build.sh : maven build successfully"
