@@ -4,4 +4,4 @@ MAINTAINER df, df@dfder.tw
 WORKDIR /usr/src/app
 # from outside to inside
 COPY . .
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java","-Dspring.profiles.active=container","-jar","app.jar"]
