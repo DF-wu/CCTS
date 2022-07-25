@@ -31,5 +31,34 @@ services:
       PACT_BROKER_PORT: "9292"
       PACT_BROKER_LOG_LEVEL: INFO
 
+  rabbitmq:
+    image: docker.io/bitnami/rabbitmq:3.8
+    ports:
+      # rabbitMQ server port
+      - '10109:5672'
+      # rabbitMq server management port
+      - '10110:15672'
+      # idk what belows use for
+      - '4369:4369'
+      - '25672:25672'
+    environment:
+      - RABBITMQ_SECURE_PASSWORD=yes
+      - RABBITMQ_USERNAME=soselab
+      - RABBITMQ_PASSWORD=soselab401
+      # safer disk space
+      - RABBITMQ_DISK_FREE_RELATIVE_LIMIT=1.0
+    volumes:
+      # - 'rabbitmq_data:/bitnami'
+      - ./data:/bitnami
+
+#  if use docker volume
+# volumes:
+#   rabbitmq_data:
+#     driver: local
+
+
+
+
+
 volumes:
   postgres-volume:
