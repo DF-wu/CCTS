@@ -7,7 +7,7 @@ spring:
   rabbitmq:
     username: 'soselab'
     password: 'soselab401'
-    host: ccts
+    host: rabbitmq
     port: 5672
     virtual-host: /
     listener:
