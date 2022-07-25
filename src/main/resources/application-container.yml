@@ -1,5 +1,5 @@
 server:
-  port: 58093
+  port: 58080
 spring:
   data:
     mongodb:

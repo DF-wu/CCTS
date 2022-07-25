@@ -58,7 +58,7 @@ services:
     image: ccts
     ports:
 #    for api endpoint
-    - '10109:5672'
+    - '58080:58080'
 
   local-mongodb:
     image: mongo:latest
