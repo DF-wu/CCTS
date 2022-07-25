@@ -48,7 +48,7 @@ services:
       - RABBITMQ_DISK_FREE_RELATIVE_LIMIT=1.0
     volumes:
       # - 'rabbitmq_data:/bitnami'
-      - ./rabbitmq_data:/bitnami
+      - rabbitmq-volume:/bitnami
 
 #  if use docker volume
 # volumes:
@@ -74,3 +74,4 @@ services:
 
 volumes:
   postgres-volume:
+  rabbitmq-volume:
