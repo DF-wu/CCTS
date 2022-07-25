@@ -60,5 +60,17 @@ services:
 #    for api endpoint
     - '10109:5672'
 
+  local-mongodb:
+    image: mongo:latest
+    container_name: local-mongodb
+    environment:
+      MONGO_INITDB_DATABASE: CCTS # 這個記得換掉
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./mongo-volumn:/data/db:Z
+    ports:
+      - 27017:27017
+
+
 volumes:
   postgres-volume:
