@@ -11,7 +11,7 @@ echo "build.sh : maven build successfully"
 cp ./target/CCTS-0.0.1.jar app.jar
 echo "build.sh : cp apps from target directory to root directory"
 
-docker build . -t CCTS-image
+docker build . -t ccts
 echo "build.sh : docker build successfully"
 
 
