@@ -21,7 +21,7 @@
 + CCTS 開發時使用的rabbitmq範本  $\rightarrow$ https://github.com/DF-wu/RabbitMQ_server
 
 + CCTS使用的儲值範例系統，修改自PDVPS專案。
-    + orchestrator $\rightarrow$ https://github.com/DF-wu/RabbitMQ_server
+    + orchestrator $\rightarrow$ https://github.com/DF-wu/CCTS_poc_orchestrator
     + point service $\rightarrow$ https://github.com/DF-wu/CCTS_poc_points
     + payment service $\rightarrow$ https://github.com/DF-wu/CCTS_poc_payment
     + logging service $\rightarrow$ https://github.com/DF-wu/CCTS_poc_logging
