@@ -1,7 +1,14 @@
+![](/imgs/logo.png)
+
 # *Composite Contract Testing Service* Handbook
 > A tool to help Event-driven asynchronized microservice system do intergrated. 
 
+## Architecture
+![](/imgs/architecture.png)
+
 ## Deployment
+Video Guide: https://youtu.be/X212bWHwBY0
+
 ### Pre-requirment
 + Make sure `docker` is available in your system.
 + Make sure `maven` is available in your system.
