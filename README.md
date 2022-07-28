@@ -1,12 +1,10 @@
-<img src="/imgs/logo.svg" width="768">
+<img src="/imgs/logo.svg" width="480">
 
 # *Composite Contract Testing Service* Handbook
 > A tool to help Event-driven asynchronized microservice system do intergrated. 
 
 ## Architecture
-![](/imgs/architecture.svg)
-
-<img src="/imgs/architecture.svg" width="768">
+<img src="/imgs/architecture.svg" width="480">
 ## Deployment
 Video Guide: https://youtu.be/X212bWHwBY0
 
