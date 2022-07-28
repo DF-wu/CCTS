@@ -1,4 +1,4 @@
-<img src="/imgs/logo.svg" width="480">
+<img src="/imgs/logo.png" width="480">
 
 # *Composite Contract Testing Service* Handbook
 > A tool to help Event-driven asynchronized microservice system do intergrated. 
