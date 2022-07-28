@@ -5,6 +5,7 @@
 
 ## Architecture
 <img src="/imgs/architecture.svg" width="480">
+
 ## Deployment
 Video Guide: https://youtu.be/X212bWHwBY0
 
