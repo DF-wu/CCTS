@@ -4,7 +4,27 @@
 > A tool to help Event-driven asynchronized microservice system do intergrated. 
 
 ## Architecture
+The image below shows how CCTS work with ralated services and their dependencies.
 <img src="/imgs/architecture.svg" width="480">
+
+## Functionality
+CCTS system combines contract test and log from end-2-end test to ensure the system behavior qualified your desire.
+### API endpoint
+The marix below shows the http api endpoint that how we act with CCTS service.
+
+| path         | method | note                           |
+| ------------ | ------ |:------------------------------ |
+| /conductCCTS | POST   | To conduct and get CCTS report |
+| / cleanDB    | POST   | clean DB data                  |
+### CCTS Document and CCTS Message Specification  
+CCTS Document is a file and structure to describe a SAGA flow for a system that are going to test .
+
+CCTS Message Specification is a structure to describe certain events that will be recognized by CCTS service.
+
+
+The details of the document specification can be found at [here](/doc/Composite%20Contract%20Testing%20Service%20Handbook.md) or [here on hackmd](https://hackmd.io/HRG1J7HkREqNM2qw0PxB0g).
+
+
 
 ## Deployment
 Video Guide: https://youtu.be/X212bWHwBY0
