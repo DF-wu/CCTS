@@ -7,10 +7,15 @@
 The image below shows how CCTS work with ralated services and their dependencies.
 <img src="/imgs/architecture.svg" width="480">
 
+
 ## Functionality
 CCTS system combines contract test and log from end-2-end test to ensure the system behavior qualified your desire.
 
 The details of the document can be found at [here](/doc/Composite%20Contract%20Testing%20Service%20Handbook.md) or [here on hackmd](https://hackmd.io/HRG1J7HkREqNM2qw0PxB0g).
+
+## Demonmstration
+![](https://i.imgur.com/zRDxSuT.gif)
+![](https://i.imgur.com/Agp7o8E.gif)
 
 
 
