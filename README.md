@@ -9,6 +9,18 @@ The image below shows how CCTS work with ralated services and their dependencies
 
 ## Functionality
 CCTS system combines contract test and log from end-2-end test to ensure the system behavior qualified your desire.
+
+The details of the document can be found at [here](/doc/Composite%20Contract%20Testing%20Service%20Handbook.md) or [here on hackmd](https://hackmd.io/HRG1J7HkREqNM2qw0PxB0g).
+
+
+
+
+### How to use CCTS 
+The process flow below shows the difference stage when using CCTS.
+
+<img src="/imgs/user_procss.svg" width="480>
+
+
 ### API endpoint
 The marix below shows the http api endpoint that how we act with CCTS service.
 
@@ -20,10 +32,6 @@ The marix below shows the http api endpoint that how we act with CCTS service.
 CCTS Document is a file and structure to describe a SAGA flow for a system that are going to test .
 
 CCTS Message Specification is a structure to describe certain events that will be recognized by CCTS service.
-
-
-The details of the document specification can be found at [here](/doc/Composite%20Contract%20Testing%20Service%20Handbook.md) or [here on hackmd](https://hackmd.io/HRG1J7HkREqNM2qw0PxB0g).
-
 
 
 ## Deployment
@@ -123,7 +131,7 @@ Video Guide: https://youtu.be/X212bWHwBY0
     7. Deploy CCTS
         + Thers is serveral way to deploy a SpringBoot programe. Go and choose what you want.
         + I recommand to pack whole programe as a `jar` file or a `container`for deployment.
-    8. Deploy PDVPS
+    8. Deploy PDVPS (Optional)
         1. Specify a folder and get into it.
         2. Clone corresponding repo.
         3. Change Rabbitmq connection setting in Springboot configuration file for each project if needed.
