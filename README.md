@@ -26,8 +26,8 @@ The marix below shows the http api endpoint that how we act with CCTS service.
 
 | path         | method | note                           |
 | ------------ | ------ |:------------------------------ |
-| /conductCCTS | POST   | To conduct and get CCTS report |
-| / cleanDB    | POST   | clean DB data                  |
+| `/conductCCTS` | POST   | To conduct and get CCTS report |
+| `/cleanDB`   | POST   | clean DB data                  |
 ### CCTS Document and CCTS Message Specification  
 CCTS Document is a file and structure to describe a SAGA flow for a system that are going to test .
 
