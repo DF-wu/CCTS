@@ -8,6 +8,9 @@
 [TOC]
 
 ## 測試流程說明
+
+
+
 1. Document verify
     1. [A-1] Document prepare stage 
         + parse to CCTS data model
@@ -19,9 +22,7 @@
         + document是否存在未被包含於可能潛在的path的delivery
         + no valid path found error
         + delivery連結的service是否合理(last consumer should be next provider)
-        + timeSequenceLabel should be uniqe in whole document's delivery
-        + time sequenceLabel should be increased for each path that  found in CCTS document
-        
+
         
         
 2. CCTS verify
