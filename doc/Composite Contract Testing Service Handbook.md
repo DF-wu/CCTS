@@ -1,32 +1,59 @@
-###### tags: `碩士`
+###### tags: `碩士` 
 
 # *Composite Contract Testing Service* Handbook
-> A tool to help Event-driven asynchronized microservice system do intergrated .
+> A tool to help Event-driven asynchronized microservice system do intergrated.
+
 
 
 [TOC]
 
-## Guidance 服用姿勢
-+ 建議的開發流程：
-    1. PO事前將服務所需的端點規格訂出以利進行契約測試，並指派人手進行開發。
-    2. 開發人員依據先前訂出的契約規格完成服務，在服務間溝通的message依據[*CCTS message spec*](##CCTS-Message-spec)的規格埋入metadata。
-    3. 開發人員執行契約測試並通過之後，將契約內容以及測試結果上傳至CCTS服務中。
-    4. 在測試階段，測試人員需要取得微服務中各個saga的案例，並依據[*CCTS Document spec*](##CCTS-Document-spec)的規定將其撰寫為狀態圖的描述文件。
-    5. 在整合測試以前，測試人員需要設定message broker，需要有一個專屬的queue負責收集測試中所有的訊息
-    6. 執行整合測試後，至CCTS執行Composite Test，檢核訊息是否有遺漏
-    7. (?) 產生測試結果報告
+## 測試流程說明
+1. Document verify
+    1. [A-1] Document prepare stage 
+        + parse to CCTS data model
+        + every document's title name should be unique
+    2. [A-2] 解析document文件，檢查是否有缺漏。 document stage 
+        + state name should be unique in whole document states
+        + required properties should not be null
+        + nextState name should be found in Document states set.
+        + document是否存在未被包含於可能潛在的path的delivery
+        + no valid path found error
+        + delivery連結的service是否合理(last consumer should be next provider)
+        + timeSequenceLabel should be uniqe in whole document's delivery
+        + time sequenceLabel should be increased for each path that  found in CCTS document
+        
+        
+        
+2. CCTS verify
+    1. 尋找path的delivery集合對應之eventLog是否存在，並驗證其有效性。 eventlog stage B-1
+        + no eventlog found between provider and consumer for the delivery. 
+        + delivery testCaseId not found in eventlog
+    2. 驗證eventlog path是否合法   path verify stage B-2
+        + eventlog produce time should follow the sequence, at least a valid eventlog path found
+    3. 對照document資訊與contract的有效性。   contract stage B-3
+        + delivery testCaseId not found in Conctract
+    4. 驗證service是否完成contract test。    contract test stage B-4
+        + service hasn't not passed contract test
 
 
-## CCTS Message spec v2
+
+## 輸出報告解析
+https://hackmd.io/@dfder/HkE9qG3Hc
+
+
+
+
+## CCTS Message spec v3
 + CCTS 預設以rabbitmq作為message broker
-    + 在一個message被produce時，必須在message header中埋入以下表格對應訊息，用以判斷本訊息。
-    + **注意**，在整個系統中，以下三個欄位對應的值不應該重複。
+	+ 在一個message被produce時，必須在message header中埋入以下表格對應訊息，用以判斷本訊息。
+	+ **注意**，在整個系統中，以下三個欄位對應的值不應該重複。
 
-| Key             | Value                      |
-| --------------- |:-------------------------- |
-| `provider`     | 發送者的service Name       |
-| `consumer`    | 接收者的service Name       |
-| `testCaseID`                |  本次通訊對應Contract的項目|
+| Key          | Value                      |
+| ------------ |:-------------------------- |
+| `provider`   | 發送者的service Name       |
+| `consumer`   | 接收者的service Name       |
+| `testCaseID` | 本次通訊對應Contract的項目 |
+| `CCTSTimestamp`             |    long  unix time  以ms表示                       |
 
 
 
@@ -41,7 +68,7 @@ testCaseId:
 
 ## CCTS Document spec
 + build a ccts profile:
-    + [The Last version](###v0.9)
+	+ [The Last version](###v0.12)
 
 
 
@@ -55,13 +82,17 @@ testCaseId:
 
 
 
+
 ---
 ## 參考資訊
-+ 畫的圖；https://drive.google.com/file/d/1R02-U71dM3OAF7uDL_mdxwfRzmCyYFCE/view?usp=sharing
-+ 範例狀態變化圖
-    + ![](https://i.imgur.com/Kevd17V.jpg)
-    + ![](https://i.imgur.com/l7rjCNe.jpg)
-    + ![](https://i.imgur.com/Kg5nxa4.jpg)
++ 範例狀態圖
+    + ![](https://i.imgur.com/ZpUqliL.jpg)
+
+
+    + archived
+        + [初期版本](https://i.imgur.com/Kevd17V.jpg)
+        + [初期版本2](https://i.imgur.com/l7rjCNe.jpg)
+        + [v3](https://i.imgur.com/PrPVWDH.png)
 
 ### testCaseId table
 
@@ -79,8 +110,8 @@ testCaseId:
 | t-point-orc-02   | pointService   | orchestrator   | req time label 9  |
 | t-orc-point-02   | orchestrator   | pointService   | res time label 10 |
 | t-point-orc-03   | pointService   | orchestrator   | req time label 11 |
-| t-payment-orc-03 | paymentService | orchestrator   | res time label 12 |
-| t-payment-orc-04 | paymentService | orchestrator   | time label 13     |
+| t-orc-payment-03 | orchestrator | paymentService   | res time label 12 |
+| t-payment-orc-03 | paymentService | orchestrator   | time label 13     |
 
 
 
@@ -88,6 +119,92 @@ testCaseId:
 + todo
 
 ## 版本紀錄
+### v0.12
+#### 變更紀錄
++ `CCTSversion` $\rightarrow$ `CCTSVersion`
+#### spec
++ `CCTSVersion`: 對應CCTS版本
++ `title`: 本測試名稱
++ `startAt`: 初始狀態
++ `states`: 狀態集合，陣列形式
+    + `stateName`: 狀態名稱
+    + `comment`: 狀態說明
+    + `nextState`: (下一個狀態)
+        + `stateName`: 下一個狀態的名稱，需定義在`states`中
+        + `testCaseId` : 對應的Contract test case Id
+        + `provider` : 生產端服務名稱
+        + `consumer` : 消費端服務名稱
+    + `options`: 狀態分歧
+        + `stateName`  : 狀態名稱
+        + `testCaseId` : Contract test case Id
+        + `provider` : 生產端服務名稱
+        + `consumer` : 消費端服務名稱
+    + `end`: 結束狀態 *True* or *False*
+
+---
+
+
+
+
+
+### v0.11
+#### 變更紀錄
++ 調整document格式。**重大修正**
+    + `states` 改為以陣列表示
+    + `options` 改為以陣列表示
+#### spec
++ `CCTSversion`: 對應CCTS版本
++ `title`: 本測試名稱
++ `startAt`: 初始狀態
++ `states`: 狀態圖 陣列
+    + `stateName`: 狀態名稱
+    + `comment`: 狀態說明
+    + `nextState`: (下一個狀態)
+        + `stateName`: 下一個狀態的名稱，需定義在`states中`
+        + `testCaseId` : 對應的Contract Term(description in pact)
+        + `provider` :
+        + `consumer` :
+        + `timeSequenceLable` :
+    + `options`: 狀態分歧
+        + `stateName`  : 狀態名稱
+        + `testCaseId` : 對應的合約項目(pact message description)
+        + `provider` :
+        + `consumer` : 
+        + `timeSequenceLable` : 
+    + `end`: 結束狀態 *True* or *False*
+
+---
+
+### v0.10
+#### 變更紀錄
++ 移除caseSequence定義
+#### spec
++ `CCTSversion`: 對應CCTS版本
++ `title`: 本測試名稱
++ `startAt`: 初始狀態
++ `states`: 狀態圖 hashMap
+	+ `狀態名稱`:
+		+ `comment`: 狀態說明
+		+ `nextState`: (下一個狀態)
+			+ `stateName`: 下一個狀態的名稱，需定義在`states中`
+			+ `testCaseId` : 對應的Contract Term(description in pact)
+			+ `provider` :
+			+ `consumer` :
+			+ `timeSequenceLable` :
+		+ `options`: 狀態分歧
+			+ `狀態名稱`:
+			    + `stateName`  : 狀態名稱
+				+ `testCaseId` : 對應的合約項目(pact message description)
+				+ `provider` :
+				+ `consumer` : 
+				+ `timeSequenceLable` : 
+			+ `狀態名`
+		+ `end`: 結束狀態 *True* or *False*
+
+
+
+
+---
 ### v0.9
 #### 變更紀錄
 + 為解決不同分支的先後順序問題，加入`timeSequences`
@@ -103,23 +220,23 @@ testCaseId:
     - 1,2,3,5
     - 1,2,5,6,7
 + `states`: 狀態圖 hashMap
-    + `狀態名稱`:
-        + `comment`: 狀態說明
-        + `nextState`: (下一個狀態)
-            + `stateName`: 下一個狀態的名稱，需定義在`states中`
-            + `testCaseId` : 對應的Contract Term(description in pact)
-            + `provider` :
-            + `consumer` :
-            + `timeSequenceLable` :
-        + `options`: 狀態分歧
-            + `狀態名稱`:
-                + `stateName`  : 狀態名稱
-                + `testCaseId` : 對應的合約項目(pact message description)
-                + `provider` :
-                + `consumer` :
-                + `timeSequenceLable` :
-            + `狀態名`
-        + `end`: 結束狀態 *True* or *False*
+	+ `狀態名稱`:
+		+ `comment`: 狀態說明
+		+ `nextState`: (下一個狀態)
+			+ `stateName`: 下一個狀態的名稱，需定義在`states中`
+			+ `testCaseId` : 對應的Contract Term(description in pact)
+			+ `provider` :
+			+ `consumer` :
+			+ `timeSequenceLable` :
+		+ `options`: 狀態分歧
+			+ `狀態名稱`:
+			    + `stateName`  : 狀態名稱
+				+ `testCaseId` : 對應的合約項目(pact message description)
+				+ `provider` :
+				+ `consumer` : 
+				+ `timeSequenceLable` : 
+			+ `狀態名`
+		+ `end`: 結束狀態 *True* or *False*
 
 
 
@@ -132,23 +249,23 @@ testCaseId:
 + `title`: 本測試名稱
 + `startAt`: 初始狀態
 + `states`: 狀態圖 hashMap
-    + `狀態名稱`:
-        + `comment`: 狀態說明
-        + `nextState`: (下一個狀態)
-            + `stateName`: 下一個狀態的名稱，需定義在`states中`
-            + `testCaseId` : 對應的Contract Term(description in pact)
-            + `provider` :
-            + `consumer` :
-            + `timeSequenceLable` :
-        + `options`: 狀態分歧
-            + `狀態名稱`:
-                + `stateName`  : 狀態名稱
-                + `testCaseId` : 對應的合約項目(pact message description)
-                + `provider` :
-                + `consumer` :
-                + `timeSequenceLable` :
-            + `狀態名`
-        + `end`: 結束狀態 *True* or *False*
+	+ `狀態名稱`:
+		+ `comment`: 狀態說明
+		+ `nextState`: (下一個狀態)
+			+ `stateName`: 下一個狀態的名稱，需定義在`states中`
+			+ `testCaseId` : 對應的Contract Term(description in pact)
+			+ `provider` :
+			+ `consumer` :
+			+ `timeSequenceLable` :
+		+ `options`: 狀態分歧
+			+ `狀態名稱`:
+			    + `stateName`  : 狀態名稱
+				+ `testCaseId` : 對應的合約項目(pact message description)
+				+ `provider` :
+				+ `consumer` : 
+				+ `timeSequenceLable` : 
+			+ `狀態名`
+		+ `end`: 結束狀態 *True* or *False*
 
 
 
@@ -162,21 +279,21 @@ testCaseId:
 + `title`: 本測試名稱
 + `startAt`: 初始狀態
 + `states`: 狀態圖 hashMap
-    + `狀態名稱`:
-        + `comment`: 狀態說明
-        + `nextState`: (下一個狀態)
-            + `stateName`: 下一個狀態的名稱，需定義在`states中`
-            + `testCaseId`: 對應的Contract Term(description in pact)
-            + `provider`
-            + `consumer`
-        + `options`: 狀態分歧
-            + `狀態名稱`:
-                + `stateName` : 狀態名稱
-                + `testCaseId`: 對應的合約項目(pact message description)
-                + `provider`:
-                + `consumer`:
-            + `狀態名`
-        + `end`: 結束狀態 *True* or *False*
+	+ `狀態名稱`:
+		+ `comment`: 狀態說明
+		+ `nextState`: (下一個狀態)
+			+ `stateName`: 下一個狀態的名稱，需定義在`states中`
+			+ `testCaseId`: 對應的Contract Term(description in pact)
+			+ `provider`
+			+ `consumer`
+		+ `options`: 狀態分歧
+			+ `狀態名稱`:
+			    + `stateName` : 狀態名稱
+				+ `testCaseId`: 對應的合約項目(pact message description)
+				+ `provider`:
+				+ `consumer`:
+			+ `狀態名`
+		+ `end`: 結束狀態 *True* or *False*
 
 
 :::spoiler 範例v0.7
@@ -306,20 +423,20 @@ states:
 + `title`: 本測試名稱
 + `startAt`: 初始狀態
 + `states`: 狀態圖 hashMap
-    + `狀態名稱`:
-        + `comment`: 狀態說明
-        + `nextState`: (下一個狀態)
-            + `stateName`: 下一個狀態的名稱，需定義在`states中`
-            + `testCaseId`: 對應的Contract Term(description in pact)
-            + `provider`
-            + `consumer`
-        + `options`: 狀態分歧
-            + `狀態名`:
-                + `testCaseId`: 對應的合約項目(pact message description)
-                + `provider`:
-                + `consumer`:
-            + `狀態名`
-        + `end`: 結束狀態 *True* or *False*
+	+ `狀態名稱`:
+		+ `comment`: 狀態說明
+		+ `nextState`: (下一個狀態)
+			+ `stateName`: 下一個狀態的名稱，需定義在`states中`
+			+ `testCaseId`: 對應的Contract Term(description in pact)
+			+ `provider`
+			+ `consumer`
+		+ `options`: 狀態分歧
+			+ `狀態名`:
+				+ `testCaseId`: 對應的合約項目(pact message description)
+				+ `provider`:
+				+ `consumer`:
+			+ `狀態名`
+		+ `end`: 結束狀態 *True* or *False*
 
 
 
@@ -333,20 +450,20 @@ states:
 + `title`: 本測試名稱
 + `startAt`: 初始狀態
 + `states`: 狀態圖 hashMap
-    + `狀態名稱`:
-        + `comment`: 狀態說明
-        + `nextState`: (下一個狀態)
-            + `State`: 下一個狀態的名稱，需定義在`States中`
-            + `contractName`: 對應的Contract Test文件名稱
-            + `publisher`
-            + `subscriber`
-        + `options`: 狀態分歧
-            + `狀態名`:
-                + `contractName`: 對應的Contract Test文件名稱
-                + `publisher`:
-                + `subscriber`:
-            + `狀態名`
-        + `end`: 結束狀態 *True* or *False*
+	+ `狀態名稱`:
+		+ `comment`: 狀態說明
+		+ `nextState`: (下一個狀態)
+			+ `State`: 下一個狀態的名稱，需定義在`States中`
+			+ `contractName`: 對應的Contract Test文件名稱
+			+ `publisher`
+			+ `subscriber`
+		+ `options`: 狀態分歧
+			+ `狀態名`:
+				+ `contractName`: 對應的Contract Test文件名稱
+				+ `publisher`:
+				+ `subscriber`:
+			+ `狀態名`
+		+ `end`: 結束狀態 *True* or *False*
 
 
 
@@ -473,20 +590,20 @@ states:
 + `Title`: 本測試名稱
 + `StartAt`: 初始狀態
 + `States`: 狀態圖hashtable
-    + `狀態名稱`:
-        + `Comment`: 狀態說明
-        + `Next`: (下一個狀態)
-            + `State`: 下一個狀態的名稱，需定義在`States中`
-            + `ContractName`: 對應的Contract Test文件名稱
-            + `Publisher`
-            + `Subscriber`
-        + `Options`: 狀態分歧
-            + `狀態名`:
-                + `ContractName`: 對應的Contract Test文件名稱
-                + `Publisher`:
-                + `Subscriber`:
-            + `狀態名`
-        + `End`: 結束狀態 *True* or *False*
+	+ `狀態名稱`:
+		+ `Comment`: 狀態說明
+		+ `Next`: (下一個狀態)
+			+ `State`: 下一個狀態的名稱，需定義在`States中`
+			+ `ContractName`: 對應的Contract Test文件名稱
+			+ `Publisher`
+			+ `Subscriber`
+		+ `Options`: 狀態分歧
+			+ `狀態名`:
+				+ `ContractName`: 對應的Contract Test文件名稱
+				+ `Publisher`:
+				+ `Subscriber`:
+			+ `狀態名`
+		+ `End`: 結束狀態 *True* or *False*
 
 :::spoiler v0.4
 ```yaml=
@@ -614,25 +731,25 @@ choices欄位直接將候選狀態作為key
 + `Title`: 本測試名稱
 + `StartAt`: 初始狀態
 + `States`: 狀態圖hashtable
-    + `狀態名稱`:
-        + `Comment`: 狀態說明
-        + `Next`: (下一個狀態)
-            + `State`: 下一個狀態的名稱，需定義在`States中`
-            + `Contract Name`: 對應的Contract Test文件名稱
-            + `Publisher`
-            + `Subscriber`
-        + `Choices`: 狀態分歧
-            + `狀態名`:
-                + `BooleanEquals`: True
-                + `Contract Name`: 對應的Contract Test文件名稱
-                + `Publisher`:
-                + `Subscriber`:
-            + `狀態名`
-                + `BooleanEquals`: False
-                + `Contract Name`: 對應的Contract Test文件名稱
-                + `Publisher`:
-                + `Subscriber`:
-        + `End`: 結束狀態 *True* or *False*
+	+ `狀態名稱`:
+		+ `Comment`: 狀態說明
+		+ `Next`: (下一個狀態)
+			+ `State`: 下一個狀態的名稱，需定義在`States中`
+			+ `Contract Name`: 對應的Contract Test文件名稱
+			+ `Publisher`
+			+ `Subscriber`
+		+ `Choices`: 狀態分歧
+			+ `狀態名`:
+				+ `BooleanEquals`: True
+				+ `Contract Name`: 對應的Contract Test文件名稱
+				+ `Publisher`:
+				+ `Subscriber`:
+			+ `狀態名`
+				+ `BooleanEquals`: False
+				+ `Contract Name`: 對應的Contract Test文件名稱
+				+ `Publisher`:
+				+ `Subscriber`:
+		+ `End`: 結束狀態 *True* or *False*
 
 :::spoiler v0.3
 ```yaml=
@@ -749,30 +866,30 @@ States:
 + `Title`: 本測試名稱
 + `StartAt`: 初始狀態
 + `States`: 狀態圖hashtable
-    + `狀態名稱`:
-        + `Comment`: 狀態說明
-        + `Next`: (下一個狀態)
-            + `State`: 下一個狀態的名稱，需定義在`States中`
-            + `Contract Name`: 對應的Contract Test文件名稱
-            + `Participant Service`:
-                + `Publisher`
-                + `Subscriber`
-        + `Choices`: 狀態分歧
-            + `Success`:
-                + `BooleanEquals`: True
-                + `State`: 狀態名稱
-                + `Contract Name`: 對應的Contract Test文件名稱
-                + `Participant Service`:
-                    + `Publisher`
-                    + `Subscriber`
-            + `Faliure`
-                + `BooleanEquals`: False
-                + `State`: 狀態名稱
-                + `Contract Name`: 對應的Contract Test文件名稱
-                + `Participant Service`:
-                    + `Publisher`
-                    + `Subscriber`
-        + `End`: 結束狀態 *True* or *False*
+	+ `狀態名稱`:
+		+ `Comment`: 狀態說明
+		+ `Next`: (下一個狀態)
+			+ `State`: 下一個狀態的名稱，需定義在`States中`
+			+ `Contract Name`: 對應的Contract Test文件名稱
+			+ `Participant Service`:
+				+ `Publisher`
+				+ `Subscriber`
+		+ `Choices`: 狀態分歧
+			+ `Success`:
+				+ `BooleanEquals`: True
+				+ `State`: 狀態名稱
+				+ `Contract Name`: 對應的Contract Test文件名稱
+				+ `Participant Service`:
+					+ `Publisher`
+					+ `Subscriber`
+			+ `Faliure`
+				+ `BooleanEquals`: False
+				+ `State`: 狀態名稱
+				+ `Contract Name`: 對應的Contract Test文件名稱
+				+ `Participant Service`:
+					+ `Publisher`
+					+ `Subscriber`
+		+ `End`: 結束狀態 *True* or *False*
 
 ::: spoiler v0.2
 ```yaml	
@@ -903,13 +1020,13 @@ States:
 + `Title`: 本測試名稱
 + `StartAt`: 初始狀態
 + `States`: 狀態圖，以陣列呈現
-    + `狀態名稱`:
-        + `Comment`: 狀態說明
-        + `Next`: 下一個狀態
-        + `Choices`: 狀態分歧
-            + `BooleanEquals`: bool條件，`Yes` 或 `No`
-            + `Next`: 下一個狀態
-        + `End`: 結束狀態
+	+ `狀態名稱`:
+		+ `Comment`: 狀態說明
+		+ `Next`: 下一個狀態
+		+ `Choices`: 狀態分歧
+			+ `BooleanEquals`: bool條件，`Yes` 或 `No`
+			+ `Next`: 下一個狀態
+		+ `End`: 結束狀態
 
 :::spoiler Click to show v0.1
 ```yaml=
