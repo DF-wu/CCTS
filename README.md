@@ -18,7 +18,7 @@ The details of the document can be found at [here](/doc/Composite%20Contract%20T
 ### How to use CCTS 
 The process flow below shows the difference stage when using CCTS.
 
-<img src="/imgs/user_process.svg" width="480>
+<img src="/imgs/user_process.svg" width="480">
 
 
 ### API endpoint
