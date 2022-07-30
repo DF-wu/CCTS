@@ -38,6 +38,15 @@ CCTS Document is a file and structure to describe a SAGA flow for a system that 
 
 CCTS Message Specification is a structure to describe certain events that will be recognized by CCTS service.
 
+## File Structure
+![](/imgs/file_structure.JPG)
++ `database_dump` is dump from my own mongoDB, including `CCTSTest`, `CCTSResult` and `Eventlogs`.
++ `doc` provide handbook for CCTS, including `CCTS Message Spce.` and `CCTS Document Spec.`.
++ `imgs` to save image file for README.md
++ `build.sh` is how maven build CCTS and make docker image.
++ `docker-compose.yml` integrates all related project as a cluster service.
++ `mongo-init.js` is helping initialization for mongodb configuration in `docker-compose.yml`.
++ `start-CCTS.sh` is a single line to build and start whole CCTS project.
 
 ## Deployment
 Video Guide: https://youtu.be/X212bWHwBY0
