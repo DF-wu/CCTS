@@ -3,7 +3,7 @@ server:
 spring:
   data:
     mongodb:
-      uri: mongodb+srv://df:dfder@clusters.owt5s.mongodb.net/CCTS?retryWrites=true&w=majority
+      uri:
   rabbitmq:
     username: 'soselab'
     password: 'soselab401'
