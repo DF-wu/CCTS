@@ -4,13 +4,9 @@
 > A tool to help Event-driven asynchronized microservice system do intergrated.
 
 
-
 [TOC]
 
 ## 測試流程說明
-
-
-
 1. Document verify
     1. [A-1] Document prepare stage 
         + parse to CCTS data model
@@ -36,6 +32,14 @@
     4. 驗證service是否完成contract test。    contract test stage B-4
         + service hasn't not passed contract test
 
+## API 
+
+
+
+| Method | path               | Note                 |
+|:------:| ------------------ | -------------------- |
+| `POST` | `/conductCCTSTest` | 執行CCTS檢查         |
+| `POST` | `cleanDB`          | 清除資料庫，注意使用 |
 
 
 ## 輸出報告解析
