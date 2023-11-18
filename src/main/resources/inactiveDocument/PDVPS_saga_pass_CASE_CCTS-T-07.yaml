@@ -14,7 +14,7 @@ states:
     comment: make payment
     end: False
     options:
-      - stateName: Payment processed
+      - stateName: Payment  processed
         testCaseId: t-payment-orc-01
         provider: paymentService
         consumer: orchestrator

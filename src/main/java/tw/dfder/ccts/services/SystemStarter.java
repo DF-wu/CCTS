@@ -55,7 +55,6 @@ public class SystemStarter {
 
         // clean ccts db
         cleaner.cleanCCTSDocumentDB();
-
         String msg = "";
         if(isSystemReady){
             CCTSTest cctsTest = new CCTSTest();

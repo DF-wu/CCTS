@@ -67,7 +67,7 @@ services:
       MONGO_INITDB_DATABASE: CCTS # 這個記得換掉
     volumes:
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-      - ./mongo-volumn:/data/db:Z
+      - ./mongo-volume:/data/db:Z
     ports:
       - 27017:27017
 
